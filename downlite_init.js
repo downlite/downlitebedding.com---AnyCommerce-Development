@@ -31,7 +31,7 @@ app.rq.push(['script',0,app.vars.baseURL+'controller.js']);
 
 app.rq.push(['script',0,app.vars.baseURL+'resources/jquery.showloading-v1.0.jt.js']); //used pretty early in process..
 app.rq.push(['script',0,app.vars.baseURL+'resources/jquery.ui.anyplugins.js']); //in zero pass in case product page is first page.
-app.rq.push(['script',0,'http://www.zazar.net/developers/jquery/zrssfeed/jquery.zrssfeed.min.js']); 
+//app.rq.push(['script',0,'http://www.zazar.net/developers/jquery/zrssfeed/jquery.zrssfeed.min.js']); 
 
 
 
@@ -53,7 +53,15 @@ app.rq.push(['templateFunction','productTemplate','onCompletes',function(P) {
 	
 app.rq.push(['templateFunction','homepageTemplate','onCompletes',function(P) {
 	 		// Load blog content
- 		$('.blog1').rssfeed('http://blog.downlitebedding.com/rss.xml', {
+		var fileref=document.createElement('script');
+		fileref.setAttribute("type","text/javascript");
+		fileref.setAttribute("src", "http://www.zazar.net/developers/jquery/zrssfeed/jquery.zrssfeed.min.js");
+		if (typeof fileref!="undefined"){
+		  document.getElementsByTagName("head")[0].appendChild(fileref);
+		}
+			
+ 		var blogs = function(){
+		$('.blog1').rssfeed('http://blog.downlitebedding.com/rss.xml', {
  			limit: 1,
  			header: false,
  			snippet: false,
@@ -75,6 +83,8 @@ app.rq.push(['templateFunction','homepageTemplate','onCompletes',function(P) {
  			snippet: false,
  			date: false
  		});
+		}
+		setTimeout(blogs, 2000);
 
 }]);
 
