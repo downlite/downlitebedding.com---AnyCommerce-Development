@@ -31,6 +31,8 @@ app.rq.push(['script',0,app.vars.baseURL+'controller.js']);
 
 app.rq.push(['script',0,app.vars.baseURL+'resources/jquery.showloading-v1.0.jt.js']); //used pretty early in process..
 app.rq.push(['script',0,app.vars.baseURL+'resources/jquery.ui.anyplugins.js']); //in zero pass in case product page is first page.
+app.rq.push(['script',0,'http://www.zazar.net/developers/jquery/zrssfeed/jquery.zrssfeed.min.js']); 
+
 
 
 
@@ -48,6 +50,33 @@ app.rq.push(['templateFunction','productTemplate','onCompletes',function(P) {
 			}
 		else	{} //couldn't find the tab to tabificate.
 	}]);
+	
+app.rq.push(['templateFunction','homepageTemplate','onCompletes',function(P) {
+	 		// Load blog content
+ 		$('.blog1').rssfeed('http://blog.downlitebedding.com/rss.xml', {
+ 			limit: 1,
+ 			header: false,
+ 			snippet: false,
+ 			date: false,
+ 			showerror: true,
+ 			errormsg: 'Sorry, the blog couldn\'t be loaded right now due to a technical problem. Please try again later.'
+ 		});
+ 		$('.blog2').rssfeed('http://blog.downlitebedding.com/rss.xml', {
+ 			limit: 1,
+ 			offset: 2,
+ 			header: false,
+ 			snippet: false,
+ 			date: false
+ 		});
+ 		$('.blog3').rssfeed('http://blog.downlitebedding.com/rss.xml', {
+ 			limit: 1,
+ 			offset: 3,
+ 			header: false,
+ 			snippet: false,
+ 			date: false
+ 		});
+
+}]);
 
 //sample of an onDeparts. executed any time a user leaves this page/template type.
 //app.rq.push(['templateFunction','homepageTemplate','onDeparts',function(P) {app.u.dump("just left the homepage")}]);
