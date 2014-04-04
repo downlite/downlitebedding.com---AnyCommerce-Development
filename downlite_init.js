@@ -31,7 +31,7 @@ app.rq.push(['script',0,app.vars.baseURL+'controller.js']);
 
 app.rq.push(['script',0,app.vars.baseURL+'resources/jquery.showloading-v1.0.jt.js']); //used pretty early in process..
 app.rq.push(['script',0,app.vars.baseURL+'resources/jquery.ui.anyplugins.js']); //in zero pass in case product page is first page.
-app.rq.push(['script',0,'http://www.zazar.net/developers/jquery/zrssfeed/jquery.zrssfeed.min.js']); 
+app.rq.push(['script',1,'http://www.zazar.net/developers/jquery/zrssfeed/jquery.zrssfeed.min.js']); 
 
 
 
