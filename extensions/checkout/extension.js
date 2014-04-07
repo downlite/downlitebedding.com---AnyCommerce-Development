@@ -215,7 +215,12 @@ this is what would traditionally be called an 'invoice' page, but certainly not 
 				
 //show post-checkout invoice and success messaging.
 				$checkout.empty();
-				$checkout.anycontent({'templateID':'chkoutCompletedTemplate',data: checkoutData}); //show invoice
+				$checkout.tlc({'templateid':'chkoutCompletedTemplate',dataset: checkoutData}); //show invoice
+
+//This will add a cart message. handy if the buyer and merchant are dialoging.
+				if(cartMessagePush in window)	{
+					cartMessagePush(oldCartID,'cart.orderCreate',{'vars':{'orderid':orderID}});
+					}
 
 //time for some cleanup. Nuke the old cart from memory and local storage, then obtain a new cart id, if necessary (admin doesn't auto-create a new one).
 
@@ -224,7 +229,7 @@ this is what would traditionally be called an 'invoice' page, but certainly not 
 
 //if a cart messenger is open, log the cart update.
 				if(_app.u.thisNestedExists('ext.cart_message.vars.carts.'+oldCartID,_app))	{
-					_app.model.addDispatchToQ({'_cmd':'cartMessagePush','what':'cart.update','orderid':orderID,'description':'Order created.','_cartid':cartid},'immutable');
+					_app.model.addDispatchToQ({'_cmd':'cartMessagePush','what':'cart.update','orderid':orderID,'description':'Order created.','_cartid':oldCartID},'immutable');
 					}
 
 				
@@ -320,7 +325,7 @@ this is what would traditionally be called an 'invoice' page, but certainly not 
 				$('body').hideLoading();
 				$('#globalMessaging').anymessage({'message':rd});
 				if(typeof _gaq != 'undefined')	{
-					_gaq.push(['_trackEvent','Checkout','App Event','Order NOT created. error occured. ('+d['_msg_1_id']+')']);
+					_gaq.push(['_trackEvent','Checkout','App Event','Order NOT created. error occured. ('+rd['_msg_1_id']+')']);
 					}
 
 				}
@@ -657,6 +662,13 @@ payment options, pricing, etc
 					$("[data-app-role='username']",$fieldset).hide();
 					$("[data-app-role='loginPasswordContainer']",$fieldset).show();
 					}
+				// ** 201402
+				//if the user is logged in, make sure the 'create account' checkbox is NOT checked.
+				//otherwise, if checked=checked is set to enable account create by default and a user logs in, the checked box will cause validation error on a hidden panel.
+				if(_app.u.buyerIsAuthenticated())	{
+					$("input[name='want/create_customer']",$fieldset).prop('checked',false);
+					}
+				
 				_app.ext.order_create.u.handlePlaceholder($fieldset);
 				}, //preflight
 
@@ -665,8 +677,11 @@ payment options, pricing, etc
 				
 				var authState = _app.u.determineAuthentication(),
 				createCustomer = formObj['want/create_customer'];
-
-				if(authState == 'authenticated' || authState == 'thirdPartyGuest'  || _app.ext.cco.u.thisSessionIsPayPal())	{
+				
+				if(_app.u.buyerIsAuthenticated())	{
+					$fieldset.hide();
+					}
+				else if(authState == 'thirdPartyGuest'  || _app.ext.cco.u.thisSessionIsPayPal())	{
 					$fieldset.hide();
 					}
 				else {
@@ -1038,7 +1053,8 @@ note - the order object is available at _app.data['order|'+P.orderID]
 //							_app.u.dump(" -> cartDetail callback for startCheckout reached.");
 							if(_app.data[rd.datapointer]['@ITEMS'].length || _app.u.thisIsAnAdminSession())	{
 								_app.u.dump(" -> cart has items or this is an admin session. cartID: "+cartID);
-								var $checkoutContents = _app.renderFunctions.transmogrify({},'checkoutTemplate',_app.ext.order_create.u.extendedDataForCheckout(cartID));
+//								var $checkoutContents = _app.renderFunctions.transmogrify({},'checkoutTemplate',_app.ext.order_create.u.extendedDataForCheckout(cartID));
+								var $checkoutContents = new tlc().runTLC({'templateid':'checkoutTemplate','dataset':_app.ext.order_create.u.extendedDataForCheckout(cartID)})
 								
 								$checkoutContents.data('cartid',cartID);
 
@@ -1180,9 +1196,9 @@ _app.u.handleButtons($chkContainer); //will handle buttons outside any of the fi
 				if(orderID)	{
 					var $orderContent = $("[data-app-role='orderContents']:first",$ele.closest("[data-app-role='orderContainer']")).show();
 					_app.ext.admin.calls.adminOrderDetail.init(orderID,{
-						'callback' : 'anycontent',
+						'callback' : 'tlc',
 						'jqObj' : $orderContent,
-						'translateOnly' : true
+						'verb' : 'translate'
 						},'mutable');
 					_app.model.dispatchThis('mutable');
 					}
@@ -1205,7 +1221,9 @@ _app.u.handleButtons($chkContainer); //will handle buttons outside any of the fi
 				},
 
 			cartItemAppendSKU : function($ele,p)	{
+//				dump("BEGIN order_create.e.cartItemAppendSKU");
 				p.skuArr = [$ele.closest("[data-sku]").data('sku')];
+//				dump(" -> p.skuArr: "); dump(p.skuArr);
 				this.cartItemAppendAllSKUsFromOrder($ele,p);
 				},
 
@@ -1253,6 +1271,40 @@ _app.u.handleButtons($chkContainer); //will handle buttons outside any of the fi
 					//cartItemUpdate will handle error display.
 					}
 				}, //cartItemUpdateExec
+
+
+			cartShippingSave : function($ele,p)	{
+				p.preventDefault();
+				var
+					$container = $ele.closest("[data-app-role='customShipMethodContainer']"),
+					cartid = $ele.closest(":data(cartid)").data('cartid'),
+					sfo = $container.serializeJSON();
+					
+				$('.ui-state.error',$container).removeClass('ui-state-error'); //remove any previous errors.
+				if(sfo['sum/shp_carrier'] && sfo['sum/shp_method'] && sfo['sum/shp_total'])	{
+					_app.model.addDispatchToQ({
+						'_cmd':'adminCartMacro',
+						'_cartid' : cartid,
+						'_tag' : {},
+						"@updates" : ["SETSHIPPING?"+$.param(sfo)]
+						},'immutable');
+					_app.ext.order_create.u.handleCommonPanels($ele.closest('form'));
+					_app.model.dispatchThis('immutable');
+					}
+				else	{
+					//handle errors.
+					if($("[name='sum/shp_carrier']",$container).val())	{}
+					else	{$("[name='sum/shp_carrier']",$container).addClass('ui-state-error')}
+
+					if($("[name='sum/shp_method']",$container).val())	{}
+					else	{$("[name='sum/shp_method']",$container).addClass('ui-state-error')}
+
+					if($("[name='sum/shp_total']",$container).val())	{}
+					else	{$("[name='sum/shp_total']",$container).addClass('ui-state-error')}
+					}
+
+				}, //orderSummarySave
+
 
 			cartItemAddFromForm : function($ele,p)	{
 				var $chkoutForm	= $ele.closest("[data-add2cart-role='container']"), $checkout = $ele.closest("[data-app-role='checkout']");
@@ -1463,7 +1515,7 @@ _app.u.handleButtons($chkContainer); //will handle buttons outside any of the fi
 					_app.model.destroy('cartDetail|'+$checkout.data('cartid'));
 
 					_app.ext.cco.calls.cartSet.init({"bill/email":$email.val(),"_cartid":$checkout.data('cartid')}) //whether the login succeeds or not, set bill/email in the cart.
-					_app.model.addDispatchToQ({"_cmd":"appBuyerLogin","login":$email.val(),"password":$password.val(),"_tag":{"datapointer":"appBuyerLogin","callback":function(rd){
+					_app.model.addDispatchToQ({"_cmd":"appBuyerLogin","login":$email.val(),"password":$password.val(),'method':'unsecure',"_tag":{"datapointer":"appBuyerLogin","callback":function(rd){
 						$('body').hideLoading();
 						if(_app.model.responseHasErrors(rd)){$fieldset.anymessage({'message':rd})}
 						else	{
@@ -1489,7 +1541,7 @@ _app.u.handleButtons($chkContainer); //will handle buttons outside any of the fi
 							_app.model.dispatchThis('immutable');
 							$fieldset.anymessage({'message':'Thank you, you are now logged in.','_msg_0_type':'success'});
 							}						
-						}}},"mutable");
+						}}},"immutable");
 					_app.calls.cartDetail.init($checkout.data('cartid'),{},'immutable'); //update cart so that if successful, the refresh on preflight panel has updated info.
 					_app.model.dispatchThis('immutable');
 					}
@@ -1522,7 +1574,9 @@ _app.u.handleButtons($chkContainer); //will handle buttons outside any of the fi
 //if paypalEC is selected, skip validation and go straight to paypal. Upon return, bill and ship will get populated automatically.
 				if($("input[name='want/payby']:checked",$form).val() == 'PAYPALEC' && !_app.ext.cco.u.thisSessionIsPayPal())	{
 					$('body').showLoading({'message':'Transferring you to PayPal payment authorization'});
-					_app.ext.cco.calls.cartPaypalSetExpressCheckout.init({'getBuyerAddress': (_app.u.buyerIsAuthenticated()) ? 0 : 1},{'callback':function(rd){
+//***201402 Must pass cartid parameter on the call itself -mc
+					var cartid = $ele.closest("[data-app-role='checkout']").data('cartid');
+					_app.ext.cco.calls.cartPaypalSetExpressCheckout.init({'getBuyerAddress': (_app.u.buyerIsAuthenticated()) ? 0 : 1, '_cartid':cartid},{'callback':function(rd){
 						if(_app.model.responseHasErrors(rd)){
 							$('body').hideLoading();
 							$('html, body').animate({scrollTop : $fieldset.offset().top},1000); //scroll to first instance of error.
@@ -1629,6 +1683,18 @@ _app.u.handleButtons($chkContainer); //will handle buttons outside any of the fi
 				_app.ext.order_create.u.handleCommonPanels($form);
 				_app.model.dispatchThis('immutable');
 				}, //execCouponAdd
+//executed on a giftcard when it is in the list of payment methods.
+			addGiftcardPaymethodAsPayment : function($ele,p)	{
+				if($ele.attr('data-giftcard-id'))	{
+					$ele.button('disable');
+					var $checkout = $ele.closest("[data-app-role='checkout']");
+					_app.ext.cco.calls.cartGiftcardAdd.init($ele.attr('data-giftcard-id'),$checkout.data('cartid'),{'callback':'updateAllPanels','extension':'order_create','jqObj':$checkout},'immutable');
+					_app.model.dispatchThis('immutable');
+					}
+				else	{
+					$("#globalMessaging").anymessage({"message":"In order_create.e.addGiftcardPaymethodAsPayment, data-giftcard-id is not set on trigger element.","gMessage":true});
+					}
+				},
 
 			execGiftcardAdd : function($ele,p)	{
 				var $fieldset = $ele.closest('fieldset'),
@@ -1854,7 +1920,7 @@ _app.u.handleButtons($chkContainer); //will handle buttons outside any of the fi
 							}
 						}, //perform things like locking form fields, hiding/showing the panel based on some setting. never pass in the setting, have it read from the form or cart.
 					ao.translate = function(formObj, $fieldset)	{
-						$fieldset.anycontent({'data' : _app.ext.order_create.u.extendedDataForCheckout(cartID)});
+						$fieldset.tlc({'verb' : 'translate','dataset' : _app.ext.order_create.u.extendedDataForCheckout(cartID)});
 						} //populates the template.
 					
 					for(var i = 0; i < L; i += 1)	{
@@ -2065,8 +2131,28 @@ _app.model.dispatchThis('passive');
 						}
 					else if(L > 0)	{
 						for(var i = 0; i < L; i += 1)	{
-	//onClick event is added through an app-event. allows for app-specific events.
-							$r.append("<div class='headerPadding' data-app-role='paymentMethodContainer'><label><input type='radio' name='want/payby' value='"+pMethods[i].id+"' />"+pMethods[i].pretty+"<\/label></div>");
+							var $div = $("<div class='headerPadding' data-app-role='paymentMethodContainer'>");
+							var $label = $("<label \/>");
+							if(pMethods[i].id.indexOf("GIFTCARD") === 0)	{
+								//onClick event is added through an app-event. allows for app-specific events.
+								$("<button>Add</button>")
+									.attr({'title':'Apply this giftcard towards this purchase','data-giftcard-id':pMethods[i].id.split(':')[1]})
+									.button({icons: {primary: "ui-icon-cart"},text: true})
+									.addClass('isGiftcard')
+									.appendTo($label);
+								$label.append(pMethods[i].pretty).appendTo($div);
+								}
+//this hid wallets in order processing.
+//							else if(pMethods[i].id.indexOf("WALLET") === 0)	{
+								//wallets are in the 'stored payments' panel. If they're shown here too, the input 'name' will be duplicated and selecting it will cause the 'other' input to be selected (and not this one)
+//								}
+							else	{
+								//onClick event is added through an app-event. allows for app-specific events.
+								$label.append("<input type='radio' name='want/payby' value='"+pMethods[i].id+"' />");
+								$label.append(pMethods[i].pretty).appendTo($div);
+								}
+							
+							$div.appendTo($r);
 							}
 						}
 					else	{
@@ -2095,7 +2181,7 @@ _app.model.dispatchThis('passive');
 
 		renderFormats : {
 //pass the cart(cart/cartid); in for the databind var. Multiple pieces of data are required for this render format (want/shipping_id and @SHIPMETHODS).
-			shipMethodsAsRadioButtons : function($tag,data)	{
+			shipmethodsasradiobuttons : function($tag,data)	{
 				var o = '',sMethods,L;
 				sMethods = data.value['@SHIPMETHODS'];
 				if(sMethods && sMethods.length)	{
@@ -2112,9 +2198,9 @@ _app.model.dispatchThis('passive');
 				if(data.value.want && data.value.want.shipping_id)	{
 					$("input[value='"+data.value.want.shipping_id+"']",$tag).prop('checked','checked').closest('li').addClass('selected ui-state-active');
 					}
-				}, //shipMethodsAsRadioButtons
+				}, //shipmethodsasradiobuttons
 
-			payMethodsAsRadioButtons : function($tag,data)	{
+			paymethodsasradiobuttons : function($tag,data)	{
 //				_app.u.dump('BEGIN _app.ext.order_create.renderFormats.payOptionsAsRadioButtons');
 //				_app.u.dump(data);
 				var o = '', cartData,pMethods;
@@ -2122,15 +2208,16 @@ _app.model.dispatchThis('passive');
 					cartData = _app.data['cartDetail|'+data.value];
 					pMethods = _app.data['appPaymentMethods|'+data.value]['@methods'];
 					o = _app.ext.order_create.u.buildPaymentOptionsAsRadios(pMethods,cartData.want.payby);
+					$("button[data-giftcard-id]",o).attr('data-app-click','order_create|addGiftcardPaymethodAsPayment');
 					$(":radio",o).each(function(){
 						$(this).attr('data-app-change','order_create|shipOrPayMethodSelectExec');
 						});
 					}
 				else	{
-					o = $("<div \/>").anymessage({'persistent':true,'message':'In order_create.renderFormats.payMethodsAsRadioButtons, cartDetail|'+data.value+' ['+( typeof _app.data['cartDetail|'+data.value] )+'] and/or appPaymentMethods|'+data.value+' ['+( typeof _app.data['appPaymentMethods|'+data.value] )+'] not found in memory. Both are required.','gMessage':true});
+					o = $("<div \/>").anymessage({'persistent':true,'message':'In order_create.renderFormats.paymethodsasradiobuttons, cartDetail|'+data.value+' ['+( typeof _app.data['cartDetail|'+data.value] )+'] and/or appPaymentMethods|'+data.value+' ['+( typeof _app.data['appPaymentMethods|'+data.value] )+'] not found in memory. Both are required.','gMessage':true});
 					}
 				$tag.html(o);
-				} //payMethodsAsRadioButtons
+				} //paymethodsasradiobuttons
 			
 
 			

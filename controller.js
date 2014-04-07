@@ -22,7 +22,7 @@
 
 function initApp(params) {
 	params = params || {};
-	console.log(" -> into initApp");
+
 	if(typeof Prototype == 'object')	{
 		alert("Oh No! you appear to have the prototype ajax library installed. This library is not compatible. Please change to a non-prototype theme (2011 series).");
 		}
@@ -49,7 +49,7 @@ function initApp(params) {
 
 
 function controller(_app)	{
-
+	
 	return {
 	cmr : [],
 	rq : [],
@@ -77,7 +77,7 @@ function controller(_app)	{
 		if(_app.u.getParameterByName('quiet') == 1){
 			_app.u.dump = function(){};
 			}
-
+		
 
 		//needs to be after the 'flush' above, or there's no way to flush the cart/session.
 		_app.vars.carts = _app.model.dpsGet('app','carts'); //get existing carts. Does NOT create one if none exists. that's app-specific behavior. Don't default to a blank array either. fetchCartID checks memory first.
@@ -86,7 +86,7 @@ function controller(_app)	{
 
 		_app.vars.debug = _app.u.getParameterByName('debug'); //set a var for this so the URI doesn't have to be checked each time.
 
-
+		
 // can be used to pass additional variables on all request and that get logged for certain requests (like createOrder). 
 // default to blank, not 'null', or += below will start with 'undefined'.
 //vars should be passed as key:value;  _v will start with zmvc:version.release.
@@ -94,7 +94,7 @@ function controller(_app)	{
 		_app.vars.passInDispatchV += 'browser:'+_app.u.getBrowserInfo()+";OS:"+_app.u.getOSInfo()+';compatMode:'+document.compatMode;
 
 		_app.vars.release = _app.vars.release || 'unspecified'; //will get overridden if set in P. this is default.
-		_app.u.dump("version: "+_app.model.version+" and release "+_app.vars.release);
+		_app.u.dump(" -> version: "+_app.model.version+" and release "+_app.vars.release);
 		_app.ext = _app.ext || {}; //for holding extensions
 		_app.data = {}; //used to hold all data retrieved from ajax requests.
 		_app.vars.extensions = _app.vars.extensions || []; //the list of extensions that are/will be loaded
@@ -124,9 +124,10 @@ _app.templates holds a copy of each of the templates declared in an extension bu
 			_app.handleAdminVars(); //needs to be late because it'll use some vars set above.
 			}
 		_app.model.addExtensions(_app.vars.extensions);
-		if(typeof _app.vars.initComplete == 'function')	{
-			_app.vars.initComplete(_app);
-			}
+// *** 201402 -> this is executed after the app is instantiated.
+//		if(typeof _app.vars.initComplete == 'function')	{
+//			_app.vars.initComplete(_app);
+//			}
 		}, //initialize
 
 //will load _session from localStorage or create a new one.
@@ -136,8 +137,13 @@ _app.templates holds a copy of each of the templates declared in an extension bu
 			_app.vars._session = _app.u.getParameterByName('_session');
 			_app.u.dump(" -> session found on URI: "+_app.vars._session);
 			}
+		//in case localstorage is disabled.
+		else if(!$.support.localStorage)	{
+			_app.vars._session = _app.model.readCookie('_session');
+			}
 		else	{
 			_app.vars._session = _app.model.dpsGet('controller','_session');
+			dump("check localstorage for _session: "+_app.vars._session);
 			if(_app.vars._session)	{
 				_app.u.dump(" -> session found in DPS: "+_app.vars._session);
 				//use the local session id.
@@ -147,6 +153,9 @@ _app.templates holds a copy of each of the templates declared in an extension bu
 				_app.vars._session = _app.u.guidGenerator();
 				_app.u.dump(" -> generated new session: "+_app.vars._session);
 				_app.model.dpsSet('controller','_session',_app.vars._session);
+				if(!$.support.localStorage)	{
+					_app.model.writeCookie('_session',_app.vars._session); //for browsers w/ localstorage disabled.
+					}
 				}
 			}
 		}, //handleSession
@@ -156,11 +165,11 @@ _app.templates holds a copy of each of the templates declared in an extension bu
 	handleAdminVars : function(){
 //		_app.u.dump("BEGIN handleAdminVars");
 		var localVars = {}
-
+		
 		if(_app.model.fetchData('authAdminLogin'))	{localVars = _app.data.authAdminLogin}
 
 //		_app.u.dump(" -> localVars: "); _app.u.dump(localVars);
-
+		
 		function setVars(id){
 //			_app.u.dump("GOT HERE!");
 //			_app.u.dump("-> "+id+": "+_app.u.getParameterByName(id));
@@ -171,7 +180,7 @@ _app.templates holds a copy of each of the templates declared in an extension bu
 			else if(localVars[id])	{_app.vars[id] = localVars[id]}
 			else	{_app.vars[id] = ''}//set to blank by default.
 			}
-
+		
 		setVars('deviceid');
 		setVars('userid');
 		setVars('authtoken');
@@ -179,7 +188,7 @@ _app.templates holds a copy of each of the templates declared in an extension bu
 		setVars('username');
 
 		_app.vars.username = _app.vars.username.toLowerCase();
-
+		
 		}, //handleAdminVars
 
 
@@ -209,7 +218,7 @@ If the data is not there, or there's no data to be retrieved (a Set, for instanc
 					var r = 0; //will return 1 if a request is needed. if zero is returned, all data needed was in local.
 					_tag = _tag || {};
 					_tag.datapointer = 'appNavcatDetail|'+obj.path;
-
+				
 					if(_app.model.fetchData(_tag.datapointer))	{
 //data is now in memory. based on the detail param, see if the category record available is enough.
 						var catData = _app.data[_tag.datapointer];
@@ -256,7 +265,7 @@ If the data is not there, or there's no data to be retrieved (a Set, for instanc
 				var r = 0; //will return 1 if a request is needed. if zero is returned, all data needed was in local.
 				if(obj && obj.pid)	{
 					if(typeof obj.pid === 'string')	{obj.pid = obj.pid.toUpperCase();} //will error if obj.pid is a number.
-
+					
 					_tag = _tag || {};
 					_tag.datapointer = "appProductGet|"+obj.pid;
 //The fetchData will put the data into memory if present, so safe to check _app.data... after here.
@@ -319,7 +328,7 @@ If the data is not there, or there's no data to be retrieved (a Set, for instanc
 				_app.model.addDispatchToQ(obj,Q);
 				} // dispatch
 			}, //appProfileInfo
-
+			
 		authAdminLogin : {
 			init : function(obj,_tag)	{
 				this.dispatch(obj,_tag);
@@ -328,14 +337,17 @@ If the data is not there, or there's no data to be retrieved (a Set, for instanc
 			dispatch : function(obj,_tag){
 				_app.u.dump("Attempting to log in");
 				obj._cmd = 'authAdminLogin';
-				if(obj.authtype == 'md5')	{
+				obj.authid = obj.password;
+				obj.authtype = 'password';
+// ** 201402 -> md5 is no longer used for login. 
+/*				if(obj.authtype == 'md5')	{
 					_app.vars.userid = obj.userid.toLowerCase();	 // important!
 					obj.ts = _app.u.ymdNow();
 					obj.authid = Crypto.MD5(obj.password+obj.ts);
 					obj.device_notes = "";
 					delete obj.password;
 					}
-
+*/
 				obj._tag = _tag || {};
 				if(obj.persistentAuth)	{obj._tag.datapointer = "authAdminLogin"} //this is only saved locally IF 'keep me logged in' is true OR it's passed in _tag
 				_app.model.addDispatchToQ(obj,'immutable');
@@ -483,7 +495,7 @@ Optionally, callbacks can have on onError. if you have a custom onError, no erro
 _app.u.throwMessage(responseData); is the default error handler.
 */
 	callbacks : {
-
+		
 
 		fileDownloadInModal : {
 			onSuccess : function(_rtag)	{
@@ -510,6 +522,50 @@ _app.u.throwMessage(responseData); is the default error handler.
 
 
 
+
+	
+//very similar to the original translate selector in the control and intented to replace it. 
+//This executes the handleAppEvents in addition to the normal translation.
+//jqObj is required and should be a jquery object.
+		tlc : {
+			onMissing : function(rd)	{
+				rd._rtag.jqObj.anymessage(rd);
+				},
+			onSuccess : function(_rtag)	{
+//				_app.u.dump("BEGIN callbacks.tlc ------------------------"); _app.u.dump(_rtag);
+				if(_rtag && _rtag.jqObj && typeof _rtag.jqObj == 'object')	{
+					
+					var $target = _rtag.jqObj
+					$target.hideLoading(); //shortcut
+					if(_rtag.templateID && !_rtag.templateid)	{_rtag.templateid = _rtag.templateID} //anycontent used templateID. tlc uses templateid. rather than put this into the core tranlsator, it's here as a stopgap.
+//anycontent will disable hideLoading and loadingBG classes.
+//to maintain flexibility, pass all anycontent params in thru _tag
+					$target.tlc(_rtag);
+					$target.anyform(_rtag);
+					_app.u.handleCommonPlugins($target);
+					_app.u.handleButtons($target);
+
+//allows for the callback to perform a lot of the common handling, but to append a little extra functionality at the end of a success.
+					if(typeof _rtag.onComplete == 'function')	{
+						_rtag.onComplete(_rtag);
+						}
+					}
+				else	{
+					$('#globalMessaging').anymessage({'message':'In admin.callbacks.tlc, jqOjb not set or not an object ['+typeof _rtag.jqObj+'].','gMessage':true});
+					}
+				},
+			onError : function(rd)	{
+				if(rd._rtag && rd._rtag.jqObj && typeof rd._rtag.jqObj == 'object'){
+					rd._rtag.jqObj.hideLoading().anymessage({'message':rd});
+					}
+				else	{
+					$('#globalMessage').anymessage({'message':rd});
+					}
+				}
+			}, //translateSelector
+
+
+	
 //very similar to the original translate selector in the control and intented to replace it. 
 //This executes the handleAppEvents in addition to the normal translation.
 //jqObj is required and should be a jquery object.
@@ -520,17 +576,17 @@ _app.u.throwMessage(responseData); is the default error handler.
 			onSuccess : function(_rtag)	{
 //				_app.u.dump("BEGIN callbacks.anycontent"); _app.u.dump(_rtag);
 				if(_rtag && _rtag.jqObj && typeof _rtag.jqObj == 'object')	{
-
+					
 					var $target = _rtag.jqObj; //shortcut
-
+					
 //anycontent will disable hideLoading and loadingBG classes.
 //to maintain flexibility, pass all anycontent params in thru _tag
 					$target.anycontent(_rtag);
 
 					_app.u.handleCommonPlugins($target);
 					_app.u.handleButtons($target);
-
-
+					
+					
 // use either delegated events OR app events, not both.
 //avoid using this. ### FUTURE -> get rid of these. the delegation should occur before here.
 					if(_rtag.addEventDelegation)	{
@@ -556,7 +612,7 @@ _app.u.throwMessage(responseData); is the default error handler.
 				else	{
 					$('#globalMessaging').anymessage({'message':'In admin.callbacks.anycontent, jqOjb not set or not an object ['+typeof _rtag.jqObj+'].','gMessage':true});
 					}
-
+				
 				},
 			onError : function(rd)	{
 				if(rd._rtag && rd._rtag.jqObj && typeof rd._rtag.jqObj == 'object'){
@@ -575,7 +631,7 @@ _app.u.throwMessage(responseData); is the default error handler.
 				_app.renderFunctions.translateSelector(_rtag.selector,_app.data[_rtag.datapointer]);
 				}
 			},
-
+	
 		transmogrify : 	{
 			onSuccess : function(_rtag)	{
 				var $parent = $(_app.u.jqSelector('#',_rtag.parentID));
@@ -584,7 +640,7 @@ _app.u.throwMessage(responseData); is the default error handler.
 				}
 			}, //translateTemplate
 
-
+		
 //pass the following on _tag:
 // parentID is the container id that the template instance is already in (should be created before call)
 // templateID is the template that will get translated.
@@ -640,7 +696,7 @@ _app.u.throwMessage(responseData); is the default error handler.
 
 				}
 			}, //showMessaging
-
+		
 		disableLoading : {
 			onSuccess : function(_rtag)	{
 				$('#'+_rtag.targetID).hideLoading();
@@ -664,8 +720,8 @@ ex: whoAmI call executed during app init. Don't want "we have no idea who you ar
 				_app.u.dump("CAUTION! response for uuid ["+uuid+"] contained errors but they were suppresed. This may be perfectly normal (passive requests) but should be investigated.");
 				}
 			} //suppressErrors
-
-
+			
+			
 		}, //callbacks
 
 
@@ -680,13 +736,13 @@ ex: whoAmI call executed during app init. Don't want "we have no idea who you ar
 		hashRoutes : [], //an object, not an array. order is not required because route matches are implicit unless they define themselves otherwise.
 		aliases : {}, //functions executed by route.
 		initObj : {},
-
+		
 	//proper way to add a route to the routes table. will have validation.
 		appendHash : function(obj)	{return this._addInitOrHash('hash','append',obj);},
 		prependHash : function(obj)	{return this._addInitOrHash('hash','prepend',obj);},
 		appendInit : function(obj)	{return this._addInitOrHash('init','append',obj);},
 		prependInit : function(obj)	{return this._addInitOrHash('init','prepend',obj);},
-
+	
 		_addInitOrHash : function(mode,method,obj)	{
 			var r = false; //what is returned.
 			obj = obj || {};
@@ -697,21 +753,21 @@ ex: whoAmI call executed during app init. Don't want "we have no idea who you ar
 						r = true;
 						}
 					else	{
-						console.warn("In _addInitOrHash, for route "+obj.route+" type was set as "+obj.type+" which is not valid");
+						_app.u.dump("In _addInitOrHash, for route "+obj.route+" type was set as "+obj.type+" which is not valid","warn");
 						}				
 					}
 				else	{
-					console.warn("In _addInitOrHash, type ["+obj.type+"] or route ["+obj.route+"] or callback [typeof: "+(typeof obj.callback)+"] was not defined and all are required.");
+					_app.u.dump("In _addInitOrHash, type ["+obj.type+"] or route ["+obj.route+"] or callback [typeof: "+(typeof obj.callback)+"] was not defined and all are required.","warn");
 					}
 				}
 			else	{
-				console.warn("In _addInitOrHash, method ["+method+"] and/or mode ["+mode+"] either not specified or not valid.");
+				_app.u.dump("In _addInitOrHash, method ["+method+"] and/or mode ["+mode+"] either not specified or not valid.","warn");
 				}
 			return r;
 			},
-
-
-
+			
+	
+			
 		//proper way to add an alias. will have validation.
 		addAlias : function(name,callback)	{
 			if(name && callback)	{
@@ -721,12 +777,11 @@ ex: whoAmI call executed during app init. Don't want "we have no idea who you ar
 				// eithr name or callback not specified.  ### TODO -> add error.
 				}
 			},
-
+			
 		_buildMatchParams : function(route,hash,keysArr)	{
-			var regex = new RegExp(/{{(.*?)}}/g), vars = {};
-			var matchVarsArr = [];
+			var regex = new RegExp(/{{(.*?)}}/g), vars = {}, matchVarsArr = [], isMatch;
 			while(isMatch = regex.exec(route))	{matchVarsArr.push(isMatch[1]);} //isMatch[0] is the match value
-
+		
 			if(matchVarsArr && matchVarsArr.length)	{
 				for(var i = 0, L = matchVarsArr.length; i < L; i += 1)	{
 					vars[matchVarsArr[i]] = keysArr[i];
@@ -746,13 +801,23 @@ ex: whoAmI call executed during app init. Don't want "we have no idea who you ar
 				return r;
 				},
 			'match' : function(routeObj,hash){
-				var pattern = routeObj.route.replace(/{{(.*?)}}/g,'([^\\/]+)');
-				if(routeObj.route.charAt(routeObj.route.length - 1) == '*' )	{pattern += "(/\?.*)?";} //allows for wildcards to be set. so admin/ext/a?some=params can be declared w/ admin/{{ext}}/{{a}}*
-				var r = false, regex = new RegExp(pattern), isMatch = regex.exec(hash);
-	//regex.exec[0] will be the match value. so comparing that to the hash will ensure no substring matches get thru.
-	//substring matches can be accomplished w/ a regex in the route.
-				if(isMatch && isMatch[0] == hash)	{
-					r = {'match' : isMatch, 'params' : _app.router._buildMatchParams(routeObj.route,hash,isMatch.splice(1))}; //isMatch is spliced because the first val is the 'match value'.
+				var r;
+				if(routeObj.route == '')	{r = false; dump("routeobj.route was blank"); dump(routeObj);} //can't 'match' against blank.
+				else if(routeObj.route)	{
+					var pattern = routeObj.route.replace(/{{(.*?)}}/g,'([^\\/]+)');
+					if(routeObj.route.charAt(routeObj.route.length - 1) == '*' )	{pattern += "(/\?.*)?";} //allows for wildcards to be set. so admin/ext/a?some=params can be declared w/ admin/{{ext}}/{{a}}*
+					var r = false, regex = new RegExp(pattern), isMatch = regex.exec(hash);
+		//regex.exec[0] will be the match value. so comparing that to the hash will ensure no substring matches get thru.
+		//substring matches can be accomplished w/ a regex in the route.
+					if(isMatch && isMatch[0] == hash)	{
+						//IE8 requires the second param be passed into splice
+						r = {'match' : isMatch, 'params' : _app.router._buildMatchParams(routeObj.route,hash,isMatch.splice(1,isMatch.length - 1))}; //isMatch is spliced because the first val is the 'match value'.
+						}
+					}
+				else	{
+					//unknown error.
+					dump("in matchFunctions.match, an unknown error occured based on the value of routeObj.route: "+routeObj.route); dump(routeObj);
+					r = false
 					}
 				return r;
 				},
@@ -773,6 +838,7 @@ ex: whoAmI call executed during app init. Don't want "we have no idea who you ar
 		_doesThisRouteMatchHash : function(routeObj,hash)	{
 			var r = null;
 			routeObj = routeObj || {};
+			//don't test for .route here because it could be blank, and that's valid.
 			if(routeObj.type && typeof _app.router.matchFunctions[routeObj.type] == 'function')	{
 				r = _app.router.matchFunctions[routeObj.type](routeObj,hash);
 				if(r)	{
@@ -780,8 +846,8 @@ ex: whoAmI call executed during app init. Don't want "we have no idea who you ar
 					}
 				}
 			else	{
-				console.warn("for route "+routeObj.route+", routeObj.type is not set ["+routeObj.type+"] OR typeof is not a function ["+(typeof _app.router.matchFunctions[routeObj.type])+"].");
-				console.dir(routeObj);
+				_app.u.dump("for route ["+routeObj.route+"], routeObj.type is not set ["+routeObj.type+"] OR typeof is not a function ["+(typeof _app.router.matchFunctions[routeObj.type])+"].","warn");
+				_app.u.dump(routeObj);
 				}
 			return r;
 			},
@@ -804,20 +870,19 @@ ex: whoAmI call executed during app init. Don't want "we have no idea who you ar
 			//if the callback is a string, then it should correspond to a handler.
 			if(routeObj.callback)	{
 				if(typeof routeObj.callback === 'string')	{
-					console.log(" -> callback is a string: "+routeObj.callback)
 					if(_app.router.aliases[routeObj.callback])	{
-						_app.router.aliases[routeObj.callback](routeObj);
+						_app.router.aliases[routeObj.callback](routeObj,_app.router.initObj);
 						}
 					else	{
 						//no matching handler found.
-						console.warn("In _executeCallback, handler ["+routeObj.callback+"] specified does not exist.");
+						_app.u.dump("In _executeCallback, handler ["+routeObj.callback+"] specified does not exist.","warn");
 						}
 					}
 				else if(typeof routeObj.callback == 'function')	{
-					routeObj.callback(routeObj);
+					routeObj.callback(routeObj,_app.router.initObj);
 					}
 				else	{
-					console.error("In _execute handler, invalid type for routeObj.callback. typeof: "+(typeof routeObj.callback));
+					_app.u.dump("In _execute handler, invalid type for routeObj.callback. typeof: "+(typeof routeObj.callback),"error");
 					//unrecognized type for calback.
 					}
 				}
@@ -832,55 +897,74 @@ ex: whoAmI call executed during app init. Don't want "we have no idea who you ar
 				if(ps.indexOf('#') == 0){} //'could' happen if uri is ...admin.html?#doSomething. no params, so do nothing.
 				else	{
 					if(ps.indexOf('#') >= 1)	{ps = ps.split('#')[0]} //uri params should be before the #
-			//	app.u.dump(ps);
 					uriParams = {}
 					uriParams = _app.u.kvp2Array(ps);
 					}
-			//	app.u.dump(uriParams);
 				}
 			return uriParams;
 			},
-
 		init : function()	{
-			console.log(" -> Router init executed");
-			//initObj is a blank object by default, but may be updated outside this process. so instead of setting it to an object, it's extended to merge the two.
-			$.extend(_app.router.initObj,{
-				location : document.location,
-				hash : location.hash,
-				uriParams : _app.router.getURIParams(),
-				hashParams : (location.hash.indexOf('?') >= 0 ? _app.u.kvp2Array(decodeURIComponent(location.hash.split("?")[1])) : {})
-				});
-			var routeObj = _app.router._getRouteObj(document.location.href,'init'); //strips out the #! and trailing slash, if present.
-			if(routeObj)	{
-				_app.router._executeCallback(routeObj);
-				}
+			if($(document.body).data('isRouted'))	{} //only allow the router to get initiated once.
 			else	{
-				console.log(" -> Uh Oh! no valid route found for "+location.hash);
-				//what to do here?
+				
+				//initObj is a blank object by default, but may be updated outside this process. so instead of setting it to an object, it's extended to merge the two.
+				$.extend(_app.router.initObj,{
+					hash : location.hash,
+					uriParams : _app.router.getURIParams(),
+					hashParams : (location.hash.indexOf('?') >= 0 ? _app.u.kvp2Array(decodeURIComponent(location.hash.split("?")[1])) : {})
+					});
+				var routeObj = _app.router._getRouteObj(document.location.href,'init'); //strips out the #! and trailing slash, if present.
+				if(routeObj)	{
+					_app.router._executeCallback(routeObj);
+					}
+				else	{
+					_app.u.dump(" -> Uh Oh! no valid route found for "+location.hash);
+					//what to do here?
+					}
+		//this would get added at end of INIT. that way, init can modify the hash as needed w/out impacting.
+				if (window.addEventListener) {
+					console.log(" -> addEventListener is supported and added for hash change.");
+					window.addEventListener("hashchange", _app.router.handleHashChange, false);
+					$(document.body).data('isRouted',true);
+					}
+				//IE 8
+				else if(window.attachEvent)	{
+					//A little black magic here for IE8 due to a hash related bug in the browser.
+					//make sure a hash is set.  Then set the hash to itself (yes, i know, but that part is key). Then wait a short period and add the hashChange event.
+					window.location.hash = window.location.hash || '#!home'; //solve an issue w/ the hash change reloading the page.
+					window.location.hash = window.location.hash;
+					setTimeout(function(){
+						window.attachEvent("onhashchange", _app.router.handleHashChange);
+						},1000);
+					$(document.body).data('isRouted',true);
+					}
+				else	{
+					$("#globalMessaging").anymessage({"message":"Browser doesn't support addEventListener OR attachEvent.","gMessage":true});
+					}
+				
 				}
-	//this would get added at end of INIT. that way, init can modify the hash as needed w/out impacting.
-			window.addEventListener("hashchange", _app.router.handleHashChange, false);
 			},
-
+	
 		handleHashChange : function()	{
-			if(location.hash.indexOf('#!') == 0)	{
+			//_ignoreHashChange set to true to disable the router.  be careful.
+			if(location.hash.indexOf('#!') == 0  && !_app.vars.ignoreHashChange)	{
 				// ### TODO -> test this with hash params set by navigateTo. may need to uri encode what is after the hash.
 				var routeObj = _app.router._getRouteObj(location.hash.substr(2),'hash'); //if we decide to strip trailing slash, use .replace(/\/$/, "")
 				if(routeObj)	{
 					routeObj.hash = location.hash;
 					routeObj.hashParams = (location.hash.indexOf('?') >= 0 ? _app.u.kvp2Array(location.hash.split("?")[1]) : {});
-//					console.log(" -> WOOT! valid route!"); // console.dir(routeObj);
 					_app.router._executeCallback(routeObj);
 					}
 				else	{
-					console.log(" -> Uh Oh! no valid route found for "+location.hash);
+					_app.u.dump(" -> Uh Oh! no valid route found for "+location.hash);
 					if(typeof _app.router.aliases['404'] == 'function')	{
 						_app.router._executeCallback({'callback':'404','hash':location.hash});
 						}
 					}
 				}
 			else	{
-				console.log(" -> not a hashbang");
+				if(_app.vars.ignoreHashChange)	{_app.u.dump(" -> ignoreHashChange is true. Router is disabled.")}
+				else	{_app.u.dump(" -> not a hashbang")}
 				//is not a hashbang. do nothing.
 				}
 			}
@@ -941,7 +1025,7 @@ Some utilities for loading external files, such as .js, .css or even extensions.
 */
 
 		loadScript : function(url, callback, params){
-		//	app.u.dump("load script: "+url);
+//			dump("load script: "+url+" and typeof callback: "+(typeof callback));
 			if(url)	{
 				var script = document.createElement("script");
 				script.type = "text/javascript";
@@ -968,7 +1052,7 @@ Some utilities for loading external files, such as .js, .css or even extensions.
 			else	{
 				//can't load a script without url being set.
 				//not sure how I want to handle this yet.
-				console.warn('loadscript run but no URL passed.');
+				_app.u.dump('loadscript run but no URL passed.','warn');
 				}
 			},
 
@@ -1014,7 +1098,7 @@ css : type, pass, path, id (id should be unique per css - allows for not loading
 			else if(filename)	{
 // Create element node - link object
 				var fileref=document.createElement('link');
-
+	
 // Set link object attributes like
 // <link rel="stylesheet" type="text/css" href="filename" />
 				fileref.setAttribute('rel', 'stylesheet');
@@ -1039,7 +1123,7 @@ will load everything in the RQ will a pass <= [pass]. so pass of 10 loads everyt
 			var L = _app.rq.length - 1; //rq is iterated through backwards, so length - 1 is used.
 
 			_app.vars.rq = new Array(); //to avoid any duplication, as iteration occurs, items are moved from app.rq into this tmp array. 
-
+		
 //the callback added to the loadScript on type 'script' sets the last value of the resource array to true.
 //another script will go through this array and make sure all values are true for validation. That script will execute the callback (once all scripts are loaded).
 			var callback = function(resource){
@@ -1100,7 +1184,6 @@ will load everything in the RQ will a pass <= [pass]. so pass of 10 loads everyt
 				if(_app.u.numberOfLoadedResourcesFromPass(0) == _app.vars.rq.length)	{
 					_app.vars.rq = null; //this is the tmp array used by handleRQ and numberOfResourcesFromPass. Should be cleared for next pass.
 					_app.model.addExtensions(_app.vars.extensions);
-					_app.router.init();
 					_app.u.handleRQ(1); //this will empty the RQ.
 					_app.rq.push = _app.u.loadResourceFile; //reassign push function to auto-add the resource.
 					}
@@ -1177,7 +1260,7 @@ will load everything in the RQ will a pass <= [pass]. so pass of 10 loads everyt
 					view[i] = file.charCodeAt(i) & 0xff;
 					}
 				var bb = new Blob([arraybuffer], {type: 'application/octet-stream'});
-
+				
 				var $a = $('<a>',{'download':filename,"href":window.URL.createObjectURL(bb)});
 
 				$a.addClass('dragout').attr('data-downloadurl',[MIME_TYPE, $a.attr('download'), $a.attr('href')].join(':')).text('download ready').on('click',function(){
@@ -1193,7 +1276,7 @@ will load everything in the RQ will a pass <= [pass]. so pass of 10 loads everyt
 						}, 1500);
 					});
 
-
+				
 				$a.appendTo($D);
 				}
 			else	{
@@ -1253,7 +1336,7 @@ will load everything in the RQ will a pass <= [pass]. so pass of 10 loads everyt
 							$btn.button( "option", "icons", { secondary: $btn.data('icon-secondary')} );
 							}
 						else	{} //no icon specified.
-
+						
 						if($btn.data('text') === false)	{
 							$btn.button( "option", "text", false );
 							}
@@ -1308,9 +1391,9 @@ will load everything in the RQ will a pass <= [pass]. so pass of 10 loads everyt
 				if(ep.handleObj && ep.handleObj.origType)	{
 					type = ep.handleObj.origType; //use this if available. ep.type could be 'focusOut' instead of 'blur'.
 					}
-
-				dump(" -> type: "+type);
-
+				
+//				dump(" -> type: "+type);
+				
 				var r, actionsArray = $CT.attr('data-app-'+type).split(","), L = actionsArray.length; // ex: admin|something or admin|something, admin|something_else
 				for(var i = 0; i < L; i += 1)	{
 					var	AEF = $.trim(actionsArray[i]).split('|'); //Action Extension Function.  [0] is extension. [1] is Function.
@@ -1359,18 +1442,18 @@ will load everything in the RQ will a pass <= [pass]. so pass of 10 loads everyt
 					else	{
 						//don't throw error to user. target 'could' be in memory.
 						_app.u.dump("In _app.u.handleAppEvents, target was either not specified/an object ["+($target instanceof jQuery)+"] or does not exist on DOM.",'warn');
-
+						
 						}
-
+					
 					}, //handleAppEvents
 
 			printByjqObj : function($ele)	{
 				var printWin = false;
-				if($ele && $ele.length)	{
-					var html="<html><style>@media print{.pageBreak {page-break-after:always} .hide4Print {display:none;}}</style><body style='font-family:sans-serif;'>";
+				if($ele && $ele instanceof jQuery)	{
+/*					var html="<html><style>@media print{.pageBreak {page-break-after:always} .hide4Print {display:none;}}</style><body style='font-family:sans-serif;'>";
 					html+= $ele.html();
 					html+="</body></html>";
-
+					
 					printWin = window.open('','','left=0,top=0,width=600,height=600,toolbar=0,scrollbars=0,status=0');
 //a browser could disallow the window.open, which results in printWin NOT being defined and that ends in a JS error, so 'if' added.
 					if(printWin)	{
@@ -1380,21 +1463,28 @@ will load everything in the RQ will a pass <= [pass]. so pass of 10 loads everyt
 						printWin.print();
 						printWin.close();
 						}
+*/
+
+var $pc = $("#printContainer");
+if($pc.length)	{
+	$pc.empty(); //emptied to make sure anything leftover from last print is gone.
+	}
+else	{
+	$pc = $("<div \/>",{'id':'printContainer'}).css('display','none').appendTo(document.body);
+	}
+var $iframe = $("<iframe \/>").attr({'id':'printContainerIframe','name':'printContainerIframe'}).appendTo($pc);
+$iframe.contents().find('body').append($ele.html());
+$iframe.contents().find('head').append('<style>@media print{.pageBreak {page-break-after:always} .hide4Print {display:none;}}</style>');
+window.frames["printContainerIframe"].focus();
+window.frames["printContainerIframe"].print();
+
+
 					}
 				else	{
 					$('#globalMessaging').anymessage({'message':'In _app.u.printBySelector, $ele not passed or not on DOM','gMessage':true});
 					}
 				return printWin;
 				},
-
-			printByElementID : function(id)	{
-				if(id && $(_app.u.jqSelector('#',id)).length)	{
-					_app.u.printByjqObj($(_app.u.jqSelector('#',id)));
-					}
-				else	{
-					_app.u.dump("WARNING! - myRIA.a.printByElementID executed but not ID was passed ["+id+"] or was not found on DOM [$('#'+"+id+").length"+$('#'+id).length+"].");
-					}
-				}, //printByElementID
 
 //pass in "_app.data.something.something" as s (string) and this will test to make sure it exists.
 //co (Context Object) is an optional param to search within. ex:  thisNestedExists("data.something.something",_app) will look for _app.data.somthing.something and return true if it exists or false if it doesn't.
@@ -1415,7 +1505,6 @@ will load everything in the RQ will a pass <= [pass]. so pass of 10 loads everyt
 					if (!o) {o= null; break;}
 					}
 				return o;
-
 				}, //getObjValFromString
 
 			getDomainFromURL : function(URL)	{
@@ -1425,12 +1514,12 @@ will load everything in the RQ will a pass <= [pass]. so pass of 10 loads everyt
 				if(r.indexOf('/'))	{r = r.split('/')[0]}
 				return r;
 				},
-
+	
 			isThisBitOn : function(bit,int)	{
 				var B = Number(int).toString(2); //binary
 				return (B.charAt(bit) == 1) ? true : false; //1
 				},
-
+	
 	//http://stackoverflow.com/questions/105034/how-to-create-a-guid-uuid-in-javascript
 			guidGenerator : function() {
 				var S4 = function() {
@@ -1438,12 +1527,12 @@ will load everything in the RQ will a pass <= [pass]. so pass of 10 loads everyt
 					};
 				return (S4()+S4()+S4()+S4()+S4()+S4()+S4()+S4());
 				},
-
+	
 	//jump to an anchor. can use a name='' or id=''.  anchor is used in function name because that's the common name for this type of action. do not need to pass # sign.
 			jumpToAnchor : function(id)	{
 				window.location.hash=id;
 				},
-
+	
 	//uses throwMessage, but always adds the same generic message. value of 'err' is output w/ dump.
 	//this should only be used for app errors (errors thrown from within the MVC, not as a result of an API call, in which case throwMessage should be used (handles request errors nicely)
 			throwGMessage : function(err,parentID){
@@ -1465,16 +1554,16 @@ will load everything in the RQ will a pass <= [pass]. so pass of 10 loads everyt
 			throwMessage : function(msg,persistent){
 	//			_app.u.dump("BEGIN _app.u.throwMessage");
 	//			_app.u.dump(" -> msg follows: "); _app.u.dump(msg);
-
-
-
+	
+				
+	
 				var $target, //where the app message will be appended.
 				r = true; //what is returned. true if a message was output
-
+	
 				if(typeof msg === 'string')	{
 					msg = this.youErrObject(msg,"#"); //put message into format anymessage can understand.
 					}
-
+	
 				if(typeof msg === 'object')	{
 	//				_app.u.dump(" -> msg: "); _app.u.dump(msg);
 					if(msg._rtag && msg._rtag.jqObj)	{$target = msg._rtag.jqObj}
@@ -1552,17 +1641,17 @@ URI PARAM
 				else
 					return decodeURIComponent(results[1].replace(/\+/g, " "));
 				}, //getParameterByName
-
+	
 //turn a set of key value pairs (a=b&c=d) into an object. pass location.search.substring(1); for URI params or location.hash.substring(1) for hash based params
 			kvp2Array : function(s)	{
 				var r = false;
 				if(s && s.indexOf('=') > -1)	{
-					r = s?JSON.parse('{"' + s.replace(/&/g, '","').replace(/=/g,'":"') + '"}',function(key, value) { return key===""?value:decodeURIComponent(value) }):{};
+					r = s ? JSON['parse']('{"' + s.replace(/&/g, '","').replace(/=/g,'":"') + '"}',function(key, value) { return key===""?value:decodeURIComponent(value) }) : {};
 					}
 				else	{}
 				return r;
 				}, //kvp2Array
-
+		
 
 /*
 
@@ -1589,7 +1678,7 @@ AUTHENTICATION/USER
 				//while technically this could be spoofed, the API wouldn't accept invalid values
 				return (_app.vars.deviceid && _app.vars.userid && _app.vars.authtoken) ? true : false;
 				}, //thisIsAnAdminSession
-
+	
 	//uses the supported methods for determining if a buyer is logged in/session is authenticated.
 	//neither whoAmI or appBuyerLogin are in localStorage to ensure data from a past session isn't used.
 			buyerIsAuthenticated : function()	{
@@ -1604,7 +1693,7 @@ AUTHENTICATION/USER
 //if no cid but email, they are a guest.
 //if logged in via facebook, they are a thirdPartyGuest.
 //this could easily become smarter to take into account the timestamp of when the session was authenticated.
-
+			
 			determineAuthentication : function(){
 				var r = 'none', cartID = _app.model.fetchCartID();
 				if(this.thisIsAnAdminSession())	{r = 'admin'}
@@ -1613,7 +1702,6 @@ AUTHENTICATION/USER
 	//and all third parties would get 'guest'
 				else if(typeof FB != 'undefined' && !$.isEmptyObject(FB) && FB['_userStatus'] == 'connected')	{
 					r = 'thirdPartyGuest';
-	//					_app.ext.myRIA.thirdParty.fb.saveUserDataToSession();
 					}
 				else if(_app.model.fetchData('cartDetail|'+cartID) && _app.data['cartDetail|'+cartID] && _app.data['cartDetail|'+cartID].bill && _app.data['cartDetail|'+cartID].bill.email)	{
 					r = 'guest';
@@ -1623,9 +1711,18 @@ AUTHENTICATION/USER
 					}
 				return r;
 				}, //determineAuthentication
-
-
-
+	
+	
+			hash2kvp : function(hash,encode)	{
+				encode = (encode === false) ? false : true;
+				var str = [];
+				for(var p in hash)
+					if (hash.hasOwnProperty(p)) {
+					str.push(encodeURIComponent(p) + "=" + encodeURIComponent(hash[p]));
+					}
+				return str.join('&');
+				},
+	
 //pass in an array and all the duplicates will be removed.
 //handy for dealing with product lists created on the fly (like cart accessories)
 			removeDuplicatesFromArray : function(arrayName)	{
@@ -1684,7 +1781,7 @@ this information is collected and sent along w/ an order create or in the admin 
 					match = /(chrome)[ \/]([\w.]+)/.exec( ua ) || /(webkit)[ \/]([\w.]+)/.exec( ua ) || /(opera)(?:.*version|)[ \/]([\w.]+)/.exec( ua ) || /(msie) ([\w.]+)/.exec( ua ) || ua.indexOf("compatible") < 0 && /(mozilla)(?:.*? rv:([\w.]+)|)/.exec( ua ) || [];
 				return match[ 1 ] || "-" + match[ 2 ] || "0";
 				}, //getBrowserInfo
-
+			
 			getOSInfo : function()	{
 				var OSName="Unknown OS";
 				if (navigator.appVersion.indexOf("Win")!=-1) OSName="WI";
@@ -1739,7 +1836,7 @@ TIME/DATE
 				}
 			return r;
 			},
-
+		
 		jsMonth : function(m)	{
 			var month = new Array();
 			month[0]="Jan.";
@@ -1754,7 +1851,7 @@ TIME/DATE
 			month[9]="Oct.";
 			month[10]="Nov.";
 			month[11]="Dec.";
-
+			
 			return month[m];
 			},
 
@@ -1777,7 +1874,7 @@ VALIDATION
 				r = false;
 			return r;
 			}, //isSet
-
+		
 		numbersOnly : function(e)	{
 			var unicode=e.charCode? e.charCode : e.keyCode;
 			var r = true;
@@ -1823,7 +1920,7 @@ VALIDATION
 //			_app.u.dump("BEGIN admin.u.validateForm");
 			if($form && $form instanceof jQuery)	{
 
-
+				
 				var r = true; //what is returned. false if any required fields are empty.
 				var radios = {};  //an object used to store whether or not radios are required and, if so, whether one is selected.
 				$form.showLoading({'message':'Validating'});
@@ -1835,9 +1932,9 @@ VALIDATION
 						$input = $(this),
 						$span = $("<span \/>").css('padding-left','6px').addClass('formValidationError'),
 						required = ($input.attr('required') == 'required') ? true : false;
-
+					
 					$input.removeClass('ui-state-error'); //remove previous error class
-
+				
 					function removeClass($t){
 						$t.off('focus.removeClass').on('focus.removeClass',function(){$t.removeClass('ui-state-error')});
 						}
@@ -1864,17 +1961,17 @@ VALIDATION
 							$input.addClass('ui-state-error');
 							$input.after($span);
 							}
-
+						
 						}
 //only validate the field if it's populated. if it's required and empty, it'll get caught by the required check later.
 					else if($input.attr('type') == 'url' && $input.val())	{
-						var urlregex = new RegExp("^(http:\/\/|https:\/\/|ftp:\/\/){1}([0-9A-Za-z]+\.)");
+						var urlregex = new RegExp("^(http:\/\/|ssh:\/\/|https:\/\/|ftp:\/\/){1}([0-9A-Za-z]+\.)");
 						if (urlregex.test($input.val())) {}
 						else	{
 							r = false;
 							$input.addClass('ui-state-error');
 							$input.after($span.text('not a valid url. '));
-							$("<span class='toolTip' title='A url must be formatted as http, https, or ftp ://www.something.com/net/org/etc'>?<\/span>").tooltip().appendTo($span);
+							$("<span class='toolTip' title='A url must be formatted as http, https, ssh or ftp ://www.something.com/net/org/etc'>?<\/span>").tooltip().appendTo($span);
 							}
 						}
 
@@ -1952,14 +2049,14 @@ VALIDATION
 						removeClass($input);
 						}
 					else	{
-
+						
 						}
 
-
+					
 					if($input.hasClass('ui-state-error'))	{
 						_app.u.dump(" -> "+$input.attr('name')+" did not validate. ishidden: "+$input.is(':hidden'));
 						}
-
+					
 					});
 
 
@@ -2025,10 +2122,15 @@ VALIDATION
 //used frequently to throw errors or debugging info at the console.
 //called within the throwError function too
 		dump : function(msg,type)	{
-			type = type || 'log'; //supported types are 'warn' and 'error'
+			// * 201402 -> the default type for an object was changed to debug to take less room in the console. dir is still available if passed as type.
+			if(!type)	{type = (typeof msg == 'object') ? 'debug' : 'log';} //supported types are 'warn' and 'error'
 //if the console isn't open, an error occurs, so check to make sure it's defined. If not, do nothing.
 			if(typeof console != 'undefined')	{
-				if(typeof console.dir == 'function' && typeof msg == 'object')	{
+// ** 201402 -> moved the type check to the top so that it gets priority (otherwise setting debug on an object is overridden by dir)
+				if(type && typeof console[type] === 'function')	{
+					console[type](msg);
+					}
+				else if(typeof console.dir == 'function' && typeof msg == 'object')	{
 				//IE8 doesn't support console.dir.
 					console.dir(msg);
 					}
@@ -2039,11 +2141,8 @@ VALIDATION
 				else if(type == 'greet')	{
 					console.log("%c\n\n"+msg+"\n\n",'color: purple; font-weight: bold;')
 					}
-				else if(console[type])	{
-					console[type](msg);
-					}
 				else	{} //hhhhmm... unsupported type.
-
+					
 				}
 			}, //dump
 
@@ -2054,12 +2153,12 @@ VALIDATION
 			decimalPlace = isNaN(decimalPlace) ? decimalPlace : 2; //if blank or NaN, default to 2
 			var r;
 			var a = new Number(A);
-
+			
 			if(hideZero == true && (a * 1) == 0)	{
 				r = '';
 				}
 			else	{
-
+				
 				var isNegative = false;
 	//only deal with positive numbers. makes the math work easier. add - sign at end.
 	//if this is changed, the a+b.substr(1) line later needs to be adjusted for negative numbers.
@@ -2067,7 +2166,7 @@ VALIDATION
 					a = a * -1;
 					isNegative = true;
 					}
-
+				
 				var b = a.toFixed(decimalPlace); //get 12345678.90
 	//			_app.u.dump(" -> b = "+b);
 				a = parseInt(a); // get 12345678
@@ -2081,12 +2180,12 @@ VALIDATION
 	//				_app.u.dump(" -> trimmed. a. a now = "+a);
 					}
 				r = a+b.substr(1);//remove the 0 from b, then return a + b = 12,345,678.90
-
+	
 	//if the character before the decimal is just a zero, remove it.
 				if(r.split('.')[0] == 0){
 					r = '.'+r.split('.')[1]
 					}
-
+				
 	//			_app.u.dump(" -> r = "+r);
 				if(currencySign)	{
 					r = currencySign + r;
@@ -2117,10 +2216,10 @@ _app.u.makeImage({"name":"","w":150,"h":150,"b":"FFFFFF","class":"prodThumb","ta
 			a.m = a.m ? 'M' : '';  //default to minimal mode off. If anything true value (not 0, false etc) is passed in as m, minimal is turned on.
 //			_app.u.dump(' -> library: '+a.lib+' and name: '+a.name);
 			if(a.name == null) { a.name = 'i/imagenotfound'; }
-
+			
 			var url, tag;
 			// alert(a.lib);		// uncomment then go into media library for some really wonky behavior 
-
+		
 				//default height and width to blank. setting it to zero or NaN is bad for IE.
 //Handling for when no parameters are set, as well as a bug fix where a necessary '-' character was being removed -mc
 			if(a.h == null || a.h == 'undefined' || a.h == 0)
@@ -2147,7 +2246,7 @@ _app.u.makeImage({"name":"","w":150,"h":150,"b":"FFFFFF","class":"prodThumb","ta
 				url = location.protocol === 'https:' ? zGlobals.appSettings.https_app_url : zGlobals.appSettings.http_app_url;
 				url += "media\/img\/"+_app.vars.username+"\/";
 				}
-
+				
 			if(!a.w && !a.h && !a.b && !a.m){
 				url += '-';
 				}
@@ -2168,7 +2267,7 @@ _app.u.makeImage({"name":"","w":150,"h":150,"b":"FFFFFF","class":"prodThumb","ta
 					}
 				}
 			url += '\/'+a.name;
-
+			
 			if(a.tag == true)	{
 				a['class'] = typeof a['class'] == 'string' ? a['class'] : ''; //default class to blank
 				a['id'] = typeof a['id'] == 'string' ? a['id'] : 'img_'+a.name; // default id to filename (more or less)
@@ -2206,7 +2305,7 @@ previous word to ensure that we don't truncate in the middle of
 a word */
 					trunc = trunc.substring(0, len);
 					trunc = trunc.replace(/\w+$/, '');
-
+		
 /* Add an ellipses to the end*/
 					trunc += '...';
 					r = trunc;
@@ -2308,18 +2407,18 @@ name Mod 10 or Modulus 10. */
 			var bResult = false;  // by default assume it is NOT a valid cc
 			var temp;  // temp variable for parsing string
 			var calc;  // used for calculation of each digit
-
+		
 			// Determine if the ccNumb is in fact all numbers
 			for (var j=0; j<len; j++) {
 				temp = "" + sCCN.substring(j, j+1);
 				if (valid.indexOf(temp) == "-1"){bNum = false;}
 				}
-
+		
 			// if it is NOT a number, you can either alert to the fact, or just pass a failure
 			if(!bNum){
 				/*alert("Not a Number");*/bResult = false;
 				}
-
+		
 		// Determine if it is the proper length 
 			if((len == 0)&&(bResult)){  // nothing, field is blank AND passed above # check
 				bResult = false;
@@ -2409,10 +2508,22 @@ name Mod 10 or Modulus 10. */
 
 //If certain privacy settings are set in a browser, even detecting if localStorage is available causes a NS_ERROR_NOT_AVAIL.
 //So we first test to make sure the test doesn't cause an error. thanks ff.
-				try{window.localStorage; jQuery.support.localStorage = true;}
+				try{
+					window.localStorage;
+					window.localStorage.setItem('test','test');
+					if(window.localStorage.getItem('test') == 'test')	{
+						jQuery.support.localStorage = true;
+						}
+					}
 				catch(e){jQuery.support.localStorage = false;}
-
-				try{window.sessionStorage; jQuery.support.sessionStorage = true;}
+				
+				try{
+					window.sessionStorage;
+					window.sessionStorage.setItem('test','test');
+					if(window.sessionStorage.getItem('test') == 'test')	{
+						jQuery.support.sessionStorage = true;
+						}
+					}
 				catch(e){jQuery.support.sessionStorage = false;}
 
 //update jQuery.support with whether or not placeholder is supported.
@@ -2527,7 +2638,7 @@ return this.handleTranslation($r,data);
 
 				}
 			}, //transmogrify
-
+		
 /*		
 templateID should be set in the view or added directly to _app.templates. 
 eleAttr is optional and allows for the instance of this template to have a unique id. used in 'lists' like results.
@@ -2548,7 +2659,7 @@ most likely, this will be expanded to support setting other data- attributes. ##
 					_app.model.makeTemplate(tmp,templateID);
 					}
 				}
-
+				
 			if(templateID && _app.templates[templateID])	{
 				r = _app.templates[templateID].clone(true); //necessary to copy events from templates for completes, inits, etc.
 				if(typeof eleAttr == 'string')	{r.attr('id',_app.u.makeSafeHTMLId(eleAttr))}
@@ -2590,7 +2701,7 @@ most likely, this will be expanded to support setting other data- attributes. ##
 //locates all children/grandchildren/etc that have a data-bind attribute within the parent id.
 //
 $r.find('[data-bind]').addBack('[data-bind]').each(function()	{
-
+										   
 	var $focusTag = $(this);
 	var value;
 
@@ -2646,7 +2757,7 @@ $r.find('[data-bind]').addBack('[data-bind]').each(function()	{
 		else{
 			$focusTag.append(_app.renderFunctions.transmogrify({},bindRules.loadsTemplate,data));
 			}
-
+		
 		}
 // forceRender, if true, will always execute the render format, regardless of whether a value is set on the attribute.
 	else if(value || (Number(value) == 0 && bindRules.hideZero === false) || bindRules.forceRender)	{
@@ -2679,7 +2790,7 @@ $r.find('[data-bind]').addBack('[data-bind]').each(function()	{
 //						_app.u.dump(bindRules);
 				}
 //					_app.u.dump(' -> custom display function "'+bindRules.format+'" is defined');
-
+			
 			}
 		}
 	else	{
@@ -2693,7 +2804,7 @@ $r.find('[data-bind]').addBack('[data-bind]').each(function()	{
 $r.removeClass('loadingBG');
 //		_app.u.dump('END translateTemplate');
 return $r;			
-
+			
 			}, //handleTranslation
 
 //each template may have a unique set of required parameters.
@@ -2701,7 +2812,7 @@ return $r;
 		translateTemplate : function(data,target)	{
 	//		_app.u.dump('BEGIN translateTemplate (target = '+target+')');
 			var safeTarget = _app.u.makeSafeHTMLId(target); //jquery doesn't like special characters in the id's.
-
+			
 			var $divObj = $('#'+safeTarget); //jquery object of the target tag. template was already rendered to screen using createTemplate.
 			if($divObj.length > 0)	{
 				var templateID = $divObj.attr('data-templateid'); //always use all lowercase for data- attributes. browser compatibility.
@@ -2717,10 +2828,10 @@ return $r;
 			else	{
 				_app.u.dump("WARNING! attempted to translate an element that isn't on the DOM. ["+safeTarget+"]");
 				}
-
+			
 	//		_app.u.dump('END translateTemplate');
 			}, //translateTemplate
-
+		
 //pass in product(zoovy:prod_name) zoovy:prod_name is returned.
 //used in template creation and also in some UI stuff, like product finder.
 		parseDataVar : function(v)	{
@@ -2850,6 +2961,31 @@ return $r;
 
 
 
+	tlcFormats : {
+//The tlc should, for the most part, just update the bind that's in focus. It can do more, but that's the intent.
+//They should return a boolean. True will continue executing the rest of the statement. False will end it.
+		loop : function(data,thisTLC)	{
+			var $tmp = $("<div>");
+
+			var
+				arr = data.globals.binds[data.globals.focusBind], 
+				argObj = thisTLC.args2obj(data.command.args,data.globals);
+			if(argObj.templateid)	{
+//				dump(" -> templateid: "+argObj.templateid.value);// dump(arr);
+				for(var i in arr)	{
+					arr[i].obj_index = i; //allows for the data object to be looked up in memory later.
+					$tmp.tlc({'templateid':argObj.templateid,'dataset':arr[i],'dataAttribs':arr[i]});
+					}
+				data.globals.binds[data.globals.focusBind] = $tmp.children();
+				}
+			else	{
+				dump("No template specified",warn); dump(data);
+				}
+			return true;
+			}
+		},
+
+
 					////////////////////////////////////   renderFormats    \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
 
@@ -2866,7 +3002,7 @@ do's should modify $tag or apply the value.
 		imageURL : function($tag,data){
 //			_app.u.dump('got into displayFunctions.image: "'+data.value+'"');
 			data.bindData.b = data.bindData.bgcolor || 'ffffff'; //default to white.
-
+			
 			if(data.bindData.isElastic) {
 				data.bindData.elasticImgIndex = data.bindData.elasticImgIndex || 0; //if a specific image isn't referenced, default to zero.
 				data.value = data.value[data.bindData.elasticImgIndex];
@@ -2878,12 +3014,13 @@ do's should modify $tag or apply the value.
 				data.bindData.h = $tag.attr('height');
 				data.bindData.tag = 0;
 				$tag.attr('src',_app.u.makeImage(data.bindData)); //passing in bindData allows for using
+				$tag.attr('data-media',data.value); //used w/ media library. will b set by tlc.
 				}
 			else	{
 //				$tag.css('display','none'); //if there is no image, hide the src. 
 				}
 			}, //imageURL
-
+		
 
 		stuffList : function($tag,data)	{
 //			_app.u.dump("BEGIN renderFormat.stuffList");
@@ -2926,45 +3063,20 @@ do's should modify $tag or apply the value.
 				}
 			},
 
-//EX:  data-bind='var: (@LIST);format:optionsFromList; text:pretty; value:safeid;'
-		optionsFromList : function($tag,data)	{
+//EX:  data-bind='var: (@LIST);format:optionsfromlist; text:pretty; value:safeid;'
+		optionsfromlist : function($tag,data)	{
 			for(var index in data.value)	{
 				$("<option \/>").val((data.bindData.value) ? data.value[index][data.bindData.value] : data.value[index]).text((data.bindData.text) ? data.value[index][data.bindData.text] : data.value[index]).appendTo($tag);
 				}
 			},
 
-//for embedding. There is an action for showing a youtube video in an iframe in quickstart.
-// hint: set the action as an onclick and set attribute youtube:video id on element and use jquery to pass it in. 
-//ex: data-bind='var:product(youtube:videoid);format:assignAttribute; attribute:data-videoid;' onClick="_app.ext.myRIA.a.showYoutubeInModal($(this).attr('data-videoid'));
-		youtubeVideo : function($tag,data){
+		youtubevideo : function($tag,data){
 			var width = data.bindData.width ? data.bindData.width : 560
 			var height = data.bindData.height ? data.bindData.height : 315
 			var r = "<iframe style='z-index:1;' width='"+width+"' height='"+height+"' src='"+(document.location.protocol === 'https:' ? 'https:' : 'http:')+"//www.youtube.com/embed/"+data.value+"' frameborder='0' allowfullscreen></iframe>";
 			$tag.append(r);
 			},
 
-
-
-
-//set bind-data to val: product(zoovy:prod_is_tags) which is a comma separated list
-//used for displaying a  series of tags, such as on the product detail page. Will show any tag enabled.
-//on bind-data, set maxTagsShown to 1 to show only 1 tag
-		addTagSpans : function($tag,data)	{
-			var whitelist = new Array('IS_PREORDER','IS_DISCONTINUED','IS_SPECIALORDER','IS_SALE','IS_CLEARANCE','IS_NEWARRIVAL','IS_BESTSELLER','IS_USER1','IS_USER2','IS_USER3','IS_USER4','IS_USER5','IS_USER6','IS_USER7','IS_USER8','IS_USER9','IS_FRESH','IS_SHIPFREE');
-//			var csv = data.value.split(',');
-			var L = whitelist.length;
-			var tagsDisplayed = 0;
-			var maxTagsShown = _app.u.isSet(data.bindData.maxTagsShown) ? data.bindData.maxTagsShown : whitelist.length; //default to showing all enabled tags.
-			var spans = ""; //1 or more span tags w/ appropriate tag class applied
-			for(var i = 0; i < L; i += 1)	{
-				if(data.value.indexOf(whitelist[i]) >= 0 && (tagsDisplayed <= maxTagsShown))	{
-					spans += "<span class='tagSprite "+whitelist[i].toLowerCase()+"'><\/span>";
-					tagsDisplayed += 1;
-					}
-				if(tagsDisplayed >= maxTagsShown)	{break;} //exit early once enough tags are displayed.
-				}
-			$tag.append(spans);
-			}, //addTagSpans
 
 //if classname is set in the bindData, it'll be concatonated with the value so that specific classes can be defined.
 //ex: for a reviews item, instead of a class of 7, which isn't valid, it would be output as review_7
@@ -2976,7 +3088,7 @@ do's should modify $tag or apply the value.
 			else	{ className = data.value}
 			$tag.addClass(className);
 			},
-
+		
 		wiki : function($tag,data)	{
 /*
 try not to barf in your mouth when you read this.
@@ -2990,14 +3102,14 @@ myCreole.parse(target, data.value,{},data.bindData.wikiFormats);
 $tag.append($tmp.html());
 $tmp.empty().remove();
 			},
-
+		
 		truncText : function($tag,data){
 			var o = _app.u.truncate(data.value,data.bindData.numCharacters);
 			$tag.text(o);
 			}, //truncText
 
 //used in a cart or invoice spec to display which options were selected for a stid.
-		selectedOptionsDisplay : function($tag,data)	{
+		selectedoptionsdisplay : function($tag,data)	{
 			var o = '';
 			for(var key in data.value) {
 //				_app.u.dump("in for loop. key = "+key);
@@ -3015,7 +3127,7 @@ $tmp.empty().remove();
 		epoch2mdy : function($tag,data)	{
 			$tag.text(_app.u.epoch2Pretty(data.value,data.bindData.showtime))
 			},
-
+	
 		text : function($tag,data){
 			var o = '';
 			if(jQuery.isEmptyObject(data.bindData))	{o = data.value}
@@ -3097,7 +3209,7 @@ $tmp.empty().remove();
 			},
 
 		money : function($tag,data)	{
-
+			
 //			_app.u.dump('BEGIN view.formats.money');
 			var amount = data.bindData.isElastic ? (data.value / 100) : data.value;
 			if(amount)	{
@@ -3157,14 +3269,14 @@ $tmp.empty().remove();
 			if(data.bindData.loadsTemplate && typeof data.value === 'object')	{
 				var $o, //recycled. what gets added to $tag for each iteration.
 				int = 0;
-
+				
 				var filter = data.bindData.filter;
 				var filterby = data.bindData.filterby;
 				if(!filterby)	{
 					if(filter)	{_app.u.dump("In process list, a 'filter' was passed, but no filterby was specified, so the filter was ignored.\ndatabind: \n"+$tag.data('bind'),'warn');}
 					filter = undefined;
 					} //can't run a filter without a filterby. filter is keyed off of later.
-
+				
 //				_app.u.dump(" -> data.value.length: "+data.value.length);
 				for(var i in data.value)	{
 // mostly for use in admin. for processing the %sku object and subbing in the default attribs when there are no inventoryable variations.
@@ -3204,17 +3316,17 @@ $tmp.empty().remove();
 						else	{
 							//value does not match filter.
 							}
-
+						
 						}
 					int += 1;				
 					}
-
+				
 				}
 			else	{
 				$tag.anymessage({'message':'Unable to render list item - no loadsTemplate specified.','persistent':true});
 				}
 			}
-
+			
 		}, //renderFormats
 
 //These rules should return true if the value is validated or false if not.
@@ -3222,12 +3334,11 @@ $tmp.empty().remove();
 	formatRules : {
 
 		'CC' : function($input,$err)	{
-			_app.u.dump(" got here. is valid cc:  "+_app.u.isValidCC($input.val()));
 			var r = _app.u.isValidCC($input.val());
 			if(!r)	{$err.append('The credit card # provided is not valid')}
 			return r;
 			},
-
+		
 		'CV' : function($input,$err)	{
 			var r = false;
 			if(isNaN($input.val())){$err.append('The CVV/CID must be a #');}
@@ -3235,7 +3346,7 @@ $tmp.empty().remove();
 			else	{r = true;}
 			return r;
 			}
-
+		
 		}
 	}
 	};
