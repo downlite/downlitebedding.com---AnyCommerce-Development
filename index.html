@@ -182,7 +182,7 @@ ANIMATION TESTING
 				</div>
 
 				<div class="header_contact">
-					<p class="headerQuestionsText">Questions? (866) 931-3696</p>
+					<p class="headerQuestionsText">Questions? 1-866-931-3696</p>
 					<span class="contact_ads">
 						<!-- START SCANALERT CODE  --><!-- REMOVE HTTP FROM SRC -->
 						<a target="_blank" href="https://www.mcafeesecure.com/RatingVerify?ref=www.downlitebedding.com"><img width="65" height="37" border="0" src="https://images.scanalert.com/meter/www.mcafee.com/55.gif" alt="McAfee Secure sites help keep you safe from identity theft, credit card fraud, spyware, spam, viruses and online scams" oncontextmenu="alert('Copying Prohibited by Law - McAfee Secure is a Trademark of McAfee, Inc.'); return false;"></a>
@@ -512,6 +512,27 @@ the homepageTemplate template is loaded into mainContentArea by default when the
 			</div>
 			
 	</div>
+    <!--
+    <button onClick='var referral = document.referrer;
+    app.u.dump("User is coming from " + referral);	
+    
+    if(referral.indexOf("www.facebook.com") != -1){
+        app.u.dump("User is coming from facebook. Add coupon.");
+        app.ext.cco.calls.cartCouponAdd.init("FACEBOOK",{"callback":function(rd) {
+            if(app.model.responseHasErrors(rd)) {
+                $("#cartMessaging").anymessage({"message":rd})
+            }
+            else {
+                app.u.dump("Coupon added successfully")
+                //Do nothing
+            }
+        }});
+        app.model.dispatchThis("immutable");
+    }
+    else{
+        app.u.dump("User is not coming from facebook. Do nothing.");
+    }'>Click here to add facebook coupon</button>
+    -->
 <!--
 		<div class='bannerDuoContainer clearfix'>
 		<div class='floatRight stacked'><img src='blank.gif' width='329' height='215' data-bind="var: category(%page.banner_right_top); format: banner; extension:myRIA; editor:banner;" /><img src='blank.gif' width='329' height='215' data-bind="var: category(%page.banner_right_bottom); format: banner; extension:myRIA; editor:banner;" /></div>
@@ -597,6 +618,15 @@ the homepageTemplate template is loaded into mainContentArea by default when the
 	<ul data-bind="var: category(@products); format: productList; editor: finder; extension: store_prodlist; loadsTemplate: productListTemplate; hide_summary:1; before:<h2>Featured Items</h2>; withReviews:1;withVariations:1; withInventory:1;" class='listStyleNone fluidList clearfix noPadOrMargin productList'></ul>
 	<p data-bind="var: category(%page.description); format:wiki; wikiFormats:myRIA; editor: textarea;"></p>
 -->
+
+<h3 class="rssTitle">Our Latest Blog Entries</h3>
+ <div class="rssfeed">
+ 	<div class="blog1"></div>
+ 	<div class="blog2"></div>
+ 	<div class="blog3"></div>
+ </div>
+ 
+ <div class="clearfix"></div>
 </div>
 
 
@@ -1382,7 +1412,7 @@ if you change these, you should move them above this comment so that when you (o
 					Mason, OH 45040 <br />
 				</p>
 				<p>
-					Please note our phones are staffed between 10 AM EST and 4 PM EST. If you are not getting the help you 
+					Phone: 1-866-931-3696. Please note our phones are staffed between 10 AM EST and 4 PM EST. If you are not getting the help you 
 					need or not satisfied with the support - please contact Stefan Hunter, Director of eCommerce (shunter@downlite.com).
 				</p>
 			</div>

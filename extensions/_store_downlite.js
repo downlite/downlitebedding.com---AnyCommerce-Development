@@ -67,7 +67,84 @@ var store_downlite = function(_app) {
 			onError : function()	{
 //errors will get reported for this callback as part of the extensions loading.  This is here for extra error handling purposes.
 //you may or may not need it.
-				_app.u.dump('BEGIN admin_orders.callbacks.init.onError');
+					_app.u.dump('BEGIN store_downlite.callbacks.init.onError');
+				}
+			},
+			
+			startExtension : {
+				onSuccess : function()	{
+					_app.u.dump('Begin store_downlite.callbacks.startExtension.onSuccess');
+					
+					var r = false; //return false if extension won't load for some reason (account config, dependencies, etc).
+				
+					_app.u.dump("Begin store_downlite.callbacks.init");
+					_app.templates.homepageTemplate.on('complete.downlite',function(event,$context,infoObj){
+						 _app.ext.store_downlite.u.loadBanners();
+						 _app.ext.store_downlite.u.startHomepageSlideshow();
+					 });
+					 
+					 //FUNCTIONALITY FOR 
+					 $( window ).resize(function() {
+						var resolution = $(window).width();
+						if (resolution >= 990){
+							$("#brandCategories").show();
+						}
+						else if ((resolution < 990) && (resolution >= 800)) {
+							$("#brandCategories").show();
+						}
+						else if ((resolution < 800) && (resolution >= 640)) {
+							if($(".showHideBrandsMobile").data("brandsState") == false){
+								$("#brandCategories").hide();
+							}
+							else if($(".showHideBrandsMobile").data("brandsState") == true){
+								$("#brandCategories").show();
+							}
+						}
+					 });
+					//if there is any functionality required for this extension to load, put it here. such as a check for async google, the FB object, etc. return false if dependencies are not present. don't check for other extensions.
+					r = true;
+					
+					_app.templates.homepageTemplate.on('complete.downlite',function(event,$context,infoObj){
+						
+						// BEGIN BLOG CONTENT CODE
+						var fileref=document.createElement('script');
+						fileref.setAttribute("type","text/javascript");
+						fileref.setAttribute("src", "http://www.zazar.net/developers/jquery/zrssfeed/jquery.zrssfeed.min.js");
+						if (typeof fileref!="undefined"){
+						  document.getElementsByTagName("head")[0].appendChild(fileref);
+						}
+							
+						var blogs = function(){
+						$('.blog1').rssfeed('http://blog.downlitebedding.com/rss.xml', {
+							limit: 1,
+							header: false,
+							snippet: false,
+							date: false,
+							showerror: true,
+							errormsg: 'Sorry, the blog couldn\'t be loaded right now due to a technical problem. Please try again later.'
+						});
+						$('.blog2').rssfeed('http://blog.downlitebedding.com/rss.xml', {
+							limit: 1,
+							offset: 2,
+							header: false,
+							snippet: false,
+							date: false
+						});
+						$('.blog3').rssfeed('http://blog.downlitebedding.com/rss.xml', {
+							limit: 1,
+							offset: 3,
+							header: false,
+							snippet: false,
+							date: false
+						});
+						}
+						setTimeout(blogs, 2000);
+						// BEGIN BLOG CONTENT CODE
+					});
+					return r;
+				},
+				onError : function()	{
+					_app.u.dump('Begin store_downlite.callbacks.startExtension.onError');
 				}
 			}
 		}, //callbacks
