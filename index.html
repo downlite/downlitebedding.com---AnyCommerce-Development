@@ -487,26 +487,26 @@ COMMONLY EDITED TEMPLATES
 <!--
 the homepageTemplate template is loaded into mainContentArea by default when the application loads
 -->
-<div id='homepageTemplate' class='homeTemplate'>
+<div id="homepageTemplate" class="homeTemplate">
 	<div class="bannerDuoContainer clearfix">
         <div class="floatLeft">
                 <div id="slideshowContainer">
                     <ul id="wideSlideshow" class="pics">
                         <div id="slideshowNav"></div>
                         <!--
-                        <a title="Get Your Own Snuggle Ready - Down Comforters" onClick="return showContent('category',{'navcat':'.125-comforters.100-white-goose-and-duck-down-comforters'});" href="#" class="">
+                        <a title="Get Your Own Snuggle Ready - Down Comforters" href="#!category/.125-comforters.100-white-goose-and-duck-down-comforters" class="">
                             <img alt="Get Your Own Snuggle Ready - Down Comforters" src="images/600x400_winter_ready_snuggly_down_comforters_from_downlite.jpg" height="432" width="661" />
                         </a>
-                        <a title="Sealy Posturepedic Ultimate Mattress Topper - Tencel + Waterproof" onClick="return showContent('product',{'pid':'DOW555MP0010'});" href="#" class="">
+                        <a title="Sealy Posturepedic Ultimate Mattress Topper - Tencel + Waterproof" href="#!product/DOW555MP0010" href="#" class="">
                             <img alt="Sealy Posturepedic Ultimate Mattress Topper - Tencel + Waterproof" src="images/661x432_sealy_posturepedic_topper.jpg" height="432" width="661" />
                         </a>
-                        <a title="Hotel Bedding Search For Home - Hundreds Of The Best Hotels" onClick="return showContent('category',{'navcat':'.hotels'});" href="#" class="">
+                        <a title="Hotel Bedding Search For Home - Hundreds Of The Best Hotels" href="#!category/.hotels" class="">
                             <img alt="Hotel Bedding Search For Home - Hundreds Of The Best Hotels" src="images/600x400_2013_hotel_bedding_search.jpg" height="432" width="661" />
                         </a>
-                        <a title="Jessica McClintock Pillow Sale" onClick="return showContent('product',{'pid':'OVS100PI0200'});" href="#" class="">
+                        <a title="Jessica McClintock Pillow Sale" href="#!product/OVS100PI0200" class="">
                             <img alt="700 Fill Power Down Pillow Sale" src="images/600x400_jmc_purdown_pillow_home_page_banner.jpg" height="432" width="661" />
                         </a>
-                        <a title="Eddie Bauer Twin Pack Pillow Sale - Makes A Great Gift" onClick="return showContent('product',{'pid':'GRP100PG0000'});" href="#" class="">
+                        <a title="Eddie Bauer Twin Pack Pillow Sale - Makes A Great Gift" href="#!product/GRP100PG0000" class="">
                             <img alt="Eddie Bauer Twin Pack Pillow Sale - Makes A Great Gift" src="images/661x432_eddie_bauer_blue_twin_pack.jpg" height="432" width="661" />
                         </a>
                         -->
@@ -514,10 +514,10 @@ the homepageTemplate template is loaded into mainContentArea by default when the
                 </div>
             </div>
 			<div class="floatRight stacked">
-				<a title="Great Gift Idea - Jessica McClintock PrimaLoft Throws" onClick="return showContent('product',{'pid':'OVS100TH0000'});" href="#" class="bannerBind">
+				<a title="Great Gift Idea - Jessica McClintock PrimaLoft Throws" href="#!product/OVS100TH0000" class="bannerBind">
 					<img alt="Jessica McClintock PrimaLoft Throws - Great Gift Idea" src="images/330x215_jessica_mcclintock_primaloft_throws.jpg" height="215" width="329">
 					</a>
-				<a title="Our Best 50/50 Hotel Down " onClick="return showContent('product',{'pid':'SDL100PI0150'});" href="#" class="bannerBind">
+				<a title="Our Best 50/50 Hotel Down " href="#!product/SDL100PI0150" class="bannerBind">
 					<img alt="Our Best 50/50 Hotel Down " src="images/homebanners6.jpg" height="215" width="329">
 				</a>
 			</div>
@@ -525,45 +525,45 @@ the homepageTemplate template is loaded into mainContentArea by default when the
 	</div>
     <!--
     <button onClick='var referral = document.referrer;
-    app.u.dump("User is coming from " + referral);	
+    myApp.u.dump("User is coming from " + referral);	
     
     if(referral.indexOf("www.facebook.com") != -1){
-        app.u.dump("User is coming from facebook. Add coupon.");
-        app.ext.cco.calls.cartCouponAdd.init("FACEBOOK",{"callback":function(rd) {
-            if(app.model.responseHasErrors(rd)) {
+        myApp.u.dump("User is coming from facebook. Add coupon.");
+        myApp.ext.cco.calls.cartCouponAdd.init("FACEBOOK",{"callback":function(rd) {
+            if(myApp.model.responseHasErrors(rd)) {
                 $("#cartMessaging").anymessage({"message":rd})
             }
             else {
-                app.u.dump("Coupon added successfully")
+                myApp.u.dump("Coupon added successfully")
                 //Do nothing
             }
         }});
-        app.model.dispatchThis("immutable");
+        myApp.model.dispatchThis("immutable");
     }
     else{
-        app.u.dump("User is not coming from facebook. Do nothing.");
+        myApp.u.dump("User is not coming from facebook. Do nothing.");
     }'>Click here to add facebook coupon</button>
     -->
 <!--
 		<div class='bannerDuoContainer clearfix'>
-		<div class='floatRight stacked'><img src='blank.gif' width='329' height='215' data-bind="var: category(%page.banner_right_top); format: banner; extension:myRIA; editor:banner;" /><img src='blank.gif' width='329' height='215' data-bind="var: category(%page.banner_right_bottom); format: banner; extension:myRIA; editor:banner;" /></div>
+		<div class='floatRight stacked'><img data-tlc="bind $var '.%page.banner_right_top'; quickstart#banner  --legacy;" src="blank.gif" height="215" width="329"><img data-tlc="bind $var '.%page.banner_right_bottom'; quickstart#banner  --legacy;" src="blank.gif" height="215" width="329"></div>
 		<div class='floatLeft'>
 
 <div id="slideshowContainer">
 	<div id="slideshowNav"></div>
 	<ul id="wideSlideshow" class="pics slideshow">
-		<img src='blank.gif' width='661' height='432' data-bind="var: category(%page.banner_slideshow1); format: banner; extension:myRIA; editor:banner; wrap:<li>;" />
-		<img src='blank.gif' width='661' height='432' data-bind="var: category(%page.banner_slideshow2); format: banner; extension:myRIA; editor:banner; wrap:<li>;" />
-		<img src='blank.gif' width='661' height='432' data-bind="var: category(%page.banner_slideshow3); format: banner; extension:myRIA; editor:banner; wrap:<li>;" />
-		<img src='blank.gif' width='661' height='432' data-bind="var: category(%page.banner_slideshow4); format: banner; extension:myRIA; editor:banner; wrap:<li>;" />
-		<img src='blank.gif' width='661' height='432' data-bind="var: category(%page.banner_slideshow5); format: banner; extension:myRIA; editor:banner; wrap:<li>;" />
+		<img data-tlc="bind $var '.%page.banner_slideshow1'; quickstart#banner  --wrap='<li>' --legacy;" src="blank.gif" height="432" width="661">
+		<img data-tlc="bind $var '.%page.banner_slideshow2'; quickstart#banner  --wrap='<li>' --legacy;" src="blank.gif" height="432" width="661">
+		<img data-tlc="bind $var '.%page.banner_slideshow3'; quickstart#banner  --wrap='<li>' --legacy;" src="blank.gif" height="432" width="661">
+		<img data-tlc="bind $var '.%page.banner_slideshow4'; quickstart#banner  --wrap='<li>' --legacy;" src="blank.gif" height="432" width="661">
+		<img data-tlc="bind $var '.%page.banner_slideshow5'; quickstart#banner  --wrap='<li>' --legacy;" src="blank.gif" height="432" width="661">	
 	</ul>
 </div>
 
 		</div>
 	</div>
 
-	<div><img src='blank.gif' width='992' height='120' data-bind="var: category(%page.banner_wide1); format: banner; extension:myRIA; editor:banner;" /></div>
+	<div><img data-tlc="bind $var '.%page.banner_wide1'; quickstart#banner  --legacy;" src="blank.gif" height="120" width="992"></div>
 -->
 <div class="floatRight homeTextBannerBlock">
 	<img alt="Down Bedding - Manufacturer Direct" src="images/150x150_downlite_down_bedding.jpg" height="90" width="90">
@@ -593,41 +593,48 @@ the homepageTemplate template is loaded into mainContentArea by default when the
 </div>
 <!--
 <div class='floatRight homeTextBannerBlock'>
-	<img src='blank.gif' width='90' height='90' data-bind="var: category(%page.banner_square1); format: banner; extension:myRIA; editor:banner;" />
-	<div data-bind="var: category(%page.description2); format:wiki; wikiFormats:myRIA; editor: textarea;" class='textBlock'></div>
+	<img data-tlc="bind $var '.%page.banner_square1'; quickstart#banner  --legacy;" src="blank.gif" height="90" width="90">
+	<div data-tlc="bind $var '.%page.description2'; if (is $var --notblank;) {{render --wiki='quickstart'; apply --append;}};" class="textBlock"></div>
 </div>
 
 <div class='floatLeft homeTextBannerBlock'>
-	<img src='blank.gif' width='90' height='90' data-bind="var: category(%page.banner_square2); format: banner; extension:myRIA; editor:banner;" />
-	<div data-bind="var: category(%page.description3); format:wiki; wikiFormats:myRIA; editor: textarea;" class='textBlock'></div>
+	<img data-tlc="bind $var '.%page.banner_square2'; quickstart#banner  --legacy;" src="blank.gif" height="90" width="90">
+	<div data-tlc="bind $var '.%page.description3'; if (is $var --notblank;) {{render --wiki='quickstart'; apply --append;}};" class="textBlock"></div>
 </div>
 <div class='clearfix'></div>
 
 
 <div class='floatRight homeTextBannerBlock'>
-	<img src='blank.gif' width='90' height='90' data-bind="var: category(%page.banner_square3); format: banner; extension:myRIA; editor:banner;" />
-	<div data-bind="var: category(%page.description4); format:wiki; wikiFormats:myRIA; editor: textarea;" class='textBlock'></div>
+	<img data-tlc="bind $var '.%page.banner_square3'; quickstart#banner  --legacy;" src="blank.gif" height="90" width="90">
+	<div data-tlc="bind $var '.%page.description4'; if (is $var --notblank;) {{render --wiki='quickstart'; apply --append;}};" class="textBlock"></div>
 </div>
 
 <div class='floatLeft homeTextBannerBlock'>
-	<img src='blank.gif' width='90' height='90' data-bind="var: category(%page.banner_square4); format: banner; extension:myRIA; editor:banner;" />
-	<div data-bind="var: category(%page.description5); format:wiki; wikiFormats:myRIA; editor: textarea;" class='textBlock'></div>
+	<img data-tlc="bind $var '.%page.banner_square4'; quickstart#banner  --legacy;" src="blank.gif" height="90" width="90">
+	<div data-tlc="bind $var '.%page.description5'; if (is $var --notblank;) {{render --wiki='quickstart'; apply --append;}};" class="textBlock"></div>
 </div>
 <div class='clearfix'></div>
 
 
 	
-<div data-bind="var: category(%page.description); format:wiki; wikiFormats:myRIA; editor: textarea;" class='textBlock'></div>
+<div data-tlc="bind $var '.%page.description'; if (is $var --notblank;) {{render --wiki='quickstart'; apply --append;}};" class="textBlock"></div>
 -->
 
 
 
 <!-- DEFAULT CODE
-	<ul id='homeProdSearchBestSellers' data-bind='var: elastic-native({"size":"4","mode":"elastic-native","filter":{"term":{"tags":"IS_BESTSELLER"}}}); format: productSearch; extension: myRIA; loadsTemplate: productListTemplateResultsNoPreview; before:<h2>Best Sellers</h2>;' class='listStyleNone fluidList clearfix noPadOrMargin productList'></ul>	
-	<ul data-bind="var: category(@subcategoryDetail); format: categoryList; extension: store_navcats; loadsTemplate: categoryListTemplate; detail:max;" class='listStyleNone fluidList clearfix noPadOrMargin categoryList'></ul>
-	<a href="#" onClick="return showContent('search',{'TAG':'IS_BESTSELLER'});">See all Best Sellers</a>
-	<ul data-bind="var: category(@products); format: productList; editor: finder; extension: store_prodlist; loadsTemplate: productListTemplate; hide_summary:1; before:<h2>Featured Items</h2>; withReviews:1;withVariations:1; withInventory:1;" class='listStyleNone fluidList clearfix noPadOrMargin productList'></ul>
-	<p data-bind="var: category(%page.description); format:wiki; wikiFormats:myRIA; editor: textarea;"></p>
+		<ul data-tlc="bind $var '.@subcategoryDetail'; store_navcats#categorylist  --detail='max' --templateid='categoryListTemplate'  --legacy;" class="listStyleNone fluidList clearfix noPadOrMargin categoryList"></ul>
+
+	<ul data-tlc="bind $var '.@products'; store_prodlist#productlist  --hideSummary='1' --withReviews='1' --withVariations='1' --withInventory='1' --templateid='productListTemplate'  --legacy;" class="listStyleNone fluidList clearfix noPadOrMargin productList"></ul>
+
+	<p data-tlc="bind $var '.%page.description'; if (is $var --notblank;) {{ render --wiki='quickstart'; apply --append;}};"></p>
+
+	<ul data-tlc="quickstart#searchbytag --tag='IS_BESTSELLER' --title='Best Sellers' --size='8' --templateid='productListTemplateResultsNoPreview';" class='listStyleNone fluidList clearfix noPadOrMargin productList'></ul>
+
+	<!--
+	<ul data-tlc="bind $var '.$listName.@products'; store_prodlist#productlist  --hideSummary='1' --withReviews='1' --withVariations='1' --withInventory='1' --templateid='productListTemplate'  --legacy;" class="listStyleNone fluidList clearfix noPadOrMargin productList"></ul>
+	-->
+
 -->
 
 <h3 class="rssTitle">Our Latest Blog Entries</h3>
