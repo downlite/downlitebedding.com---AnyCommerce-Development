@@ -663,41 +663,41 @@ used to organize content when a category is clicked.
 each of the 'sections' are used to load another template. don't change the id.
 don't modify the 'data-templateid' unless you are changing template names and updating everywhere appropriate.
 -->
-<div id='categoryTemplate' class='loadingBG categoryTemplate'>
-
-	<ul class='breadcrumb clearfix noPadOrMargin fluidList' data-bind='var: category(path); format:breadcrumb; extension:store_navcats; loadsTemplate: breadcrumbTemplate;'></ul>
+<div id="categoryTemplate" class=" categoryTemplate">
+	
+	<ul data-tlc="bind $var '.path'; store_navcats#breadcrumb  --templateid='breadcrumbTemplate'  --legacy;" class="breadcrumb clearfix noPadOrMargin fluidList"></ul>
 
 <div class='clearfix'></div>
 <div class='marginBottom'>
 <!--	<div class='catMediaCol'>-->
-		<div class='catMediaContainer displayNone' data-bind='var:category(%page.picture1);format:showIfSet;'>
-			<div class='catBigImageContainer displayNone' data-bind='var:category(%page.picture1);format:showIfSet;'><img src='blank.gif' data-bind='var: category(%page.picture1); format:imageURL;' width='480' height='360' /></div>
-			<div class='displayNone' data-bind='var:category(%page.youtube_videoid); format:showIfSet;'>
-				<div class='catVideoContainer clearfix pointer' data-bind='var:category(%page.youtube_videoid);format:assignAttribute; attribute:data-videoid;' onClick="myApp.ext.store_downlite.a.showYoutubeInModal($(this).attr('data-videoid'));" >
-				<div class='vidThumb'><img src='blank.gif' data-bind='var: category(%page.youtube_videoid); format:youtubeThumbnail; extension:myRIA;'  width='120' height='90' /></div>
-				<h2 data-bind="var: category(%page.youtube_videoheader); format: text;"></h2>
-				<p  data-bind="var: category(%page.youtube_videodescription); format: text;"></p>
+		<div data-tlc="bind $var '.%page.picture1'; if(is $var --notblank;) {{ apply --show; }}; " class="catMediaContainer displayNone"></div>
+			div data-tlc="bind $var '.%page.picture1'; if(is $var --notblank;) {{ apply --show; }}; " class="catBigImageContainer displayNone"><img data-tlc="bind $var '.%page.picture1'; if (is $var --notblank;) {{ apply --img --media=$var --width=480 --height=360 --bgcolor='#ffffff' --replace;}};" src="blank.gif" height="360" width="480"></div>
+			<div data-tlc="bind $var '.%page.youtube_videoid'; if(is $var --notblank;) {{ apply --show; }}; " class="displayNone"></div>
+				<div data-tlc="bind $var '.%page.youtube_videoid'; apply --attrib='data-videoid'; " class="catVideoContainer clearfix pointer" onclick="myApp.ext.store_downlite.a.showYoutubeInModal($(this).attr('data-videoid'));"></div>
+				<div class='vidThumb'><img data-tlc="bind $var '.%page.youtube_videoid'; quickstart#youtubethumbnail  --legacy;" src="blank.gif" height="90" width="120"></div>
+				<h2 data-tlc="bind $var '.%page.youtube_videoheader'; if (is $var --notblank;) {{apply --append;}};"></h2>
+				<p data-tlc="bind $var '.%page.youtube_videodescription'; if (is $var --notblank;) {{apply --append;}};"></p>
 				</div>
 			</div>
 		</div>
 <!--	</div>-->
 	<div class='catDesc'>	
-		<div class='textBlock' data-bind="var: category(%page.description); format:wiki; wikiFormats:myRIA; editor: textarea;"></div>
+		<div data-tlc="bind $var '.%page.description'; if (is $var --notblank;) {{render --wiki='quickstart'; apply --append;}};" class="textBlock"></div>
 		<!-- COMMENTING OUT UNTIL FRAMEWORK ALLOWS MULTIPLE FORMAT/CATEGORY CALLS ON A PAGE; AS OF 201248 IT DOES NOT
-		<ul data-bind="var: category(@subcategoryDetail); format: categoryList; extension: store_navcats; loadsTemplate: breadcrumbTemplate; detail:max;" class='listStyleNone clearfix noPadOrMargin categoryList noUnderline'></ul>
+		<ul data-tlc="bind $var '.@subcategoryDetail'; store_navcats#categorylist  --detail='max' --templateid='breadcrumbTemplate'  --legacy;" class="listStyleNone clearfix noPadOrMargin categoryList noUnderline"></ul>
 		-->
-		<div class='textBlock' data-bind="var: category(%page.description2); format:wiki; wikiFormats:myRIA; editor: textarea;"></div>
+		<div data-tlc="bind $var '.%page.description2'; if (is $var --notblank;) {{render --wiki='quickstart'; apply --append;}};" class="textBlock"></div>
 	</div>
 	<div class="clearfix"></div>
 </div>
 
-	<ul data-bind="var: category(@subcategoryDetail); format: categoryList; extension: store_navcats; loadsTemplate: categoryListTemplate; detail: max;" class='listStyleNone clearfix noPadOrMargin fluidList categoryList marginBottom'></ul>
+	<ul data-tlc="bind $var '.@subcategoryDetail'; store_navcats#categorylist  --detail='max' --templateid='categoryListTemplate'  --legacy;" class="listStyleNone clearfix noPadOrMargin fluidList categoryList marginBottom"></ul>
 
 	<div class="catProdListContainer">
     	<div class="catProdListSidebar">
         </div>
         <div class="nativeProductList">
-            <ul data-bind="var: category(@products); format: infiniteProductList; extension:prodlist_infinite; loadsTemplate: productListTemplate;" class='listStyleNone fluidList clearfix noPadOrMargin productList'></ul>	
+            <ul data-tlc="bind $var '.@products'; prodlist_infinite#infiniteproductlist  --templateid='productListTemplate'  --legacy;" class="listStyleNone fluidList clearfix noPadOrMargin productList"></ul>	
         </div>
         <div class="searchFilterResults">
             <ul class="categoryFilterResults productList" data-app-role='productList'></ul>
@@ -705,17 +705,17 @@ don't modify the 'data-templateid' unless you are changing template names and up
     </div>
     
 <!-- DEFAULT CODE
-	<img data-bind="var: category(%page.banner1); format: banner; editor: banner; height:250; width:750; extension: myRIA;" />
+	<img data-tlc="bind $var '.%page.banner1'; quickstart#banner  --height='250' --width='750' --legacy;" src="images/blank.gif" alt="">
 
-	<h2 data-bind="var: category(%page.header); format: text; editor: text;"></h2>
+	<h2 data-tlc="bind $var '.%page.header'; if (is $var --notblank;) {{apply --append;}};"></h2>
 
-	<p data-bind="var: category(%page.description); format:wiki; wikiFormats:myRIA; editor: textarea;"></p>
+	<p data-tlc="bind $var '.%page.description'; if (is $var --notblank;) {{ render --wiki='quickstart'; apply --append;}};"></p>
 
-	<ul data-bind="var: category(@subcategoryDetail); format: categoryList; extension: store_navcats; loadsTemplate: categoryListTemplate; detail:max;" class='listStyleNone fluidList clearfix noPadOrMargin categoryList'></ul><!-- outputs a list of subcategories -->
+	<ul data-tlc="bind $var '.@subcategoryDetail'; store_navcats#categorylist  --detail='max' --templateid='categoryListTemplate'  --legacy;" class="listStyleNone fluidList clearfix noPadOrMargin categoryList"></ul><!-- outputs a list of subcategories -->
 
-	<!--<ul data-bind="var: category(@products); format: productList; editor: finder; extension: store_prodlist; loadsTemplate: productListTemplate; withReviews:1; withInventory:1; withVariations:1; items_per_page: 25;" class='listStyleNone fluidList clearfix noPadOrMargin productList'></ul><!-- outputs the product list -->
+	<ul data-tlc="bind $var '.@products'; store_prodlist#productlist  --withReviews='1' --withInventory='1' --withVariations='1' --itemsperpage='25' --templateid='productListTemplate'  --legacy;" class="listStyleNone fluidList clearfix noPadOrMargin productList"></ul><!-- outputs the product list -->
 
-	<p data-bind="var: category(%page.description2); format:wiki; wikiFormats:myRIA; editor: textarea;"></p>
+	<p data-tlc="bind $var '.%page.description2'; if (is $var --notblank;) {{ render --wiki='quickstart'; apply --append;}};"></p>
 
 		
 </div>
