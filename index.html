@@ -729,23 +729,23 @@ don't modify the 'data-templateid' unless you are changing template names and up
 <!-- used to display a category within a 'list', usually in the body of a category or the homepage. -->
 <ul>
 <li id='categoryListTemplate' class='categoryBox pointer categoryInnerBox'>
-	<div onClick="showContent('category',{'navcat':$(this).parent().attr('data-catsafeid')});" class='pointer'>
-		<div class='thumbContainer'><img src='blank.gif' class='catThumb' alt='' data-bind='var: category(%meta.CAT_THUMB); format:imageURL;' width='230' height='230' /></div>
-		<div class='catName white2LGray'><span data-bind='var: category(pretty); format:catText; extension: myRIA;'></span></div>
-	</div>
+	<a data-tlc="bind $var '.'; store_routing#seoanchor --type='category' --seo; apply --attrib='href';">
+		<div class="thumbContainer"><img data-tlc="bind $var '.%meta.CAT_THUMB'; if (is $var --notblank){{apply --img --media=$var --width=120 --height=120 --bgcolor='#ffffff' --replace;}};" src="blank.gif" class="catThumb" alt="" height="120" width="120"></div>
+		<div class="catName white2LGray"><span data-tlc="bind $var '.pretty'; quickstart#cattext  --legacy;"></span></div>
+	</a>
 </li>
 
 
 <li id='categoryListTemplateRootCats'>
-	<a data-bind='var: category(pretty); format:text;' href='#' onClick="showContent('category',{'navcat':$(this).parent().attr('data-catsafeid')}); return false"></a>
-	<ul data-bind='var:category(@subcategoryDetail); format:stuffList; loadsTemplate:simpleSubcatTemplate;' class="child_menu">
-		<li><img src='blank.gif' class='catThumb' data-bind='var: category(%meta.CAT_THUMB); format:imageURL; bgcolor:f1f3f2;' height='155' width='155' /></li>
+	<a data-tlc="bind $var '.pretty'; if (is $var --notblank;) {{apply --append;}};" href="#" onclick="showContent('category',{'navcat':$(this).parent().attr('data-catsafeid')}); return false"></a>
+	<ul data-tlc="bind $var '.@subcategoryDetail'; controller#loop --templateid='simpleSubcatTemplate'; if (is $var --notblank;) {{apply --append;}};" class="child_menu">
+		<li><img src='blank.gif' class='catThumb' <img data-tlc="bind $var '.%meta.CAT_THUMB'; if (is $var --notblank){{apply --img --media=$var --height=155 --width=155 --bgcolor='#ffffff' --replace;}};" alt="" height="155" width="155" /></li>
 	</ul>	
 	<!--
-	<div onClick="showContent('category',{'navcat':$(this).parent().attr('data-catsafeid')});" class='pointer'>
-		<div class='thumbContainer'><img src='blank.gif' class='catThumb' alt='' data-bind='var: category(%meta.CAT_THUMB); format:imageURL;' width='35' height='35' /></div>
-		<div class='catName'><span data-bind='var: category(pretty); format:catText; extension: myRIA;'></span></div>
-	</div>
+	<a data-tlc="bind $var '.'; store_routing#seoanchor --type='category' --seo; apply --attrib='href';">
+		<div class="thumbContainer"><img data-tlc="bind $var '.%meta.CAT_THUMB'; if (is $var --notblank){{apply --img --media=$var --width=35 --height=35 --bgcolor='#ffffff' --replace;}};" src="blank.gif" class="catThumb" alt="" height="35" width="35"></div>
+		<div class="catName"><span data-tlc="bind $var '.pretty'; quickstart#cattext  --legacy; apply --append;"></span></div>
+	</a>
 	-->
 </li>
 
@@ -759,27 +759,28 @@ Used for the product in a product list (prodlist), usually in the body of a cate
 the loadingBG class is removed (must be that classname) when the template is translated.
 remember to NOT put the button inside the 'onclick' container or two events will occur onclick.
 -->
-<li id='productListTemplate' class='loadingBG productBox' onMouseOver="$('.quickView',$(this)).show();" onMouseOut="$('.quickView').hide();" >
+<li id="productListTemplate" class="loadingBG productBox' onmouseover="$('.quickView',$(this)).show();" onmouseout="$('.quickView').hide();">
 	
-	<button class='floatRight pointer quickView displayNone' data-app-click='myRIA|quickviewShow' data-loadstemplate='productTemplateQuickView'>Quickview</button>
+	<button class="floatRight pointer quickView displayNone" data-app-click="quickstart|quickviewShow" data-loadstemplate="productTemplateQuickView">Quickview</button>
 
-	<div onClick="showContent('product',{'pid':$(this).attr('data-pid')})" data-bind='var:product(pid);format:assignAttribute; attribute:data-pid;' class='pointer'>
-		<div class='prodThumbContainer' data-bind='var:product(pid); format:addPicSlider; extension:myRIA;'>
-		<img src='blank.gif' class='prodThumb' alt='' data-bind='var: product(zoovy:prod_image1); format:imageURL;' width='230' height='230' />
+	<a data-tlc="bind $pid '.pid'; bind $seo '.%attribs.zoovy:prod_name'; bind $href ''; store_routing#productlink --pid=$pid --seo=$seo; apply --attrib='href';" class="blockLink">
+		<div data-tlc="bind $var '.pid'; quickstart#addpicslider  --legacy; apply --append;" class="prodThumbContainer">
+		<img data-tlc="bind $var '.%attribs.zoovy:prod_thumb'; if(is $var --blank;){{bind $var '.%attribs.zoovy:prod_image1';}}; if(is $var --notblank;){{apply --img --media=$var --width=230 --height=230 --bgcolor='#ffffff' --replace;}};" src="blank.gif" class="prodThumb" alt="" height="230" width="230">
 		</div>
 		<div class='productInfoPadding'>
-			<h5 data-bind='var: product(zoovy:prod_name); format:text;'></h5>
+			<h5 data-tlc="bind $var '.%attribs.zoovy:prod_name'; if (is $var --notblank;) {{apply --append;}};"></h5>
 			<div class='pricing'>
 				<div class='basePrice' >
-				<span class='value' data-bind="var: product(zoovy:base_price); format:money; currencySign: $;  hideZero:true; before: <span class='prompt pricePrompt'>Price From: </span>;">
+				<span class='value' data-tlc="bind $var '.%attribs.zoovy:base_price'; if (is $var --notblank;) {{ format --currency='USD';  format --prepend='<span class='prompt pricePrompt'>Price From: </span>'; apply --append;}};"
 				</span>
 				</div>
 				
 				<div class='retailPrice'>
-					<span data-bind="var: product(zoovy:prod_msrp); format:money; currencySign: $;  hideZero:true; before: <span class='prompt retailPricePrompt'>MSRP: </span>;"></span>
+					<span data-tlc="bind $var '.%attribs.zoovy:prod_msrp'; if (is $var --notblank;) {{format --currency='USD'; format --prepend='<span class='prompt retailPricePrompt'>MSRP: </span>' apply --append;}};"></span>
 				</div>
 				
-				<div class='savings' data-bind="var: product(pid); format:priceRetailSavingsDifference; currencySign: $;  hideZero:true; pretext: You Save: ; extension:myRIA;"></div>			
+				<div class="displayNone" data-tlc="bind $var '.%attribs.zoovy:prod_msrp'; if(is $var --notblank;) {{ apply --show; }};">You save: </span><span data-tlc="bind $var '.pid'; quickstart#priceretailsavingsdifference  --legacy; apply --append;" class="savingsDifference"></div>
+							
 			</div>			
 		</div>
 		<!--
@@ -790,9 +791,9 @@ remember to NOT put the button inside the 'onclick' container or two events will
 <!-- 	<span data-bind='var: reviews(reviews.total); format:text; pretext: from ;posttext: reviews; className:numReviews;'></span> -->
 	</div>
 	
-	<form data-bind='var: product(pid); format:atcForm; extension:store_product;' class='prodViewerAddToCartForm clearfix' action='#' onsubmit='return false'  data-app-submit='myRIA|productAdd2Cart' data-show='modal'>
-		<input type='hidden' name='qty' value='1' />
-		<button data-bind='format:addToCartButton; extension:myRIA; useParentData:true;'>more details</button>
+	<form data-tlc="bind $var '.pid'; store_product#atcform  --legacy; apply --append;" class="prodViewerAddToCartForm clearfix" action="#" onsubmit="return false" data-app-submit="quickstart|productAdd2Cart" data-show="modal">
+		<input name="qty" value="1" type="hidden">
+		<button data-tlc="quickstart#addtocartbutton  --legacy; apply --append;" data-bind="format:addtocartbutton; extension:quickstart; useParentData:true;" class='applyButton'>more details</button>
 	</form>
 	
 </li>
