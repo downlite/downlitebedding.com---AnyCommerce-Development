@@ -1547,65 +1547,64 @@ if you change these, you should move them above this comment so that when you (o
 
 
 
-<!-- loadingBG needed on this for app init (content may take a moment to load) -->
-<div id='customerTemplate' class='clearfix'>
+<div id="customerTemplate" class="clearfix">
 
-	<div class='sideline' >
-	<nav id='customerNav'>
-	<ul class='listStyleNone noPadOrMargin'>
+	<div class="sideline">
+	<nav id="customerNav">
+	<ul class="listStyleNone noPadOrMargin">
 <!-- before restoring this, test cuz news form on left was causing some conflicts
 		<li><a href='#customer?show=subscriberLists'>Newsletter Subscription</a></li> -->
-		<li><a href='#customer?show=myaccount'>My Account</a></li>
-		<li><a href='#customer?show=changepassword'>Change Password</a></li>
-		<li><a href='#customer?show=orders'>Order History</a></li>
-		<li><a href='#customer?show=lists'>Manage Lists</a></li>
-		<li class='hideIfLoggedOut'><a href="#customer?show=logout">Log Out</a></li>
+		<li><a href="#!customer/myaccount">My Account</a></li>
+		<li><a href="#!customer/changepassword">Change Password</a></li>
+		<li><a href="#!customer/orders">Order History</a></li>
+		<li><a href="#!customer/lists">Manage Lists</a></li>
+		<li class="hideIfLoggedOut"><a href="#!customer/logout">Log Out</a></li>
 	</ul>
 	</nav>
 	</div>
 
-	<div class='mainColumn'>
+	<div class="mainColumn">
 <!-- .textContentArea is used as a selector because IE8 doesn't play well  with tag type article as a selector -->
 
 <!--
 newsletterArticle is used for buyers who are not logged in or do not have an account.
 subscribeListsArticle is used for authenticated buyers
 -->
-		<div id='newsletterArticle' class='displayNone textContentArea'>
+		<div id="newsletterArticle" class="displayNone textContentArea">
 			<h1>Subscribe to our Newsletter and Save!</h1>
-			<div data-bind="format:loadsTemplate; loadsTemplate:subscribeFormTemplate;"></div>
+			<div data-tlc="bind $var '.'; transmogrify --dataset=$var --templateid='subscribeFormTemplate'; apply --append;"></div>
 		</div>
 
-		<div id='subscriberListsArticle' class='displayNone textContentArea'>
+		<div id="subscriberListsArticle" class="displayNone textContentArea">
 			<h1>Manage your Subscriptions</h1>
 <!-- save onchange -->
-<form action='#' name='subscribeFrm'>
+<form action="#" name="subscribeFrm">
 
-<fieldset data-bind="var:newsletters(@lists); format:subscribeCheckboxes; extension:store_crm;" class='borderNone subscriberLists'></fieldset>
+<fieldset data-tlc="bind $var '.@lists'; store_crm#subscribecheckboxes  --legacy; apply --append;" class="borderNone subscriberLists"></fieldset>
 
 </form>
 
 		</div>
 
-		<div id='myaccountArticle' class='displayNone textContentArea'>
+		<div id="myaccountArticle" class="displayNone textContentArea">
 			<h1>My Account</h1>
 
 			<section>
 
-<div class='billAddressContainer' data-app-role='addressContainer' data-app-addresstype='bill'>
-	<div class='marginBottom'>
-		<button class='floatRight applyButton' data-icon-primary='ui-icon-plus' data-app-click='myRIA|showBuyerAddressAdd'>New Billing Address</button>
+<div class="billAddressContainer" data-app-role="addressContainer" data-app-addresstype="bill">
+	<div class="marginBottom">
+		<button class="floatRight applyButton" data-icon-primary="ui-icon-plus" data-app-click="quickstart|showBuyerAddressAdd">New Billing Address</button>
 		<h2>Billing Address(es)</h2>
 	</div>
-	<div class='billAddresses' data-bind="var: buyer(@bill); format:processList; loadsTemplate:billAddressTemplate;"></div>
+	<div data-tlc="bind $var '.@bill'; controller#loop --templateid='billAddressTemplate'; if (is $var --notblank;) {{apply --append;}};" class="billAddresses"></div>
 </div>
 
-<div class='shipAddressContainer' data-app-role='addressContainer' data-app-addresstype='ship'>
-	<div class='marginBottom'>
-		<button class='floatRight applyButton' data-icon-primary='ui-icon-plus' data-app-click='myRIA|showBuyerAddressAdd'>New Shipping Address</button>
+<div class="shipAddressContainer" data-app-role="addressContainer" data-app-addresstype="ship">
+	<div class="marginBottom">
+		<button class="floatRight applyButton" data-icon-primary="ui-icon-plus" data-app-click="quickstart|showBuyerAddressAdd">New Shipping Address</button>
 		<h2>Shipping Address(es)</h2>
 	</div>
-	<div class='billAddresses' data-bind="var: buyer(@ship); format:processList; loadsTemplate:shipAddressTemplate;"></div>
+	<div data-tlc="bind $var '.@ship'; controller#loop --templateid='shipAddressTemplate'; if (is $var --notblank;) {{apply --append;}};" class="billAddresses"></div>
 </div>
 
 
@@ -1615,47 +1614,46 @@ subscribeListsArticle is used for authenticated buyers
 		</div>
 
 
-		<div id='ordersArticle' class='displayNone textContentArea'>
+		<div id="ordersArticle" class="displayNone textContentArea">
 			<h1>Order History</h1>
-			<div data-bind="var: orders(@orders); format:processList; loadsTemplate:orderLineItemTemplate;" data-app-role='orderList' class='ui-accordion ui-widget ui-helper-reset ui-accordion-icons '></div>
+			<div data-tlc="bind $var '.@orders'; controller#loop --templateid='orderLineItemTemplate'; if (is $var --notblank;) {{apply --append;}};" data-app-role="orderList" class="ui-accordion ui-widget ui-helper-reset ui-accordion-icons "></div>
 		</div>
 
 
-		<div id='invoiceArticle' class='displayNone textContentArea'>
-			<div data-bind="format:loadsTemplate; loadsTemplate: invoiceTemplate; useParentData:true;"></div>
+		<div id="invoiceArticle" class="displayNone textContentArea">
+			<div data-tlc="bind $var '.'; transmogrify --dataset=$var --templateid='invoiceTemplate'; apply --append;" data-bind="format:loadsTemplate; loadsTemplate: invoiceTemplate; useParentData:true;"></div>
 		</div>
 
 
 
-		<div id='changepasswordArticle' class='displayNone textContentArea'>
+		<div id="changepasswordArticle" class="displayNone textContentArea">
 			<h1>Change Password</h1>
 			<div id='changepasswordContainer'>
 
-				<form action='#' name='changePasswordForm' data-app-submit="myRIA|passwordChangeSubmit">
-				<fieldset class='borderNone'>
+				<form action="#" name="changePasswordForm" data-app-submit="quickstart|passwordChangeSubmit" class='alignedForm'>
+				<fieldset class="borderNone">
+				<p>For passwords, we recommend using mixed case, at least one number and one special character.</p>
 				<div class="messaging"></div>
-				<div class='marginBottom'><label><span class='prompt'>Password</span><input type='password' name='password' size='35' required='required' /></label></div>
-				<div class='marginBottom'><label><span class='prompt'>Confirm Password</span><input type='password' name='password2' required='required' size='35' /></label></div>
-				<div class='marginBottom'><input type='submit' value='Change Password' class='loadingButton applyButton'></div>
-				
+				<label><span class="prompt">Password</span><input name="password" size="35" required type="password" data-minlength='8'></label>
+				<label><span class="prompt">Confirm Password</span><input name="password2" required size="35" type="password" data-minlength='8'></label>
+				<div class='alignCenter'><input value="Change Password" class="loadingButton applyButton" type="submit"></div>
 				</fieldset>
 				</form>
 
 			</div>
 		</div>
 
-		<div id='listsArticle' class='displayNone textContentArea'>
+		<div id="listsArticle" class="displayNone textContentArea">
 			<h1>List Manager</h1>
-			<div id='listsContainer' class='prodlist loadingBG'></div>
 
-			<div id='listEditorContainer' class='displayNone loadingBG'></div><!-- editor for a given list gets added here -->
+			<div class='applyAccordion' data-tlc="apply --empty; bind $var '.@lists'; controller#loop --templateid='buyerListTemplate'; apply --append; bind $content '.@lists'; controller#loop --templateid='buyerListProdlistContainerTemplate'; apply --append;"></div>
 
 		</div>
 
-		<div id='forgetmeArticle' class='displayNone textContentArea'>
+		<div id="forgetmeArticle" class="displayNone textContentArea">
 			<h1>Your 'Forget Me' list</h1>
 			<p>Items on this list will not show up anywhere on the site. Use it for items you never want to see again. If you add an item to the list by mistake, use this page to remove it from the list and it will start re-appearing during your shopping experience.</p>
-			<ul id='forgetmeContainer' class='prodlist loadingBG'>
+			<ul id="forgetmeContainer" class="prodlist ">
 			</ul>
 		</div>
 
@@ -1664,17 +1662,27 @@ subscribeListsArticle is used for authenticated buyers
 </div>
 
 
+<h2 id='buyerListTemplate' data-tlc="bind $id '.id'; apply --append; bind $items '.items'; if (is $items --notblank;) {{format --prepend=' (' --append=')'; apply --append;}};"></h2>
 
 
 
-<div id='searchTemplate' class='searchResultsPage clearfix'>
+<div id='buyerListProdlistContainerTemplate' class='buyerList' data-tlc="bind $id '.id'; apply --attrib='data-buyerlistid';">
+	<!--
+	the UL is generated automatically because the tlc bind is specific to the list id. trying to use tlc to generate tlc would probably get me committed.
+	the div is NOT added dynamically so the accordion can be generated.
+	-->
+</div>
+
+
+
+<div id="searchTemplate" class="searchResultsPage clearfix">
 
 	<!-- the div is use to show a detailed view of a product. should be hidden by default. -->
-	<div class='previewProductDetail displayNone'></div>
+	<div class="previewProductDetail displayNone"></div>
 
-	<div class='previewListContainer'>
+	<div class="previewListContainer">
 		<!-- productListTemplateResults gets loaded into here -->
-		<ul id='resultsProductListContainer' class='listStyleNone fluidList noPadOrMargin productList'></ul>
+		<ul id="resultsProductListContainer" class="listStyleNone fluidList noPadOrMargin productList"></ul>
 	</div>
 
 </div>
@@ -1695,33 +1703,33 @@ onclicks are recursive, so only add it to the parent element.
 .mpControlsPagination is used to 'hide' the pagination portion of the header if pagination is disabled.
 -->
 
-<div id='mpControlSpec' class='mpControlContainer'>
-	<div class='mpControls ui-widget ui-state-default ui-corner-top'>
+<div id="mpControlSpec" class="mpControlContainer">
+	<div class="mpControls ui-widget ui-state-default ui-corner-top">
 
-<span class="mpControlsPagination ui-state-active ui-corner-all floatRight paging pointer" data-role='next' title="next page">
+<span class="mpControlsPagination ui-state-active ui-corner-all floatRight paging pointer" data-role="next" title="next page">
 	<span class="ui-icon ui-icon-circle-triangle-e"></span>
 </span>
 
-<div class='floatRight ddUlMenu mpControlsPagination'>
+<div class="floatRight ddUlMenu mpControlsPagination">
 <ul>
 	<li>
 
-	<a href='#' onClick='return false;'>
-	<span data-bind='var:prodlistmeta(page_in_focus); format:text; pretext: page ;'></span>
-	<span data-bind='var:prodlistmeta(total_page_count); format:text; pretext: of ;'></span>	</a>
-	<ul data-bind='var:prodlistmeta(total_page_count); format:mpPagesAsListItems; extension:store_prodlist;' class='ui-widget-content ui-corner-bottom'></ul>
+	<a href="#" onclick="return false;">
+	<span data-tlc="bind $var '.page_in_focus'; format --prepend='page '; if (is $var --notblank;) {{apply --append;}};"></span>
+	<span data-tlc="bind $var '.total_page_count'; format --prepend='of '; if (is $var --notblank;) {{apply --append;}};"></span>	</a>
+	<ul data-tlc="bind $var '.total_page_count'; store_prodlist#mppagesaslistitems  --legacy; apply --append;" class="ui-widget-content ui-corner-bottom"></ul>
 	</li>
 </ul>
 </div>
 
-<span class="mpControlsPagination ui-state-active ui-corner-all floatRight paging pointer" data-role='previous' title="previous page">
+<span class="mpControlsPagination ui-state-active ui-corner-all floatRight paging pointer" data-role="previous" title="previous page">
 	<span class="ui-icon ui-icon-circle-triangle-w"></span>
 </span>
 
 
-<span data-bind='var:prodlistmeta(page_start_point); format:text; pretext:items ;'></span>
-<span data-bind='var:prodlistmeta(page_end_point); format:text; pretext: - ;'></span>
-<span data-bind='var:prodlistmeta(total_product_count); format:text; pretext: of ;'></span>
+<span data-tlc="bind $var '.page_start_point'; format --prepend='items '; if (is $var --notblank;) {{apply --append;}};"></span>
+<span data-tlc="bind $var '.page_end_point'; format --prepend='- '; if (is $var --notblank;) {{apply --append;}};"></span>
+<span data-tlc="bind $var '.total_product_count'; format --prepend='of '; if (is $var --notblank;) {{apply --append;}};"></span>
 
 	</div><!-- /.mpControls -->
 </div><!-- /#mpControlSpec -->
