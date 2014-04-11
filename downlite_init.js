@@ -140,7 +140,7 @@ myApp.u.appInitComplete = function()	{
 	myApp.ext.store_navcats.calls.appCategoryList.init('.brands',{'callback':'getChildData','extension':'store_navcats','parentID':'brandCategories','templateID':'categoryListTemplateThumb'},'passive');
 	myApp.model.dispatchThis('passive'); //use passive or going into checkout could cause request to get muted.		
 //Adding category nav tabs
-	myApp.ext.myRIA.renderFormats.simpleSubcats = function($tag,data)	{
+	myApp.ext.quickstart.renderFormats.simpleSubcats = function($tag,data)	{
 		//app.u.dump("BEGIN control.renderFormats.subcats");
 		var L = data.value.length;
 		var thisCatSafeID; //used in the loop below to store the cat id during each iteration

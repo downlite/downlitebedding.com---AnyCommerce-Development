@@ -102,7 +102,7 @@ css files should be included before any .js file to ensure they are downloaded i
 <script type="text/javascript">
 $(document).ready(function(){
 	window.myApp = new initApp({
-		"release":"201402.a",  //increment this with each change. should solve caching issues. format: YYYYMMDDHHMMSS
+		"release":"201402.aa",  //increment this with each change. should solve caching issues. format: YYYYMMDDHHMMSS
 		"_clientid":"zmvc", //zmvc for store app, 1pc for one page checkout.
 		"baseURL":baseURL, //used in non-local mode.
 		"checkoutAuthMode" : "active",//can be passive, active or required
@@ -207,7 +207,7 @@ ANIMATION TESTING
 					<ul class="account">
 						<li ><a href="#!customer/myaccount">Sign In</a></li>
 						<li><a href="#!company/about">About Us</a></li>
-						<!--<li ><a href="#!customer/newsletter">New Account</a></li>-->
+						<li ><a href="#!customer/myaccount">New Account</a></li>
 						<li><a href="#!company/faq">Help</a></li>
 					</ul>
 				</div>
@@ -231,13 +231,10 @@ ANIMATION TESTING
 					
                     
                     <form id="headerSearchFrm" name="headerSearchFrm" action="#" class="productSearchForm" method="get" data-app-submit='quickstart|searchFormSubmit'>
-			<input type='search' name='KEYWORDS' class="productSearchKeyword handleDefault secondary box" placeholder="Enter Search Term..." id="searchBar"/>
-			<input class="search pointer" type="submit" value="Search" id="searchButton" />
-		    </form>
-		    <form name='headerSearchFrm' action='#' class='productSearchForm marginLeft' method="get" data-app-submit='quickstart|searchFormSubmit'>
-                         <input type='search' name='KEYWORDS' placeholder='Enter Search Term...' class="productSearchKeyword handleDefault secondary box" />
-                         <input class="search pointer" type="submit" value="Search" id="searchButton ">Search</button>
+                        <input type='search' name='KEYWORDS' class="productSearchKeyword handleDefault secondary box" placeholder="Enter Search Term..." id="searchBar"/>
+                        <input class="search pointer" type="submit" value="Search" id="searchButton" />
                     </form>
+		    		
                     
                     
 				</div>
@@ -274,7 +271,7 @@ ANIMATION TESTING
 					<h5><img src="images/msg_img.png" alt="" /> SIGN UP FOR DEALS</h5>
 					<p>Get Product Updates &amp; Coupons</p>
 				</div>
-				<a href="#!customer/myaccount"><input class="subButton pointer" type="submit" value="Join" /></a>
+				<a href="#!customer/myaccount"><input class="subButton pointer" type="submit" value="Join Now" /></a>
 				<!--
 				<form action='#' id='subscribeFrmFooter' name='subscribeFrm' onSubmit="myApp.ext.store_crm.u.handleSubscribe(this.id); return false">
 					<input required='required' type='email' value='email address' class='newsSubscribeInput textbox email'  maxlength='50' size='25' name='login' id='subscribeLoginFooter' onFocus="myApp.ext.quickstart.u.handleFormField(this);"  onBlur="myApp.ext.myRIA.u.handleFormField(this);" />
@@ -295,7 +292,7 @@ ANIMATION TESTING
 						<li><a href="#!company/return">Returns & Exchanges</a></li>
 						<li><a href="#!company/contact">Contact Us</a></li>
 						<li><a href="#!company/privacy">Your Privacy</a></li>
-	<!--					<!--<li><a>Banner/decal #8 (103 by X)</a></li> -->
+	<!--					<li><a>Banner/decal #8 (103 by X)</a></li> -->
 					</ul>
 				</div>
 				<div class="footer_widget">
@@ -635,7 +632,7 @@ the homepageTemplate template is loaded into mainContentArea by default when the
 	<ul data-tlc="bind $var '.$listName.@products'; store_prodlist#productlist  --hideSummary='1' --withReviews='1' --withVariations='1' --withInventory='1' --templateid='productListTemplate'  --legacy;" class="listStyleNone fluidList clearfix noPadOrMargin productList"></ul>
 	-->
 
--->
+
 
 <h3 class="rssTitle">Our Latest Blog Entries</h3>
  <div class="rssfeed">
@@ -667,44 +664,43 @@ don't modify the 'data-templateid' unless you are changing template names and up
 	
 	<ul data-tlc="bind $var '.path'; store_navcats#breadcrumb  --templateid='breadcrumbTemplate'  --legacy;" class="breadcrumb clearfix noPadOrMargin fluidList"></ul>
 
-<div class='clearfix'></div>
-<div class='marginBottom'>
-<!--	<div class='catMediaCol'>-->
-		<div data-tlc="bind $var '.%page.picture1'; if(is $var --notblank;) {{ apply --show; }}; " class="catMediaContainer displayNone"></div>
-			div data-tlc="bind $var '.%page.picture1'; if(is $var --notblank;) {{ apply --show; }}; " class="catBigImageContainer displayNone"><img data-tlc="bind $var '.%page.picture1'; if (is $var --notblank;) {{ apply --img --media=$var --width=480 --height=360 --bgcolor='#ffffff' --replace;}};" src="blank.gif" height="360" width="480"></div>
-			<div data-tlc="bind $var '.%page.youtube_videoid'; if(is $var --notblank;) {{ apply --show; }}; " class="displayNone"></div>
-				<div data-tlc="bind $var '.%page.youtube_videoid'; apply --attrib='data-videoid'; " class="catVideoContainer clearfix pointer" onclick="myApp.ext.store_downlite.a.showYoutubeInModal($(this).attr('data-videoid'));"></div>
-				<div class='vidThumb'><img data-tlc="bind $var '.%page.youtube_videoid'; quickstart#youtubethumbnail  --legacy;" src="blank.gif" height="90" width="120"></div>
-				<h2 data-tlc="bind $var '.%page.youtube_videoheader'; if (is $var --notblank;) {{apply --append;}};"></h2>
-				<p data-tlc="bind $var '.%page.youtube_videodescription'; if (is $var --notblank;) {{apply --append;}};"></p>
+	<div class='clearfix'></div>
+	<div class='marginBottom'>
+	<!--	<div class='catMediaCol'>-->
+		<div data-tlc="bind $var '.%page.picture1'; if(is $var --notblank;) {{ apply --show; }}; " class="catMediaContainer displayNone">
+			<div data-tlc="bind $var '.%page.picture1'; if(is $var --notblank;) {{ apply --show; }}; " class="catBigImageContainer displayNone"><img data-tlc="bind $var '.%page.picture1'; if (is $var --notblank;) {{ apply --img --media=$var --width=480 --height=360 --bgcolor='#ffffff' --replace;}};" src="blank.gif" height="360" width="480"></div>
+			<div data-tlc="bind $var '.%page.youtube_videoid'; if(is $var --notblank;) {{ apply --show; }}; " class="displayNone">
+				<div data-tlc="bind $var '.%page.youtube_videoid'; apply --attrib='data-videoid'; " class="catVideoContainer clearfix pointer" onclick="myApp.ext.store_downlite.a.showYoutubeInModal($(this).attr('data-videoid'));">
+					<div class='vidThumb'><img data-tlc="bind $var '.%page.youtube_videoid'; quickstart#youtubethumbnail  --legacy;" src="blank.gif" height="90" width="120"></div>
+					<h2 data-tlc="bind $var '.%page.youtube_videoheader'; if (is $var --notblank;) {{apply --append;}};"></h2>
+					<p data-tlc="bind $var '.%page.youtube_videodescription'; if (is $var --notblank;) {{apply --append;}};"></p>
 				</div>
 			</div>
 		</div>
-<!--	</div>-->
-	<div class='catDesc'>	
-		<div data-tlc="bind $var '.%page.description'; if (is $var --notblank;) {{render --wiki='quickstart'; apply --append;}};" class="textBlock"></div>
-		<!-- COMMENTING OUT UNTIL FRAMEWORK ALLOWS MULTIPLE FORMAT/CATEGORY CALLS ON A PAGE; AS OF 201248 IT DOES NOT
-		<ul data-tlc="bind $var '.@subcategoryDetail'; store_navcats#categorylist  --detail='max' --templateid='breadcrumbTemplate'  --legacy;" class="listStyleNone clearfix noPadOrMargin categoryList noUnderline"></ul>
-		-->
-		<div data-tlc="bind $var '.%page.description2'; if (is $var --notblank;) {{render --wiki='quickstart'; apply --append;}};" class="textBlock"></div>
+	<!--	</div>-->
+		<div class='catDesc'>	
+			<div data-tlc="bind $var '.%page.description'; if (is $var --notblank;) {{render --wiki='quickstart'; apply --append;}};" class="textBlock"></div>
+			<!-- COMMENTING OUT UNTIL FRAMEWORK ALLOWS MULTIPLE FORMAT/CATEGORY CALLS ON A PAGE; AS OF 201248 IT DOES NOT
+			<ul data-tlc="bind $var '.@subcategoryDetail'; store_navcats#categorylist  --detail='max' --templateid='breadcrumbTemplate'  --legacy;" class="listStyleNone clearfix noPadOrMargin categoryList noUnderline"></ul>
+			-->
+			<div data-tlc="bind $var '.%page.description2'; if (is $var --notblank;) {{render --wiki='quickstart'; apply --append;}};" class="textBlock"></div>
+		</div>
+		<div class="clearfix"></div>
 	</div>
-	<div class="clearfix"></div>
-</div>
 
 	<ul data-tlc="bind $var '.@subcategoryDetail'; store_navcats#categorylist  --detail='max' --templateid='categoryListTemplate'  --legacy;" class="listStyleNone clearfix noPadOrMargin fluidList categoryList marginBottom"></ul>
 
 	<div class="catProdListContainer">
-    	<div class="catProdListSidebar">
-        </div>
-        <div class="nativeProductList">
-            <ul data-tlc="bind $var '.@products'; prodlist_infinite#infiniteproductlist  --templateid='productListTemplate'  --legacy;" class="listStyleNone fluidList clearfix noPadOrMargin productList"></ul>	
-        </div>
-        <div class="searchFilterResults">
-            <ul class="categoryFilterResults productList" data-app-role='productList'></ul>
-        </div>
-    </div>
-    
-<!-- DEFAULT CODE
+		<div class="catProdListSidebar"></div>
+		<div class="nativeProductList">
+			<ul data-tlc="bind $var '.@products'; prodlist_infinite#infiniteproductlist  --templateid='productListTemplate'  --legacy;" class="listStyleNone fluidList clearfix noPadOrMargin productList"></ul>	
+		</div>
+		<div class="searchFilterResults">
+			<ul class="categoryFilterResults productList" data-app-role='productList'></ul>
+		</div>
+	</div>
+			
+	<!-- DEFAULT CODE
 	<img data-tlc="bind $var '.%page.banner1'; quickstart#banner  --height='250' --width='750' --legacy;" src="images/blank.gif" alt="">
 
 	<h2 data-tlc="bind $var '.%page.header'; if (is $var --notblank;) {{apply --append;}};"></h2>
@@ -739,7 +735,7 @@ don't modify the 'data-templateid' unless you are changing template names and up
 <li id='categoryListTemplateRootCats'>
 	<a data-tlc="bind $var '.pretty'; if (is $var --notblank;) {{apply --append;}};" href="#" onclick="showContent('category',{'navcat':$(this).parent().attr('data-catsafeid')}); return false"></a>
 	<ul data-tlc="bind $var '.@subcategoryDetail'; controller#loop --templateid='simpleSubcatTemplate'; if (is $var --notblank;) {{apply --append;}};" class="child_menu">
-		<li><img src='blank.gif' class='catThumb' <img data-tlc="bind $var '.%meta.CAT_THUMB'; if (is $var --notblank){{apply --img --media=$var --height=155 --width=155 --bgcolor='#ffffff' --replace;}};" alt="" height="155" width="155" /></li>
+		<li><img data-tlc="bind $var '.%meta.CAT_THUMB'; if (is $var --notblank){{apply --img --media=$var --height=155 --width=155 --bgcolor='#ffffff' --replace;}};" alt="" height="155" width="155" /></li>
 	</ul>	
 	<!--
 	<a data-tlc="bind $var '.'; store_routing#seoanchor --type='category' --seo; apply --attrib='href';">
@@ -759,7 +755,7 @@ Used for the product in a product list (prodlist), usually in the body of a cate
 the loadingBG class is removed (must be that classname) when the template is translated.
 remember to NOT put the button inside the 'onclick' container or two events will occur onclick.
 -->
-<li id="productListTemplate" class="loadingBG productBox' onmouseover="$('.quickView',$(this)).show();" onmouseout="$('.quickView').hide();">
+<li id="productListTemplate" class="loadingBG productBox" onmouseover="$('.quickView',$(this)).show();" onmouseout="$('.quickView').hide();">
 	
 	<button class="floatRight pointer quickView displayNone" data-app-click="quickstart|quickviewShow" data-loadstemplate="productTemplateQuickView">Quickview</button>
 
@@ -771,7 +767,7 @@ remember to NOT put the button inside the 'onclick' container or two events will
 			<h5 data-tlc="bind $var '.%attribs.zoovy:prod_name'; if (is $var --notblank;) {{apply --append;}};"></h5>
 			<div class='pricing'>
 				<div class='basePrice' >
-				<span class='value' data-tlc="bind $var '.%attribs.zoovy:base_price'; if (is $var --notblank;) {{ format --currency='USD';  format --prepend='<span class='prompt pricePrompt'>Price From: </span>'; apply --append;}};"
+				<span class='value' data-tlc="bind $var '.%attribs.zoovy:base_price'; if (is $var --notblank;) {{ format --currency='USD';  format --prepend='<span>Price From: </span>'; apply --append;}};">
 				</span>
 				</div>
 				
@@ -779,7 +775,7 @@ remember to NOT put the button inside the 'onclick' container or two events will
 					<span data-tlc="bind $var '.%attribs.zoovy:prod_msrp'; if (is $var --notblank;) {{format --currency='USD'; format --prepend='<span class='prompt retailPricePrompt'>MSRP: </span>' apply --append;}};"></span>
 				</div>
 				
-				<div class="displayNone" data-tlc="bind $var '.%attribs.zoovy:prod_msrp'; if(is $var --notblank;) {{ apply --show; }};">You save: </span><span data-tlc="bind $var '.pid'; quickstart#priceretailsavingsdifference  --legacy; apply --append;" class="savingsDifference"></div>
+				<span class="displayNone" data-tlc="bind $var '.%attribs.zoovy:prod_msrp'; if(is $var --notblank;) {{ apply --show; }};">You save: </span><span data-tlc="bind $var '.pid'; quickstart#priceretailsavingsdifference  --legacy; apply --append;" class="savingsDifference"></span>
 							
 			</div>			
 		</div>
@@ -789,7 +785,7 @@ remember to NOT put the button inside the 'onclick' container or two events will
 		
 <!--		<span data-bind='var: reviews(reviews.average); format:addClass; className:review_;' class='reviewSprite'></span> -->
 <!-- 	<span data-bind='var: reviews(reviews.total); format:text; pretext: from ;posttext: reviews; className:numReviews;'></span> -->
-	</div>
+	</a>
 	
 	<form data-tlc="bind $var '.pid'; store_product#atcform  --legacy; apply --append;" class="prodViewerAddToCartForm clearfix" action="#" onsubmit="return false" data-app-submit="quickstart|productAdd2Cart" data-show="modal">
 		<input name="qty" value="1" type="hidden">
@@ -873,7 +869,7 @@ SANITY -> if you change the height and width of this image, change the .minimalM
 <li id="productListTemplateResults" class="loadingBG searchResultsProduct ">
 	<div data-app-click="quickstart|inlineProductPreviewShow" class="pointer">
 		<div class="prodThumbContainer">
-		<img data-tlc="bind $var '.images.0'; apply --img --media=$var --width=120 --height=120 --bgcolor='#ffffff' --replace;" src="blank.gif" class="prodThumb" alt="" height="120" width="120">
+			<img data-tlc="bind $var '.images.0'; apply --img --media=$var --width=120 --height=120 --bgcolor='#ffffff' --replace;" src="blank.gif" class="prodThumb" alt="" height="120" width="120" />
 		</div>
 
 		<h5 data-tlc="bind $var '.prod_name'; if (is $var --notblank;) {{apply --append;}};" class="hideInMinimalMode"></h5>
@@ -886,7 +882,7 @@ SANITY -> if you change the height and width of this image, change the .minimalM
 <li id="productListTemplateResultsNoPreview" class="loadingBG searchResultsProduct ">
 	<a data-tlc="bind $var '.'; store_routing#seoanchor --type='product' --seo; apply --attrib='href';" class="pointer">
 		<div class="prodThumbContainer">
-		<img data-tlc="bind $var '.images.0'; if (is $var --notblank;) {{apply --img --media=$var --width=120 --height=120 --bgcolor='#ffffff' --replace;}};" src="blank.gif" class="prodThumb" alt="" height="120" width="120">
+			<img data-tlc="bind $var '.images.0'; if (is $var --notblank;) {{apply --img --media=$var --width=120 --height=120 --bgcolor='#ffffff' --replace;}};" src="blank.gif" class="prodThumb" alt="" height="120" width="120" />
 		</div>
 
 		<h5 data-tlc="bind $var '.prod_name'; if (is $var --notblank;) {{apply --append;}};" class="hideInMinimalMode"></h5>
@@ -989,17 +985,17 @@ this will likely become more flexible in the future. ###
 
 		<div data-tlc="bind $var '.pid'; apply --attrib='data-pid';" class="prodThumbs">
 	
-	<div onclick="myApp.ext.store_product.u.showPicsInModal({'pid':$(this).parent().attr('data-pid'),'int':'2'});" class="pointer"><img data-tlc="bind $var '.%attribs.zoovy:prod_image2';  if(is $var --notblank){{apply --img --media=$var --width=100 --height=100 --bgcolor='#ffffff' --replace;}};" src="blank.gif" alt="" height="100" width="100"></div>
-	
-	<div onclick="myApp.ext.store_product.u.showPicsInModal({'pid':$(this).parent().attr('data-pid'),'int':'3'});" class="pointer"><img data-tlc="bind $var '.%attribs.zoovy:prod_image3'; if(is $var --notblank){{apply --img --media=$var --width=100 --height=100 --bgcolor='#ffffff' --replace;}};" src="blank.gif" alt="" height="100" width="100"></div>
-	
-	<div onclick="myApp.ext.store_product.u.showPicsInModal({'pid':$(this).parent().attr('data-pid'),'int':'4'});" class="pointer"><img data-tlc="bind $var '.%attribs.zoovy:prod_image4'; if(is $var --notblank){{apply --img --media=$var --width=100 --height=100 --bgcolor='#ffffff' --replace;}};" src="blank.gif" alt="" height="100" width="100"></div>
+			<div onclick="myApp.ext.store_product.u.showPicsInModal({'pid':$(this).parent().attr('data-pid'),'int':'2'});" class="pointer"><img data-tlc="bind $var '.%attribs.zoovy:prod_image2';  if(is $var --notblank){{apply --img --media=$var --width=100 --height=100 --bgcolor='#ffffff' --replace;}};" src="blank.gif" alt="" height="100" width="100"></div>
+			
+			<div onclick="myApp.ext.store_product.u.showPicsInModal({'pid':$(this).parent().attr('data-pid'),'int':'3'});" class="pointer"><img data-tlc="bind $var '.%attribs.zoovy:prod_image3'; if(is $var --notblank){{apply --img --media=$var --width=100 --height=100 --bgcolor='#ffffff' --replace;}};" src="blank.gif" alt="" height="100" width="100"></div>
+			
+			<div onclick="myApp.ext.store_product.u.showPicsInModal({'pid':$(this).parent().attr('data-pid'),'int':'4'});" class="pointer"><img data-tlc="bind $var '.%attribs.zoovy:prod_image4'; if(is $var --notblank){{apply --img --media=$var --width=100 --height=100 --bgcolor='#ffffff' --replace;}};" src="blank.gif" alt="" height="100" width="100"></div>
 	
 		</div>
-		<div data-tlc="bind $var '.%attribs.youtube:videoid'; if(is $var --notblank;) {{ apply --show; }}; " class="displayNone youTubeVideoCont"></div>
+		<div data-tlc="bind $var '.%attribs.youtube:videoid'; if(is $var --notblank;) {{ apply --show; }}; " class="displayNone youTubeVideoCont">
         	<img class="prodYTPrev" src="images/prodYTPrev.png" />
             <img class="prodYTNext" src="images/prodYTNext.png" />
-            <div data-tlc="bind $var '.%attribs.youtube:videoid'; store_downlite#renderyoutubevideos  --legacy;" class="ytVideoCont"></div>
+            <div data-tlc="bind $var '.%attribs.youtube:videoid'; store_downlite#renderyoutubevideos  --legacy;" class="ytVideoCont">
             	<span data-tlc="bind $var '.%attribs.youtube:video_title'; store_downlite#renderyoutubetitles  --legacy;" class="displayNone"></span>
                 <span data-tlc="bind $var '.%attribs.youtube:video_description'; store_downlite#renderyoutubedesc  --legacy;" class="displayNone"></span>
             </div>
@@ -1102,7 +1098,7 @@ the tabs are built in an onComplete.  ID's are added based on sku AND index, so 
 or the tab clicked won't open the right content.
 It's done this way because ID's hard coded into template are bad mojo (templates are recycled) and because using data-binds to add id's caused some serious issues
 -->
-<div data-tlc="bind $var '.pid'; apply --attrib='data-pid'; " class="prodTabs tabbedProductContent applyAnytabs"></div>
+<div data-tlc="bind $var '.pid'; apply --attrib='data-pid'; " class="prodTabs tabbedProductContent applyAnytabs">
 
 	<ul class='tabs'>
 		<!-- <li class='prodDescTab'><a href='#prodDesc'>Description</a></li> -->
@@ -1761,11 +1757,11 @@ This is the template used both within a dialog and inline, unless implicitly ove
 
 <div id="cartTemplate" class="clearfix"><!-- template role gets added by the myApp. don't add it yourself -->
 
-<form action="#" onsubmit="return false">
+	<form action="#" onsubmit="return false">
 
-<div class="cartStuffContainer">
-	<ul data-tlc="bind $var '.@ITEMS'; controller#loop --templateid='productListTemplateCart'; if (is $var --notblank;) {{apply --append;}};" class="listStyleNone fluidList clearfix noPadOrMargin productList lineItemProdlist"></ul>
-</div>
+		<div class="cartStuffContainer">
+			<ul data-tlc="bind $var '.@ITEMS'; controller#loop --templateid='productListTemplateCart'; if (is $var --notblank;) {{apply --append;}};" class="listStyleNone fluidList clearfix noPadOrMargin productList lineItemProdlist"></ul>
+		</div>
 
 		<div class='cartSummaryTotalsContainer'>
 			<div class='ui-widget-header ui-corner-top ui-header smallPadding smallButton'>
@@ -1774,57 +1770,57 @@ This is the template used both within a dialog and inline, unless implicitly ove
 			</div>
 			<div class='cartSummaryContainer stdPadding ui-widget-content clearfix'>
 
-<section class="cartSummary marginBottom">
+				<section class="cartSummary marginBottom">
 
-	<div data-tlc="bind $var '.sum.items_total'; if (is $var --notblank;) {{format --currency='USD'; format --prepend='Subtotal: '; apply --add --class='orderSubtotal'; apply --append;}};"></div>
+					<div data-tlc="bind $var '.sum.items_total'; if (is $var --notblank;) {{format --currency='USD'; format --prepend='Subtotal: '; apply --add --class='orderSubtotal'; apply --append;}};"></div>
 
-	<div data-tlc="bind $var '.sum.tax_total'; if (is $var --notblank;) {{format --currency='USD'; format --prepend='Tax: '; apply --add --class='orderTax'; apply --append;}};"></div>
+					<div data-tlc="bind $var '.sum.tax_total'; if (is $var --notblank;) {{format --currency='USD'; format --prepend='Tax: '; apply --add --class='orderTax'; apply --append;}};"></div>
 
-	<div data-tlc="cco#shipinfobyid  --legacy;" class="orderShipping" data-bind="useParentData:true; format:shipinfobyid; extension:cco;"></div>
+					<div data-tlc="cco#shipinfobyid  --legacy;" class="orderShipping" data-bind="useParentData:true; format:shipinfobyid; extension:cco;"></div>
 
-	<div data-tlc="bind $var '.sum.order_total'; if (is $var --notblank;) {{format --currency='USD'; format --prepend='Order Total: '; apply --add --class='orderTotal'; apply --append;}};"></div>
+					<div data-tlc="bind $var '.sum.order_total'; if (is $var --notblank;) {{format --currency='USD'; format --prepend='Order Total: '; apply --add --class='orderTotal'; apply --append;}};"></div>
 
-	<div data-tlc="bind $var '.sum.gfc_total'; if (is $var --notblank;) {{format --currency='USD'; format --prepend='Giftcard(s): '; apply --add --class='orderGiftcardTotal'; apply --append;}};"></div>
-	<div data-tlc="bind $var '.sum.pnt_total'; if (is $var --notblank;) {{format --currency='USD'; format --prepend='Reward Points: '; apply --add --class='rewardPointsTotal'; apply --append;}};"></div>
-	<div data-tlc="bind $var '.sum.rmc_total'; if (is $var --notblank;) {{format --currency='USD'; format --prepend='Returns Credit: '; apply --add --class='returnsCreditTotal'; apply --append;}};"></div>
+					<div data-tlc="bind $var '.sum.gfc_total'; if (is $var --notblank;) {{format --currency='USD'; format --prepend='Giftcard(s): '; apply --add --class='orderGiftcardTotal'; apply --append;}};"></div>
+					<div data-tlc="bind $var '.sum.pnt_total'; if (is $var --notblank;) {{format --currency='USD'; format --prepend='Reward Points: '; apply --add --class='rewardPointsTotal'; apply --append;}};"></div>
+					<div data-tlc="bind $var '.sum.rmc_total'; if (is $var --notblank;) {{format --currency='USD'; format --prepend='Returns Credit: '; apply --add --class='returnsCreditTotal'; apply --append;}};"></div>
 
-	<div data-tlc="bind $var '.sum.balance_due_total'; cco#orderbalance  --classname='orderBalanceDue' --hidezero='false' --currencysign='$' --legacy;"></div>
+					<div data-tlc="bind $var '.sum.balance_due_total'; cco#orderbalance  --classname='orderBalanceDue' --hidezero='false' --currencysign='$' --legacy;"></div>
 
-</section>
+				</section>
 
 				<section id='cartTemplateShippingContainer' data-app-role='cartTemplateShippingContainer' class='cartTemplateShippingContainer'>
 					<h3>Shipping:</h3>
 
-	<div class="cartZipCodeContainer marginBottom">
-		<label>Zip/Postal Code:
-		<input data-tlc="bind $var '.ship.postal'; if(is $var --blank) {{bind $var '.bill.postal'; }}; apply --select=$var; " size="6" name="ship/postal" value="" maxlength="10" data-app-blur="cco|cartZipUpdateExec" type="text"></label>
-	</div>
+					<div class="cartZipCodeContainer marginBottom">
+						<label>Zip/Postal Code:
+						<input data-tlc="bind $var '.ship.postal'; if(is $var --blank) {{bind $var '.bill.postal'; }}; apply --select=$var; " size="6" name="ship/postal" value="" maxlength="10" data-app-blur="cco|cartZipUpdateExec" type="text"></label>
+					</div>
 
-	<ul data-tlc="order_create#shipmethodsasradiobuttons  --legacy;" class="noPadOrMargin listStyleNone" data-bind="useParentData:true; format:shipmethodsasradiobuttons; extension: order_create;" data-app-role="shipMethodsUL"></ul>
-</section>
+					<ul data-tlc="order_create#shipmethodsasradiobuttons  --legacy;" class="noPadOrMargin listStyleNone" data-bind="useParentData:true; format:shipmethodsasradiobuttons; extension: order_create;" data-app-role="shipMethodsUL"></ul>
+				</section>
 
-<section class="marginBottom">
+				<section class="marginBottom">
 
-	
+					
 
-</section>
+				</section>
+
+			</div>
+			<div class="ui-state-default cartButtons stdPadding clearfix">
+				<!-- spans are set around the buttons so each element has one consitent tag type around it -->
+				<span class="continueShoppingSpan thisButton"><button class="applyButton continueShoppingButton" data-app-click="myRIA|dialogClose">Continue Shopping</button></span>
+		
+				<span id="inStoreCheckoutButton" class='thisButton' title="proceed to secure checkout">
+					<a class="applyButton ui-state-highlight checkoutButton" href='#!checkout'>Store Checkout</a>
+				</span>
+		
+				<span data-tlc="bind $var '.cart.cartid'; cco#paypalecbutton  --legacy;" id="paypalecbutton" class="thisButton"></span>
+		
+			</div>
 
 		</div>
-		<div class="ui-state-default cartButtons stdPadding clearfix">
-			<!-- spans are set around the buttons so each element has one consitent tag type around it -->
-			<span class="continueShoppingSpan thisButton"><button class="applyButton continueShoppingButton" data-app-click="myRIA|dialogClose">Continue Shopping</button></span>
-	
-			<span id="inStoreCheckoutButton" class='thisButton' title="proceed to secure checkout">
-				<a class="applyButton ui-state-highlight checkoutButton" href='#!checkout'>Store Checkout</a>
-			</span>
-	
-			<span data-tlc="bind $var '.cart.cartid'; cco#paypalecbutton  --legacy;" id="paypalecbutton" class="thisButton"></span>
-	
-		</div>
 
-	</div>
-</div>
-</form>
+	</form>
 </div>
 
 

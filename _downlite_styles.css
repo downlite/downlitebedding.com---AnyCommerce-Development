@@ -154,6 +154,18 @@ div.nav_menu div.caroufredsel_wrapper{
     text-decoration: none;
 }
 
+.subButton {
+    background-image: url("images/SearchBg.png");
+    border: 1px solid #BFBFBD;
+    color: #858585;
+    float: left;
+    font-size: 13px;
+    font-weight: bold;
+    margin: 25px 0 0 20px;
+    padding: 9px;
+    width: 90px;
+}
+
 
 
 /* RSS feed styles */
