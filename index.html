@@ -215,7 +215,7 @@ ANIMATION TESTING
 
 			<div class="vertical_slider">
 				<a class="showHideBrandsMobile displayNone" onClick="myApp.ext.store_downlite.a.showHideBrands();">Our Brands</a>
-                		<ul id='brandCategories' class='noPadOrMargin listStyleNone categoryList fluidList'></ul><!-- BRAND LIST WILL GO HERE -->
+                <ul id='brandCategories' class='noPadOrMargin listStyleNone categoryList fluidList'></ul><!-- BRAND LIST WILL GO HERE -->
 			</div>
 
 			<div class="nav_menu">
@@ -462,7 +462,7 @@ APP SPECIFIC TEMPLATES
 <!-- used in the 'brands' carousel in the header. -->
 <ul>
 
-<li id='categoryListTemplateThumb' onClick="showContent('category',{'navcat':$(this).attr('data-catsafeid')});" class='pointer'><img data-tlc="bind $var '.%meta.CAT_THUMB'; if (is $var --notblank;) {{ apply --img --media=$var --width=100 --height=35 --bgcolor='#ffffff' --replace;}};" src="blank.gif" class="catThumb" height="35" width="100"></li>
+<li id='categoryListTemplateThumb' class='pointer'><a data-tlc="bind $var '.'; store_routing#seoanchor --type='category' --seo; apply --attrib='href';"><img data-tlc="bind $var '.%meta.CAT_THUMB'; if (is $var --notblank;) {{ apply --img --media=$var --width=100 --height=35 --bgcolor='#ffffff' --replace;}};" src="blank.gif" class="catThumb" height="35" width="100"></a></li>
 
 <li id='categoryListTemplateName'><a data-tlc="bind $var '.pretty'; if (is $var --notblank;) {{apply --append;}};" href="#" onclick="showContent('category',{'navcat':$(this).parent().attr('data-catsafeid')}); return false"></a></li>
 

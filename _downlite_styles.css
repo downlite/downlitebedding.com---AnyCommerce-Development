@@ -198,11 +198,13 @@ div.nav_menu div.caroufredsel_wrapper{
  }
  
  .blog1, .blog2, .blog3 {
- 	display: table-cell;
- 	width: 280px;
- 	padding: 15px 15px 0 25px;
- 	border-right: 10px solid white;
  	background-color: #918484;
+    border-right: 10px solid #FFFFFF;
+    display: table-cell;
+    float: left;
+    height: 690px;
+    padding: 15px 15px 0 25px;
+    width: 270px;
  }
  
  .blog2, .blog3 {
