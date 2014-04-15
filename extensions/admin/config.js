@@ -1181,7 +1181,7 @@ when an event type is changed, all the event types are dropped, then re-added.
 					sfo = $form.serializeJSON({'cb':true}), //cb true returns checkboxes w/ 1 or 0 based on whether it's checked/unchecked, respecticely. strings, not ints.
 					$dataTableTbody = $("tbody[data-table-role='content']",$form), //a table used for data such as price breakdowns on a flex priced based ship method (or zip,weight,etc data)
 					macros = new Array(),
-					callback = 'handleMacroUpdate'; //will be changed if in insert mode.
+					callback = 'handleMacroUpdate'; //will be changed if in insert mode. this is in the marketplace extension.
 					
 				if(_app.u.validateForm($form))	{
 					
@@ -1212,12 +1212,14 @@ when an event type is changed, all the event types are dropped, then re-added.
 							});
 						}
 				//currently, only insurance and handling have more than one data table. If that changes, the code below will need updating.
+				//this is used for ALL ship methods tho, so the whitelist must include all the input names for all the ship method data tables.
 					else if($dataTableTbody.length && sfo.provider)	{
 						macros.push("SHIPMETHOD/DATATABLE-EMPTY?provider="+sfo.provider);
 						$('tr',$dataTableTbody).each(function(){
-							if($(this).hasClass('rowTaggedForRemove'))	{} //row is being deleted. do not add. first macro clears all, so no specific remove necessary.
+							if($(this).hasClass('rowTaggedForRemove'))	{ $(this).intervaledEmpty()} //row is being deleted. do not add. first macro clears all, so no specific remove necessary.
 							else	{
-								macros.push("SHIPMETHOD/DATATABLE-INSERT?provider="+sfo.provider+"&"+$.param(_app.u.getWhitelistedObject($(this).data(),['country','type','match','guid'])));
+//								dump(" -> tr.data():"); dump($(this).data());
+								macros.push("SHIPMETHOD/DATATABLE-INSERT?provider="+sfo.provider+"&"+$._app.u.hash2kvp(_app.u.getWhitelistedObject($(this).data(),['country','type','match','guid','subtotal','fee','weight','zip1','zip2','postal','text'])));
 								}
 							});
 						}
@@ -1228,9 +1230,13 @@ when an event type is changed, all the event types are dropped, then re-added.
 				
 					_app.ext.admin.calls.adminConfigMacro.init(macros,{'callback':callback,'extension':'admin_marketplace','jqObj':$form},'immutable');
 //nuke and re-obtain shipmethods so re-editing THIS method shows most up to date info.
-// ** 201401 -> the new callback for navigateTo on the configMacro call will destroy/re-obtain the shipmethods.
-//					_app.model.destroy('adminConfigDetail|shipmethods|'+_app.vars.partition);
-//					_app.ext.admin.calls.adminConfigDetail.init({'shipmethods':true},{datapointer : 'adminConfigDetail|shipmethods|'+_app.vars.partition},'immutable');
+//the new callback for navigateTo on the configMacro call will destroy/re-obtain the shipmethods for handling and insurance.
+					if(sfo.provider == 'HANDLING' || sfo.provider == 'INSURANCE')	{}
+					else	{
+						_app.model.destroy('adminConfigDetail|shipmethods|'+_app.vars.partition);
+						_app.ext.admin.calls.adminConfigDetail.init({'shipmethods':true},{datapointer : 'adminConfigDetail|shipmethods|'+_app.vars.partition},'immutable');
+						
+						}
 				
 				//	_app.u.dump(" -> macros"); _app.u.dump(macros);
 					_app.model.dispatchThis('immutable');

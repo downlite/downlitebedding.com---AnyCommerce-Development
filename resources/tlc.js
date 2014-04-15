@@ -187,12 +187,17 @@ var tlc = function()	{
 					}
 	
 				if(commands && !$.isEmptyObject(commands))	{
-					_self.executeCommands(commands,{
+					var dataAfterTranslation = _self.executeCommands(commands,{
 						tags : {
 							'$tag' : $tag
 							}, //an object of tags.
 						focusTag : '$tag' //the pointer to the tag that is currently in focus.
 						},dataset);
+					if($._app.vars.debug == 'tlc')	{
+						dump(" ------> this is what the dataset looks like at the very end <------ ");
+						console.dir(dataAfterTranslation);
+						}
+					
 					}
 				else	{
 					dump("couldn't parse a tlc: "+$tag.data('tlc'),'warn');
@@ -462,7 +467,8 @@ This one block should get called for both img and imageurl but obviously, imageu
 			case 'remove':
 				if(argObj['class'])	{$tag.removeClass(argObj['class'])}
 				else if(argObj.tag)	{
-					globals.tags[argObj.tag].remove();
+					$tag.remove();
+//					globals.tags[argObj.tag].remove();
 					}
 				else	{
 					dump("For apply, the verb was set to remove, but neither a tag or class were defined. argObj follows:",'warn'); dump(argObj);
@@ -580,10 +586,10 @@ This one block should get called for both img and imageurl but obviously, imageu
 			case "or":
 				if(p1 != null){r = true;}; break; // ### FUTURE -> not done.
 */			}
-		if($._app.vars.debug == 'tlc')	{
+/*		if($._app.vars.debug == 'tlc')	{
 			dump(" -> op: "+op+" and p1 = "+p1+" and p2 = "+p2+" and r = "+r);
 			}
-		return r;
+*/		return r;
 		}
 
 
@@ -673,7 +679,7 @@ This one block should get called for both img and imageurl but obviously, imageu
 		}
 
 	this.set_path = function(argObj,globals,dataset)	{
-		dataset[argObj.path] = globals.binds[argObj.bind];
+		globals.binds[argObj.bind] = dataset[argObj.path];
 		return globals.binds[argObj.bind]; //no manipulation of the data occured so return unmolested var. 
 		}
 
@@ -759,6 +765,7 @@ returning a 'false' here will exit the statement loop.
 		}
 
 	this.handleType_EXPORT = function(cmd,globals,dataset)	{
+//		dump(" -> cmd: "); dump(cmd,'dir'); dump(dataset,'dir');
 		var argObj = this.args2obj(cmd.args,globals);
 //SANITY -> dataset is the name of the param passed in.
 		dataset[cmd.Set.value] = argObj.dataset;
@@ -794,20 +801,23 @@ returning a 'false' here will exit the statement loop.
 
 	this.handleType_FOREACH = function(cmd,globals,dataset)	{
 		//tested on a tlc formatted as follows: bind $items '.@DOMAINS'; foreach $item in $items {{transmogrify --templateid='tlclisttest' --dataset=$item; apply --append;}};
-//		dump(" -> into FOREACH"); dump(cmd.Members,'debug');
+		if($._app.vars.debug == 'tlc')	{
+			dump(" -> into FOREACH. members: "); dump(cmd.Members,'debug');
+			}
+		var newGlobal;
 		for(var index in globals.binds[cmd.Members.value])	{
-			var newGlobals = $.extend({},globals); //make a clean copy because focusBind here will probably be different than the rest of the tlc statement.
-			newGlobals.binds = {};
-			newGlobals.binds[cmd.Set.value] = globals.binds[cmd.Members.value][index];
-			newGlobals.focusBind = cmd.Set.value;
+//			var newGlobals = $.extend({},globals); //make a clean copy because focusBind here will probably be different than the rest of the tlc statement.
+			globals.binds[cmd.Set.value] = globals.binds[cmd.Members.value][index];
+			globals.focusBind = cmd.Set.value;
 //			dump(" -> index: "+index); dump(newGlobals);
-			this.executeCommands(cmd.Loop.statements,newGlobals,globals.binds[cmd.Members.value][index]);
+			this.executeCommands(cmd.Loop.statements,globals,globals.binds[cmd.Members.value][index]);
 			}
 		return cmd.Set.value;
 		}
 
 	this.handleType_SET = function(cmd,globals,dataset)	{
-		globals.binds[cmd.Set.value] = cmd.Src.value; //have to set this here so that the set_ functions have something to reference.
+		// a set is essentially a copy.  so we set the new bind to the value.  Then, the args are processed which may impact the final value. 
+		globals.binds[cmd.Set.value] = (cmd.Src.type == 'scalar') ? cmd.Src.value : globals.binds[cmd.Src.value]; //have to set this here so that the set_ functions have something to reference.
 		globals.focusBind = cmd.Set.value;
 		if(cmd.args)	{
 			var argObj = this.args2obj(cmd.args,globals);
@@ -1096,7 +1106,7 @@ returning a 'false' here will exit the statement loop.
 //		dump(" -> running tlcInstance.executeCommands"); //dump(commands);
 		//make sure all the globals are defined. whatever is passed in will overwrite the defaults. that happens w/ transmogrify
 		// NOTE -> if this extend is set to deep copy, any if statements w/ bind in them will stop working. that deep extend should be moved into translate, where execute is called.
-		var theseGlobals = $.extend({
+		var globals = $.extend({
 			binds : {}, //an object of all the binds set in args.
 			tags : {
 				'$tag' : ''
@@ -1108,7 +1118,7 @@ returning a 'false' here will exit the statement loop.
 		for(var i = 0, L = commands.length; i < L; i += 1)	{
 //			dump(i+") commands[i]: handleCommand_"+commands[i].type); //dump(commands[i]);
 			if(commands[i].type == 'command')	{
-				if(this.handleType_command(commands[i],theseGlobals,dataset))	{} //continue
+				if(this.handleType_command(commands[i],globals,dataset))	{} //continue
 				else	{
 					if($._app.vars.debug == 'tlc')	{
 						dump(" -> early exit of statement loop caused on cmd: "+commands[i].name+" (normal if this was legacy/renderFormat)");
@@ -1118,7 +1128,7 @@ returning a 'false' here will exit the statement loop.
 					}
 				}
 			else if(typeof this['handleType_'+commands[i].type] === 'function')	{
-				this['handleType_'+commands[i].type](commands[i],theseGlobals,dataset);
+				this['handleType_'+commands[i].type](commands[i],globals,dataset);
 				}
 			else	{
 				//unrecognized type.
@@ -1126,6 +1136,7 @@ returning a 'false' here will exit the statement loop.
 				dump(commands);
 				}
 			}
+		return globals;
 		}
 	
 //This is intendted to be run on a template BEFORE the data is in memory. Allows for gathering what data will be necessary.

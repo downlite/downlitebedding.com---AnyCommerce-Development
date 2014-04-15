@@ -3584,7 +3584,7 @@ dataAttribs -> an object that will be set as data- on the panel.
 				vars = vars || {};
 				vars.title = vars.title || ""; //don't want 'undefind' as title if not set.
 				vars.anycontent = vars.anycontent || true; //default to runing anycontent. if no templateID specified, won't run.
-				vars.handleAppEvents = (vars.handleAppEvents == false) ? false : true; //default to runing anycontent. if no templateID specified, won't run.
+				vars.handleAppEvents = (vars.handleAppEvents == false) ? false : true; //need to be able to turn this off in case a dialog is appended to a parent.
 
 				var $D = $("<div \/>").attr('title',vars.title);
 				
@@ -3627,7 +3627,9 @@ dataAttribs -> an object that will be set as data- on the panel.
 				if(vars.handleAppEvents)	{
 					_app.u.handleAppEvents($D,vars);
 					}
-				_app.u.addEventDelegation($D);
+				if(!vars.skipDelegation)	{
+					_app.u.addEventDelegation($D);
+					}
 				$D.anyform();
 				_app.u.handleCommonPlugins($D);
 				_app.u.handleButtons($D);
@@ -3668,7 +3670,12 @@ dataAttribs -> an object that will be set as data- on the panel.
 // ** 201402 -> the menu, when opening a dialog, was not closing
 				$menu.on('click','a, button',function(){$menu.hide();});
 				$( document ).one( "click", function() {$menu.hide();});
-				$menu.css({'position':'absolute','width':($menu.data('width') || 200),'z-index':200,'top':25,'right':0}).show();
+				$menu.css({'position':'absolute','width':($menu.data('width') || 200),'z-index':200}).show();
+				$menu.position({
+					my: "left top",
+					at: "left bottom",
+					of: $ele
+					});
 				return false;
 				},
 			
