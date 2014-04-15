@@ -667,9 +667,9 @@ don't modify the 'data-templateid' unless you are changing template names and up
 	<div class='clearfix'></div>
 	<div class='marginBottom'>
 	<!--	<div class='catMediaCol'>-->
-		<div data-tlc="bind $var '.%page.picture1'; store_downlite#showhidecategoryvideo  --legacy;" class="catMediaContainer displayNone">
+		<div data-tlc="bind $var '.%page.picture1'; store_downlite#showhidearea  --legacy;" class="catMediaContainer displayNone">
 			<div data-tlc="bind $var '.%page.picture1'; if(is $var --notblank;) {{ apply --show; }}; " class="catBigImageContainer displayNone"><img data-tlc="bind $var '.%page.picture1'; if (is $var --notblank;) {{ apply --img --media=$var --width=480 --height=360 --bgcolor='#ffffff' --replace;}};" src="blank.gif" height="360" width="480"></div>
-			<div data-tlc="bind $var '.%page.youtube_videoid'; store_downlite#showhidecategoryvideo  --legacy;" class="displayNone">
+			<div data-tlc="bind $var '.%page.youtube_videoid'; store_downlite#showhidearea  --legacy;" class="displayNone">
 				<div data-tlc="bind $var '.%page.youtube_videoid'; apply --attrib='data-videoid'; " class="catVideoContainer clearfix pointer" onclick="myApp.ext.store_downlite.a.showYoutubeInModal($(this).attr('data-videoid'));">
 					<div class='vidThumb'><img data-tlc="bind $var '.%page.youtube_videoid'; quickstart#youtubethumbnail  --legacy;" src="blank.gif" height="90" width="120"></div>
 					<h2 data-tlc="bind $var '.%page.youtube_videoheader'; if (is $var --notblank;) {{apply --append;}};"></h2>
@@ -688,7 +688,7 @@ don't modify the 'data-templateid' unless you are changing template names and up
 		<div class="clearfix"></div>
 	</div>
 
-	<ul data-tlc="bind $var '.@subcategoryDetail'; store_navcats#categorylist  --detail='max' --templateid='categoryListTemplate'  --legacy;" class="listStyleNone clearfix noPadOrMargin fluidList categoryList marginBottom"></ul>
+	<!--<ul data-tlc="bind $var '.@subcategoryDetail'; store_navcats#categorylist  --detail='max' --templateid='categoryListTemplate'  --legacy;" class="listStyleNone clearfix noPadOrMargin fluidList categoryList marginBottom"></ul>-->
 
 	<div class="catProdListContainer">
 		<div class="catProdListSidebar"></div>
@@ -709,8 +709,10 @@ don't modify the 'data-templateid' unless you are changing template names and up
 
 	<ul data-tlc="bind $var '.@subcategoryDetail'; store_navcats#categorylist  --detail='max' --templateid='categoryListTemplate'  --legacy;" class="listStyleNone fluidList clearfix noPadOrMargin categoryList"></ul><!-- outputs a list of subcategories -->
 
-	<ul data-tlc="bind $var '.@products'; store_prodlist#productlist  --withReviews='1' --withInventory='1' --withVariations='1' --itemsperpage='25' --templateid='productListTemplate'  --legacy;" class="listStyleNone fluidList clearfix noPadOrMargin productList"></ul><!-- outputs the product list -->
-
+	<!--
+    <ul data-tlc="bind $var '.@products'; store_prodlist#productlist  --withReviews='1' --withInventory='1' --withVariations='1' --itemsperpage='25' --templateid='productListTemplate'  --legacy;" class="listStyleNone fluidList clearfix noPadOrMargin productList"></ul><!-- outputs the product list -->
+	
+    
 	<p data-tlc="bind $var '.%page.description2'; if (is $var --notblank;) {{ render --wiki='quickstart'; apply --append;}};"></p>
 
 		
@@ -769,16 +771,18 @@ remember to NOT put the button inside the 'onclick' container or two events will
 			<h5 data-tlc="bind $var '.%attribs.zoovy:prod_name'; if (is $var --notblank;) {{apply --append;}};"></h5>
 			<div class='pricing'>
 				<div class='basePrice' >
-				<span class='value' data-tlc="bind $var '.%attribs.zoovy:base_price'; if (is $var --notblank;) {{ format --currency='USD';  format --prepend='<span>Price From: </span>'; apply --append;}};">
+				<span class='value' data-tlc="bind $var '.%attribs.zoovy:base_price'; if (is $var --notblank;) {{store_downlite#currencyprodlist --legacy; apply --append;}};">
 				</span>
 				</div>
 				
 				<div class='retailPrice'>
-					<span data-tlc="bind $var '.%attribs.zoovy:prod_msrp'; if (is $var --notblank;) {{format --currency='USD'; format --prepend='<span class='prompt retailPricePrompt'>MSRP: </span>' apply --append;}};"></span>
+					<span data-tlc="bind $var '.%attribs.zoovy:prod_msrp'; if (is $var --notblank;) {{store_downlite#currencymsrp --legacy; apply --append;}};"></span>
 				</div>
 				
-				<span class="displayNone" data-tlc="bind $var '.%attribs.zoovy:prod_msrp'; if(is $var --notblank;) {{ apply --show; }};">You save: </span><span data-tlc="bind $var '.pid'; quickstart#priceretailsavingsdifference  --legacy; apply --append;" class="savingsDifference"></span>
-							
+				<span class="displayNone savings" data-tlc="bind $var '.%attribs.zoovy:prod_msrp'; store_downlite#showhidearea  --legacy;">
+                    <span class="displayNone" data-tlc="bind $var '.%attribs.zoovy:prod_msrp'; store_downlite#showhidearea  --legacy;">You save: </span><span data-tlc="bind $var '.pid'; quickstart#priceretailsavingsdifference  --legacy; apply --append;" class="savingsDifference"></span>
+                    <span class="displayNone" data-tlc="bind $var '.%attribs.zoovy:prod_msrp'; store_downlite#showhidearea  --legacy;"> (</span><span data-tlc="bind $var '.pid'; quickstart#priceretailsavingspercentage  --legacy; apply --append;" class="savingsPercentage"></span><span class="displayNone" data-tlc="bind $var '.%attribs.zoovy:prod_msrp'; if(is $var --notblank;) {{ apply --show; }};">)</span>
+                </span>
 			</div>			
 		</div>
 		<!--
@@ -788,11 +792,12 @@ remember to NOT put the button inside the 'onclick' container or two events will
 <!--		<span data-bind='var: reviews(reviews.average); format:addClass; className:review_;' class='reviewSprite'></span> -->
 <!-- 	<span data-bind='var: reviews(reviews.total); format:text; pretext: from ;posttext: reviews; className:numReviews;'></span> -->
 	</a>
-	
+	<!--
 	<form data-tlc="bind $var '.pid'; store_product#atcform  --legacy; apply --append;" class="prodViewerAddToCartForm clearfix" action="#" onsubmit="return false" data-app-submit="quickstart|productAdd2Cart" data-show="modal">
 		<input name="qty" value="1" type="hidden">
 		<button data-tlc="quickstart#addtocartbutton  --legacy; apply --append;" data-bind="format:addtocartbutton; extension:quickstart; useParentData:true;" class='applyButton'>more details</button>
 	</form>
+    -->
 	
 </li>
 

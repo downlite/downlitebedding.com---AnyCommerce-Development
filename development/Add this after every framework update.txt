@@ -1,24 +1,2 @@
-1. quickstart.js:
-- Add back in custom templates:
-//CUSTOM TEMPLATES
-'categoryProductListTemplate',
-'testimonialsTemplate',
-
-- 						}
-					else	{
-						infoObj.templateID = 'categoryTemplate'
-						}
-
-becomes
-						}					else if(myApp.ext._store_formals.vars.catTemplates[catSafeID]){
-             			myApp.u.dump("category list template option selected");
-              			infoObj.templateID = myApp.ext._store_formals.vars.catTemplates[catSafeID]
-            		}
-          			else{
-              			myApp.u.dump("category default template option selected");
-              			infoObj.templateID = 'categoryTemplate'
-					}
-
-
-2. cart_checkout_order.js:
+1. cart_checkout_order.js:
 Add this commit: https://github.com/onlineformals/onlineformals/commit/bcf08ed5097eee5ac1e8e6b13a9c5738d65a12bc

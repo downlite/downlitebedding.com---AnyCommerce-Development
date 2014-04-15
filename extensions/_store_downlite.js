@@ -292,7 +292,7 @@ var store_downlite = function(_app) {
 						$(".prodYTPrev", $context).hide();
 						$(".prodYTNext", $context).hide();
 					}
-				},
+				},//renderYouTubeVideos
 				
 				renderYouTubeTitles : function($tag,data)	{
 					var $context = $tag.parent();
@@ -306,7 +306,7 @@ var store_downlite = function(_app) {
 						$(".youtubeVideo" + i, $context).append($title);
 					}
 					
-				},
+				},//renderYouTubeTitles
 				
 				renderYouTubeDesc : function($tag,data)	{
 					var $context = $tag.parent();
@@ -320,9 +320,9 @@ var store_downlite = function(_app) {
 						$(".youtubeVideo" + i, $context).append($desc);
 					}
 					
-				},
+				},//renderYouTubeDesc
 				
-				showhidecategoryvideo : function($tag,data)	{
+				showhidearea : function($tag,data)	{
 					//dump("showHideCategoryVideo data object = ");
 					//dump(data);
 					if(data.value == null || data.value == ""){
@@ -332,7 +332,64 @@ var store_downlite = function(_app) {
 						$tag.show();
 					}
 					
-				}
+				},//showhidecategoryvideo
+				
+				currencyprodlist : function($tag,data)	{
+					//dump("Begin currency product list format");
+					//dump(data);
+					//dump($tag);
+					
+					var r = "<span class='pricePrefix'>Our price:</span> $"+data.value;
+					//dump(r);
+					var cents = r.split(".")
+					//dump(cents[1]);
+					if(cents[1] == undefined){
+						//dump ("No cents present. Add a .00")
+						r = r + "<span class='cents'>.00</span>";
+					}
+					else if(cents[1].length === 1){
+						//dump(cents[1].length);
+						//dump ("cents only has one value. Adding a zero.")
+						var pricePieces = r.split(".");
+						r = pricePieces[0] + "<span class='cents'>.00</span>";
+					}
+					else if(cents[1] == ""){
+						//dump("Price value has a decimal but no cent values. Fixing this shenanigans");
+						var pricePieces = r.split(".");
+						r = pricePieces[0] + "<span class='cents'>.00</span>";
+					}
+					//dump(r);
+					$tag.append(r);
+				}, //currencyprodlist
+			
+			
+				currencymsrp : function($tag,data)	{
+					//dump("Begin currency product list format");
+					//dump(data);
+					//dump($tag);
+					
+					var r = "<span class='msrpPrefix'>MSRP:</span> $"+data.value;
+					//dump(r);
+					var cents = r.split(".")
+					//dump(cents[1]);
+					if(cents[1] == undefined){
+						//dump ("No cents present. Add a .00")
+						r = r + "<span class='cents'>.00</span>";
+					}
+					else if(cents[1].length === 1){
+						//dump(cents[1].length);
+						//dump ("cents only has one value. Adding a zero.")
+						var pricePieces = r.split(".");
+						r = pricePieces[0] + "<span class='cents'>.00</span>";
+					}
+					else if(cents[1] == ""){
+						//dump("Price value has a decimal but no cent values. Fixing this shenanigans");
+						var pricePieces = r.split(".");
+						r = pricePieces[0] + "<span class='cents'>.00</span>";
+					}
+					//dump(r);
+					$tag.append(r);
+				} //currencymsrp
 
 
 			}, //renderFormats

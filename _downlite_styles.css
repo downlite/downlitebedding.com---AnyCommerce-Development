@@ -175,6 +175,19 @@ div.nav_menu div.caroufredsel_wrapper{
 	text-decoration:none;
 }
 
+.basePrice span.value{
+	font-style: italic;
+}
+.basePrice span.value span{
+	font-size: 15px;
+    font-style: italic;
+    font-weight: 400;
+}
+.basePrice span.value span.cents{
+	font-size: 22px;
+    font-weight: bold;
+}
+
 
 
 

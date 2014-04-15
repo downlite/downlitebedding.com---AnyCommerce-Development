@@ -2075,7 +2075,15 @@ CATEGORY TEMPLATE
 .categoryBox, .productBox	{border:1px solid #d2d2d2;} /* separate class for border because 'categoryList' is shared and not all lists need a border. */
 .categoryList .catName, .productList .productInfoPadding	{text-align:center; padding:8px;}
 
-.productInfoPadding h5	{font-weight:normal; margin-bottom:8px;font-size:100%;}
+.productBox a{text-decoration: none;}
+.productInfoPadding h5	{
+	color: #6F7376;
+    font-size: 100%;
+    font-style: italic;
+    font-weight: normal;
+    margin-bottom: 8px;
+    text-decoration: none;
+}
 .pricing .retailPrice	{text-decoration:line-through}
 .pricing .basePrice	{color:#c95b04;}
 
