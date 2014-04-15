@@ -908,7 +908,7 @@ SANITY -> if you change the height and width of this image, change the .minimalM
 </li>
 
 <li id="simpleSubcatTemplate">
- 	<a data-tlc="bind $var '.path'; apply --attrib='data-navcat'; " href="#" onclick="myApp.u.dump($(this).attr('data-navcat')); return showContent('category',{'navcat':$(this).attr('data-navcat')});">
+ 	<a data-tlc="bind $var '.'; store_routing#seoanchor --type='category' --seo; apply --attrib='href';">
  		<span data-tlc="bind $var '.pretty'; if (is $var --notblank;) {{apply --append;}};"></span>
  	</a>
 </li>
