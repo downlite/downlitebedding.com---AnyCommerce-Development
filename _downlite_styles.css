@@ -818,6 +818,9 @@ div.nav_menu div.caroufredsel_wrapper{
 		text-align: center;
 		width: 74px;
 	}
+    .dropdownCategoryTextCont p{
+	}
+	
 	.headerTopNavPrev{
 		display: block;
 		left: 0;
