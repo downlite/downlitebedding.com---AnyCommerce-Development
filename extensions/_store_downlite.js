@@ -320,6 +320,18 @@ var store_downlite = function(_app) {
 						$(".youtubeVideo" + i, $context).append($desc);
 					}
 					
+				},
+				
+				showhidecategoryvideo : function($tag,data)	{
+					//dump("showHideCategoryVideo data object = ");
+					//dump(data);
+					if(data.value == null || data.value == ""){
+						$tag.hide();
+					}
+					else{
+						$tag.show();
+					}
+					
 				}
 
 

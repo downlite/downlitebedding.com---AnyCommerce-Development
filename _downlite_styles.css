@@ -166,6 +166,19 @@ div.nav_menu div.caroufredsel_wrapper{
     width: 90px;
 }
 
+.categoryBox  a{
+	 text-decoration: none;
+}
+.catName span {
+	color: #6F7376;
+    font-size: 15px;
+	text-decoration:none;
+}
+
+
+
+
+
 
 
 /* RSS feed styles */

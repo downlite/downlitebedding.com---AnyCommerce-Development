@@ -667,9 +667,9 @@ don't modify the 'data-templateid' unless you are changing template names and up
 	<div class='clearfix'></div>
 	<div class='marginBottom'>
 	<!--	<div class='catMediaCol'>-->
-		<div data-tlc="bind $var '.%page.picture1'; if(is $var --notblank;) {{ apply --show; }}; " class="catMediaContainer displayNone">
+		<div data-tlc="bind $var '.%page.picture1'; store_downlite#showhidecategoryvideo  --legacy;" class="catMediaContainer displayNone">
 			<div data-tlc="bind $var '.%page.picture1'; if(is $var --notblank;) {{ apply --show; }}; " class="catBigImageContainer displayNone"><img data-tlc="bind $var '.%page.picture1'; if (is $var --notblank;) {{ apply --img --media=$var --width=480 --height=360 --bgcolor='#ffffff' --replace;}};" src="blank.gif" height="360" width="480"></div>
-			<div data-tlc="bind $var '.%page.youtube_videoid'; if(is $var --notblank;) {{ apply --show; }}; " class="displayNone">
+			<div data-tlc="bind $var '.%page.youtube_videoid'; store_downlite#showhidecategoryvideo  --legacy;" class="displayNone">
 				<div data-tlc="bind $var '.%page.youtube_videoid'; apply --attrib='data-videoid'; " class="catVideoContainer clearfix pointer" onclick="myApp.ext.store_downlite.a.showYoutubeInModal($(this).attr('data-videoid'));">
 					<div class='vidThumb'><img data-tlc="bind $var '.%page.youtube_videoid'; quickstart#youtubethumbnail  --legacy;" src="blank.gif" height="90" width="120"></div>
 					<h2 data-tlc="bind $var '.%page.youtube_videoheader'; if (is $var --notblank;) {{apply --append;}};"></h2>
@@ -726,7 +726,7 @@ don't modify the 'data-templateid' unless you are changing template names and up
 <ul>
 <li id='categoryListTemplate' class='categoryBox pointer categoryInnerBox'>
 	<a data-tlc="bind $var '.'; store_routing#seoanchor --type='category' --seo; apply --attrib='href';">
-		<div class="thumbContainer"><img data-tlc="bind $var '.%meta.CAT_THUMB'; if (is $var --notblank){{apply --img --media=$var --width=120 --height=120 --bgcolor='#ffffff' --replace;}};" src="blank.gif" class="catThumb" alt="" height="120" width="120"></div>
+		<div class="thumbContainer"><img data-tlc="bind $var '.%meta.CAT_THUMB'; if (is $var --notblank){{apply --img --media=$var --width=230 --height=230 --bgcolor='#ffffff' --replace;}};" src="blank.gif" class="catThumb" alt="" height="230" width="230"></div>
 		<div class="catName white2LGray"><span data-tlc="bind $var '.pretty'; quickstart#cattext  --legacy;"></span></div>
 	</a>
 </li>
