@@ -389,7 +389,45 @@ var store_downlite = function(_app) {
 					}
 					//dump(r);
 					$tag.append(r);
-				} //currencymsrp
+				}, //currencymsrp
+				
+				priceretailsavingsdifferenceprodlistitem : function($tag,data)	{
+				var o; //output generated.
+				dump(data);
+				var pData = _app.data['appProductGet|'+data.value]['%attribs'];
+	//use original pdata vars for display of price/msrp. use parseInts for savings computation only.
+				var price = Number(pData['zoovy:base_price']);
+				var msrp = Number(pData['zoovy:prod_msrp']);
+				dump("price = ");
+				dump(price);
+				dump("msrp = ");
+				dump(msrp);
+				if(price > 0 && (msrp - price > 0))	{
+					o = _app.u.formatMoney(msrp-price,'$',2,true)
+					$tag.append(o);
+					}
+				else	{
+					$tag.hide(); //if msrp > price, don't show savings because it'll be negative.
+					}
+				}, //priceRetailSavings
+				
+				priceretailsavingspercentageprodlistitem : function($tag,data)	{
+				var o; //output generated.
+				var pData = _app.data['appProductGet|'+data.value]['%attribs'];
+	//use original pdata vars for display of price/msrp. use parseInts for savings computation only.
+				var price = Number(pData['zoovy:base_price']);
+				var msrp = Number(pData['zoovy:prod_msrp']);
+				if(price > 0 && (msrp - price > 0))	{
+					var savings = (( msrp - price ) / msrp) * 100;
+					o = savings.toFixed(0)+'%';
+					$tag.append(o);
+					}
+				else	{
+					$tag.hide(); //if msrp > price, don't show savings because it'll be negative.
+					}
+				} //priceRetailSavings	
+				
+				
 
 
 			}, //renderFormats

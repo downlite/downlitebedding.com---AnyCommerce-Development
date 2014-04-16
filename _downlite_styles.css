@@ -187,6 +187,16 @@ div.nav_menu div.caroufredsel_wrapper{
 	font-size: 22px;
     font-weight: bold;
 }
+.retailPrice{
+	color: #6F7376;
+}
+.retailPrice span{
+	color: #6F7376;
+	font-style:italic;
+}
+span.savings{
+	color: #6F7376;
+}
 
 
 

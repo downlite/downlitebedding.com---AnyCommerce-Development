@@ -688,7 +688,7 @@ don't modify the 'data-templateid' unless you are changing template names and up
 		<div class="clearfix"></div>
 	</div>
 
-	<!--<ul data-tlc="bind $var '.@subcategoryDetail'; store_navcats#categorylist  --detail='max' --templateid='categoryListTemplate'  --legacy;" class="listStyleNone clearfix noPadOrMargin fluidList categoryList marginBottom"></ul>-->
+	<ul data-tlc="bind $var '.@subcategoryDetail'; store_navcats#categorylist  --detail='max' --templateid='categoryListTemplate'  --legacy;" class="listStyleNone clearfix noPadOrMargin fluidList categoryList marginBottom"></ul>
 
 	<div class="catProdListContainer">
 		<div class="catProdListSidebar"></div>
@@ -779,9 +779,10 @@ remember to NOT put the button inside the 'onclick' container or two events will
 					<span data-tlc="bind $var '.%attribs.zoovy:prod_msrp'; if (is $var --notblank;) {{store_downlite#currencymsrp --legacy; apply --append;}};"></span>
 				</div>
 				
-				<span class="displayNone savings" data-tlc="bind $var '.%attribs.zoovy:prod_msrp'; store_downlite#showhidearea  --legacy;">
-                    <span class="displayNone" data-tlc="bind $var '.%attribs.zoovy:prod_msrp'; store_downlite#showhidearea  --legacy;">You save: </span><span data-tlc="bind $var '.pid'; quickstart#priceretailsavingsdifference  --legacy; apply --append;" class="savingsDifference"></span>
-                    <span class="displayNone" data-tlc="bind $var '.%attribs.zoovy:prod_msrp'; store_downlite#showhidearea  --legacy;"> (</span><span data-tlc="bind $var '.pid'; quickstart#priceretailsavingspercentage  --legacy; apply --append;" class="savingsPercentage"></span><span class="displayNone" data-tlc="bind $var '.%attribs.zoovy:prod_msrp'; if(is $var --notblank;) {{ apply --show; }};">)</span>
+				<span class="displayNone savings" data-tlc="bind $var '.%attribs.zoovy:prod_msrp'; store_downlite#showhidearea  --legacy;">                	
+                    <div data-tlc="bind $var '.pid'; quickstart#priceretailsavingsdifference  --currencysign='$' --hidezero='true' --legacy;" class="savings"></div>
+                    <span class="displayNone" data-tlc="bind $var '.%attribs.zoovy:prod_msrp'; store_downlite#showhidearea  --legacy;">You save: </span><span data-tlc="bind $var '.pid'; store_downlite#priceretailsavingsdifferenceprodlistitem  --legacy; apply --append;" class="savingsDifference"></span>
+                    <span class="displayNone" data-tlc="bind $var '.%attribs.zoovy:prod_msrp'; store_downlite#showhidearea  --legacy;"> (</span><span data-tlc="bind $var '.pid'; store_downlite#priceretailsavingspercentageprodlistitem  --legacy; apply --append;" class="savingsPercentage"></span><span class="displayNone" data-tlc="bind $var '.%attribs.zoovy:prod_msrp'; if(is $var --notblank;) {{ apply --show; }};">)</span>
                 </span>
 			</div>			
 		</div>
