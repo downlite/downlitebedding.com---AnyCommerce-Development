@@ -330,9 +330,8 @@ var store_downlite = function(_app) {
 					}
 					else{
 						$tag.show();
-					}
-					
-				},//showhidecategoryvideo
+					}	
+				},//showhidearea
 				
 				currencyprodlist : function($tag,data)	{
 					//dump("Begin currency product list format");
@@ -398,12 +397,9 @@ var store_downlite = function(_app) {
 	//use original pdata vars for display of price/msrp. use parseInts for savings computation only.
 				var price = Number(pData['zoovy:base_price']);
 				var msrp = Number(pData['zoovy:prod_msrp']);
-				dump("price = ");
-				dump(price);
-				dump("msrp = ");
-				dump(msrp);
 				if(price > 0 && (msrp - price > 0))	{
 					o = _app.u.formatMoney(msrp-price,'$',2,true)
+					o = "You save: " + o;
 					$tag.append(o);
 					}
 				else	{
@@ -420,6 +416,7 @@ var store_downlite = function(_app) {
 				if(price > 0 && (msrp - price > 0))	{
 					var savings = (( msrp - price ) / msrp) * 100;
 					o = savings.toFixed(0)+'%';
+					o = "(" + o + ")";
 					$tag.append(o);
 					}
 				else	{
