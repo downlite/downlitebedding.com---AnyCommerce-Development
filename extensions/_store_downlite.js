@@ -255,16 +255,16 @@ var store_downlite = function(_app) {
 				}, //END atcForm
 				
 				
-				renderYouTubeVideos : function($tag,data)	{
-					//_app.u.dump(data);
+				renderyoutubevideos : function($tag,data)	{
+					dump(data);
 					var $context = $tag.parent();
 					var videoIds = data.value.split(',');
-					_app.u.dump("videoIds = " + videoIds);
+					dump("videoIds = " + videoIds);
 					var totalVideoAmount = videoIds.length;
-					_app.u.dump("totalVideoAmount = " + totalVideoAmount);
+					dump("totalVideoAmount = " + totalVideoAmount);
 					
 					for(var i=0;i<totalVideoAmount;i++){
-						var $videoContent = $("<div class='prodVideoContainer pointer clearfix youtubeVideo"+i+"' onClick=\"myApp.ext.myRIA.a.showYoutubeInModal($(this).attr('data-videoid'));\">"
+						var $videoContent = $("<div class='prodVideoContainer pointer clearfix youtubeVideo"+i+"' onClick=\"myApp.ext.quickstart.a.showYoutubeInModal($(this).attr('data-videoid'));\">"
 							+ "<div class='vidThumb'><img src='blank.gif' width='120' height='90' /></div>"
 							+"</div>"
 						);
@@ -294,7 +294,7 @@ var store_downlite = function(_app) {
 					}
 				},//renderYouTubeVideos
 				
-				renderYouTubeTitles : function($tag,data)	{
+				renderyoutubetitles : function($tag,data)	{
 					var $context = $tag.parent();
 					var videoTitles = data.value.split(',');
 					_app.u.dump("videoTitles = " + videoTitles);
@@ -308,7 +308,7 @@ var store_downlite = function(_app) {
 					
 				},//renderYouTubeTitles
 				
-				renderYouTubeDesc : function($tag,data)	{
+				renderyoutubedesc : function($tag,data)	{
 					var $context = $tag.parent();
 					var videoDesc = data.value.split(',');
 					_app.u.dump("videoDesc = " + videoDesc);

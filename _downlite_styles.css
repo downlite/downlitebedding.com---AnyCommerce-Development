@@ -198,6 +198,15 @@ span.savings{
 	color: #6F7376;
 }
 
+.prodManufacturer{
+}
+.prodManufacturer a{
+	color: #4D4D4D;
+}
+.prodManufacturer a:hover{
+	color:#D65E00;
+}
+
 
 
 
