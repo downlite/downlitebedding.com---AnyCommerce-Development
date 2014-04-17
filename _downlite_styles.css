@@ -207,6 +207,21 @@ span.savings{
 	color:#D65E00;
 }
 
+td.tabbedProductContentTD div.prodTabs ul.tabs li{
+	padding: 15px 0;
+}
+td.tabbedProductContentTD div.prodTabs ul.tabs li.ui-tabs-active{
+	border-bottom:none;
+}
+.tabbedProductContentTD .ui-tabs-panel{
+	border-top:none;
+}
+
+#prodViewerReviewSummary a{
+	cursor: pointer;
+    text-decoration: underline;
+}
+
 
 
 

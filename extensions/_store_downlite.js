@@ -214,7 +214,7 @@ var store_downlite = function(_app) {
 //that way, two render formats named the same (but in different extensions) don't overwrite each other.
 		renderFormats : {
 		
-				atcForm : function($tag,data)	{
+				atcform : function($tag,data)	{
 					$tag.append("<input type='hidden' name='sku' value='"+data.value+"' />");
 					//_app.u.dump($tag);
 					//_app.u.dump(data.value);
@@ -256,12 +256,12 @@ var store_downlite = function(_app) {
 				
 				
 				renderyoutubevideos : function($tag,data)	{
-					dump(data);
+					//dump(data);
 					var $context = $tag.parent();
 					var videoIds = data.value.split(',');
-					dump("videoIds = " + videoIds);
+					//dump("videoIds = " + videoIds);
 					var totalVideoAmount = videoIds.length;
-					dump("totalVideoAmount = " + totalVideoAmount);
+					//dump("totalVideoAmount = " + totalVideoAmount);
 					
 					for(var i=0;i<totalVideoAmount;i++){
 						var $videoContent = $("<div class='prodVideoContainer pointer clearfix youtubeVideo"+i+"' onClick=\"myApp.ext.quickstart.a.showYoutubeInModal($(this).attr('data-videoid'));\">"
@@ -297,9 +297,9 @@ var store_downlite = function(_app) {
 				renderyoutubetitles : function($tag,data)	{
 					var $context = $tag.parent();
 					var videoTitles = data.value.split(',');
-					_app.u.dump("videoTitles = " + videoTitles);
+					//dump("videoTitles = " + videoTitles);
 					var totalTitlesAmount = videoTitles.length;
-					_app.u.dump("totalTitlesAmount = " + totalTitlesAmount);
+					//dump("totalTitlesAmount = " + totalTitlesAmount);
 					
 					for(var i=0;i<totalTitlesAmount;i++){
 						var $title = $("<h2>"+videoTitles[i]+"</h2>");
@@ -311,9 +311,9 @@ var store_downlite = function(_app) {
 				renderyoutubedesc : function($tag,data)	{
 					var $context = $tag.parent();
 					var videoDesc = data.value.split(',');
-					_app.u.dump("videoDesc = " + videoDesc);
+					//dump("videoDesc = " + videoDesc);
 					var totalDescAmount = videoDesc.length;
-					_app.u.dump("totalDescAmount = " + totalDescAmount);
+					//dump("totalDescAmount = " + totalDescAmount);
 					
 					for(var i=0;i<totalDescAmount;i++){
 						var $desc = $("<p>"+videoDesc[i]+"</p>");

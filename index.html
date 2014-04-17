@@ -1018,9 +1018,10 @@ this will likely become more flexible in the future. ###
 	<h5 data-tlc="bind $var '.pid'; if (is $var --notblank;) {{format --prepend='Item #: '; apply --append;}};" class="stid"></h5>
     <h5 class="prodManufacturer" data-tlc="bind $var '.%attribs.zoovy:prod_mfg'; store_downlite#showhidearea  --legacy;">Manufacturer: <a href='#' data-tlc="bind $var '.%attribs.zoovy:prod_mfg'; if(is $var --notblank;) {{apply --append; format --prepend='#!search/keywords/'; apply --attrib='href';}};"></a></h5>
 	<!--<h5 data-bind='var: product(zoovy:prod_mfgid); format:text; pretext: Mfg ID: ;'></h5>-->
-	
-	<section id='prodViewerReviewSummary'>
-		<a href="#" onclick="myApp.ext.store_crm.u.showReviewFrmInModal({&quot;pid&quot;:$(this).parent().attr(&quot;data-pid&quot;),&quot;templateID&quot;:&quot;reviewFrmTemplate&quot;}); return false;">Review This Item</a> <span data-tlc="bind $var '.reviews.average'; if(is $var --notblank;) {{ apply --class='review_'; }}; if (is $var --notblank;) {{apply --add --class='review_'; apply --append;}};" class="reviewSprite"></span>
+    
+    <section id='prodViewerReviewSummary' data-tlc="bind $var '.pid'; apply --attrib='data-pid';">
+		<a data-app-click="store_crm|productReviewShow">Review This Item</a> 
+        <span data-tlc="bind $var '.reviews.average'; if(is $var --notblank;) {{ apply --class='review_'; }}; if (is $var --notblank;) {{apply --add --class='review_'; apply --append;}};" class="reviewSprite"></span>
 	</section>
 
 	
@@ -1058,18 +1059,18 @@ this will likely become more flexible in the future. ###
 	
    
     
-    	<form data-tlc="bind $var '.pid'; store_product#store_downlite  --legacy; apply --append;" class="prodViewerAddToCartForm clearfix marginBottom" action="#" data-app-submit="store_downlite|productAdd2Cart" data-show="modal">
+    	<form data-tlc="bind $var '.pid'; store_downlite#atcform  --legacy; apply --append;" class="prodViewerAddToCartForm clearfix marginBottom" action="#" data-app-submit="store_downlite|productAdd2Cart" data-show="modal">
 	
-		<fieldset data-tlc="bind $var '.pid'; store_product#atcvariations  --legacy; apply --append;" class="borderNone"></fieldset>
-		<div class='qtyAndATCContainer clearfix qtyInput'>
-			
-			<input id="addToCartBtn" data-tlc="bind $var '.pid'; store_product#addtocartbutton  --legacy;" value="Add to Cart" class="applyButton addtocartbutton displayNone floatRight" type="submit" />
-			
-			<fieldset data-tlc="bind $var '.'; store_product#atcquantityinput  --defaultvalue='1' --legacy;" class="borderNone floatRight displayNone"></fieldset>
-			
-			<img class='floatLeft' src='images/free_shipping-147x38.png' width='147' height='38' alt='free shipping on orders over $150' />
-		</div>
-	</form>
+            <fieldset data-tlc="bind $var '.pid'; store_product#atcvariations  --legacy; apply --append;" class="borderNone"></fieldset>
+            <div class='qtyAndATCContainer clearfix qtyInput'>
+                
+                <input id="addToCartBtn" data-tlc="bind $var '.pid'; store_product#addtocartbutton  --legacy;" value="Add to Cart" class="applyButton addtocartbutton displayNone floatRight" type="submit" />
+                
+                <fieldset data-tlc="bind $var '.'; store_product#atcquantityinput  --defaultvalue='1' --legacy;" class="borderNone floatRight displayNone"></fieldset>
+                
+                <img class='floatLeft' src='images/free_shipping-147x38.png' width='147' height='38' alt='free shipping on orders over $150' />
+            </div>
+        </form>
 	
 	<!--<div data-bind='var:product(zoovy:prod_cpsiawarning); format:cpsiaWarning; extension:myRIA;'></div>-->
 	<div data-bind='var:product(zoovy:qty_price);format:quantityDiscounts; extension:store_product; pretext:Quantity Discounts:; className:marginBottom;'></div>
@@ -1126,8 +1127,8 @@ It's done this way because ID's hard coded into template are bad mojo (templates
 	-->
 	<div class='tabContent' data-anytab-content='prodReviews'>
 		<div data-tlc="bind $var '.pid'; apply --attrib='data-pid';" class="clearfix alignRight">
-				<button class="applyButton" data-app-click="store_crm|productReviewShow">Write Review</button>
-			</div>
+            <button class="applyButton" data-app-click="store_crm|productReviewShow">Write Review</button>
+        </div>
 		<ul data-tlc="bind $var '.reviews.@reviews'; controller#loop --templateid='productReviewsTemplateDetail'; if (is $var --notblank;) {{apply --append;}};" class="listStyleNone clearfix productReviewsList"></ul>
 	</div>
 	
@@ -1248,6 +1249,7 @@ It's done this way because ID's hard coded into template are bad mojo (templates
 </tr>
 </table>
 <div class='prodlistRelatedContainer'>
+	<h4></h4>
 	<ul data-tlc="bind $var '.%attribs.zoovy:related_products'; store_prodlist#productlist  --hidePagination='true' --hideSummary='true' --prepend='<h2>Similar Items</h2>' --withReviews='1' --templateid='productListTemplate'  --legacy; apply --append;" class="listStyleNone fluidList clearfix noPadOrMargin productList"></ul>
 </div>
 
