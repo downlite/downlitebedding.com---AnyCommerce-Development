@@ -203,7 +203,29 @@ var store_downlite = function(_app) {
 						$ele.dialog('open');
 					}
 				return false;
-				}
+				},
+				
+				loginFrmSubmit : function(email,password,errorDiv)        {
+					var errors = '';
+					$errorDiv = errorDiv.empty(); //make sure error screen is empty. do not hide or callback errors won't show up.
+
+					if(_app.u.isValidEmail(email) == false){
+							errors += "Please provide a valid email address<br \/>";
+							}
+					if(!password)        {
+							errors += "Please provide your password<br \/>";
+							}
+					if(errors == ''){
+							_app.calls.appBuyerLogin.init({"login":email,"password":password},{'callback':'authenticateBuyer','extension':'quickstart'});
+							_app.calls.refreshCart.init({},'immutable'); //cart needs to be updated as part of authentication process.
+//                          _app.calls.buyerProductLists.init('forgetme',{'callback':'handleForgetmeList','extension':'store_prodlist'},'immutable');
+							_app.model.dispatchThis('immutable');
+							}
+					else {
+						$errorDiv.anymessage({'message':errors});
+					}
+					showContent('customer',{'show':'myaccount'})
+					} //loginFrmSubmit
 
 			}, //Actions
 
@@ -507,9 +529,9 @@ var store_downlite = function(_app) {
 				//the buildCartItemAppendObj needs a _cartid param in the form.
 				//_app.u.dump($ele.data('show'));
 				if($("input[name='_cartid']",$ele).length)	{}
-				else	{
+				else{
 					$ele.append("<input type='hidden' name='_cartid' value='"+_app.model.fetchCartID()+"' \/>");
-					}
+				}
 
 				var cartObj = _app.ext.store_product.u.buildCartItemAppendObj($ele);
 				if(cartObj)	{
@@ -521,15 +543,51 @@ var store_downlite = function(_app) {
 							}
 						else	{
 							if((cartType == "modal") || (cartType == "inline")){
-								showContent('cart',{'show':$ele.data('show')});
+								if(cartType == "inline"){
+									showContent('cart',{'show':$ele.data('show')});
+								}
+								else if(cartType == "modal"){
+									_app.ext.quickstart.u.showCartInModal({'templateID':'cartTemplate'});
+								}
 							}
 							else{}
-							}
-						}},'immutable');
+						}
+					}},'immutable');
 					_app.model.dispatchThis('immutable');
-					}
-				else	{} //do nothing, the validation handles displaying the errors.
 				}
+				else	{} //do nothing, the validation handles displaying the errors.
+				},
+				
+				handleAppLoginCreate : function($form)        {
+				if($form)        {
+						var formObj = $form.serializeJSON();
+						
+						if(formObj.pass !== formObj.pass2) {
+								_app.u.throwMessage('Sorry, your passwords do not match! Please re-enter your password');
+								return;
+						}
+						
+						var tagObj = {
+								'callback':function(rd) {
+										if(_app.model.responseHasErrors(rd)) {
+												$form.anymessage({'message':rd});
+										}
+										else {
+												showContent('customer',{'show':'myaccount'});
+												_app.u.throwMessage(_app.u.successMsgObject("Your account has been created!"));
+										}
+								}
+						}
+						
+						formObj._vendor = "onlineformals";
+						_app.calls.appBuyerCreate.init(formObj,tagObj,'immutable');
+						_app.model.dispatchThis('immutable');
+				}
+				else {
+						$('#globalMessaging').anymessage({'message':'$form not passed into _store_formals.u.handleBuyerAccountCreate','gMessage':true});
+				}
+			}
+				
 			}, //u [utilities]
 			
 			
