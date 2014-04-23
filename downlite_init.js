@@ -137,8 +137,9 @@ myApp.u.appInitComplete = function()	{
 		});
 		
 		//Go get the brands and display them.	
-	myApp.ext.store_navcats.calls.appCategoryList.init('.brands',{'callback':'getChildData','extension':'store_navcats','parentID':'brandCategories','templateID':'categoryListTemplateThumb'},'passive');
-	myApp.model.dispatchThis('passive'); //use passive or going into checkout could cause request to get muted.		
+			myApp.ext.store_navcats.calls.appCategoryList.init('.brands',{'callback':'getChildData','extension':'store_navcats','parentID':'brandCategories','templateID':'categoryListTemplateThumb'},'passive');
+			myApp.model.dispatchThis('passive'); //use passive or going into checkout could cause request to get muted.		
+		//EB+ND 
 //Adding category nav tabs
 	myApp.ext.quickstart.renderFormats.simpleSubcats = function($tag,data)	{
 		//app.u.dump("BEGIN control.renderFormats.subcats");

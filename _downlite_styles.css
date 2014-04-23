@@ -222,6 +222,16 @@ td.tabbedProductContentTD div.prodTabs ul.tabs li.ui-tabs-active{
     text-decoration: underline;
 }
 
+.contactUsForm{
+	float: right;
+	width: 315px;
+}
+#contactContent{
+}
+.sideline a{
+	padding: 5px 0;
+}
+
 
 
 
