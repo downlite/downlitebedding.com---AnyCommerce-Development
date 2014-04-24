@@ -102,7 +102,7 @@ css files should be included before any .js file to ensure they are downloaded i
 <script type="text/javascript">
 $(document).ready(function(){
 	window.myApp = new initApp({
-		"release":"201402.aatest2",  //increment this with each change. should solve caching issues. format: YYYYMMDDHHMMSS
+		"release":"201402.aatest3",  //increment this with each change. should solve caching issues. format: YYYYMMDDHHMMSS
 		"_clientid":"zmvc", //zmvc for store app, 1pc for one page checkout.
 		"baseURL":baseURL, //used in non-local mode.
 		"checkoutAuthMode" : "active",//can be passive, active or required
@@ -1592,7 +1592,7 @@ subscribeListsArticle is used for authenticated buyers
                         <div id="gotAccount1"> 
                                 <h1 class='smallcaps'>ALREADY HAVE AN ACCOUNT?</h1>
                                 <!-- Third parameter is id of message destination -->
-                                <form action='#' onSubmit='myApp.ext.store_downlite.a.loginFrmSubmit($("input[name=login]",$(this)).val(),$("input[name=password]",$(this)).val(),$("#loginMessagingInline")); return false;' id='modalLoginForm1'>
+                                <form action='#' data-app-submit="store_account_creation|accountLoginSubmit" id='modalLoginForm1'>
                                         <input type='hidden' name='loginCallback' id='loginCallback' value='' /><!-- used to save a callback action in -->
                                         <fieldset>
                                                 <input type='email' class='zform_textbox zform_email' name='login' id='modalLoginLogin' value='' size='39' placeholder='E-mail address' />
@@ -1604,8 +1604,8 @@ subscribeListsArticle is used for authenticated buyers
                         </div>
                         <div class="Account" >
                                 <!--<form action='#' class='inputsAsBreaks'  onSubmit="myApp.ext.myRIA.u.handleAppBuyerCreate($(this)); return false;">-->
-                                <form action='#' class='inputsAsBreaks'  onSubmit="myApp.ext._store_downlite.u.handleAppLoginCreate($(this)); return false;">
-                                        <input type="hidden" name="vendor" value="onlineformals"/>
+                                <form action='#' class='inputsAsBreaks'  onSubmit="myApp.ext.store_account_creation.u.handleAppLoginCreate($(this)); return false;">
+                                        <input type="hidden" name="_script" value="downlite"/>
                                         <h1>FIRST TIME WITH US?</h1><input type='hidden' name='form' value='wholesale' />
                                         <div class="fieldM"><span class="field">First Name</span> <input name='firstname' type='text' size='30' class='textfname' placeholder='First Name' required='required' />
                                         <span class="field mname">Middle Initial</span> <input name='middlename' type='text' size='3' class='textfmname' />
@@ -1615,59 +1615,59 @@ subscribeListsArticle is used for authenticated buyers
                                         <input name='address2' type='text' size='30' placeholder='Address (Line 2)' class='textfadd1'/></div>
                                         <div class="fieldM stateFix"><span class="field">City</span> <input name='city' type='text' size='30' placeholder='City' required='required' class='textfcity'/>         
                                                 <div class='selectWrapperState'>
-                                                		<b class="accountCreateStateLabel">State</b>
+                                                	<b class="accountCreateStateLabel">State</b>
                                                         <select name='region' class='textfstate sprite'>
-                                                                <option value='AL'>AL</option>
-                                                                <option value='AK'>AK</option>
-                                                                <option value='AZ'>AZ</option>
-                                                                <option value='AR'>AR</option>
-                                                                <option value='CA'>CA</option>
-                                                                <option value='CO'>CO</option>
-                                                                <option value='CT'>CT</option>
-                                                                <option value='DE'>DE</option>
-                                                                <option value='DC'>DC</option>
-                                                                <option value='FL'>FL</option>
-                                                                <option value='GA'>GA</option>
-                                                                <option value='HI'>HI</option>
-                                                                <option value='ID'>ID</option>
-                                                                <option value='IL'>IL</option>
-                                                                <option value='IN'>IN</option>
-                                                                <option value='IA'>IA</option>
-                                                                <option value='KS'>KS</option>
-                                                                <option value='KY'>KY</option>
-                                                                <option value='LA'>LA</option>
-                                                                <option value='ME'>ME</option>
-                                                                <option value='MD'>MD</option>
-                                                                <option value='MA'>MA</option>
-                                                                <option value='MI'>MI</option>
-                                                                <option value='MN'>MN</option>
-                                                                <option value='MS'>MS</option>
-                                                                <option value='MO'>MO</option>
-                                                                <option value='MT'>MT</option>
-                                                                <option value='NE'>NE</option>
-                                                                <option value='NV'>NV</option>
-                                                                <option value='NH'>NH</option>
-                                                                <option value='NJ'>NJ</option>
-                                                                <option value='NM'>NM</option>
-                                                                <option value='NY'>NY</option>
-                                                                <option value='NC'>NC</option>
-                                                                <option value='ND'>ND</option>
-                                                                <option value='OH'>OH</option>
-                                                                <option value='OK'>OK</option>
-                                                                <option value='OR'>OR</option>
-                                                                <option value='PA'>PA</option>
-                                                                <option value='RI'>RI</option>
-                                                                <option value='SC'>SC</option>
-                                                                <option value='SD'>SD</option>
-                                                                <option value='TN'>TN</option>
-                                                                <option value='TX'>TX</option>
-                                                                <option value='UT'>UT</option>
-                                                                <option value='VT'>VT</option>
-                                                                <option value='VA'>VA</option>
-                                                                <option value='WA'>WA</option>
-                                                                <option value='WV'>WV</option>
-                                                                <option value='WI'>WI</option>
-                                                                <option value='WY'>WY</option>
+															<option value='AL'>AL</option>
+															<option value='AK'>AK</option>
+															<option value='AZ'>AZ</option>
+															<option value='AR'>AR</option>
+															<option value='CA'>CA</option>
+															<option value='CO'>CO</option>
+															<option value='CT'>CT</option>
+															<option value='DE'>DE</option>
+															<option value='DC'>DC</option>
+															<option value='FL'>FL</option>
+															<option value='GA'>GA</option>
+															<option value='HI'>HI</option>
+															<option value='ID'>ID</option>
+															<option value='IL'>IL</option>
+															<option value='IN'>IN</option>
+															<option value='IA'>IA</option>
+															<option value='KS'>KS</option>
+															<option value='KY'>KY</option>
+															<option value='LA'>LA</option>
+															<option value='ME'>ME</option>
+															<option value='MD'>MD</option>
+															<option value='MA'>MA</option>
+															<option value='MI'>MI</option>
+															<option value='MN'>MN</option>
+															<option value='MS'>MS</option>
+															<option value='MO'>MO</option>
+															<option value='MT'>MT</option>
+															<option value='NE'>NE</option>
+															<option value='NV'>NV</option>
+															<option value='NH'>NH</option>
+															<option value='NJ'>NJ</option>
+															<option value='NM'>NM</option>
+															<option value='NY'>NY</option>
+															<option value='NC'>NC</option>
+															<option value='ND'>ND</option>
+															<option value='OH'>OH</option>
+															<option value='OK'>OK</option>
+															<option value='OR'>OR</option>
+															<option value='PA'>PA</option>
+															<option value='RI'>RI</option>
+															<option value='SC'>SC</option>
+															<option value='SD'>SD</option>
+															<option value='TN'>TN</option>
+															<option value='TX'>TX</option>
+															<option value='UT'>UT</option>
+															<option value='VT'>VT</option>
+															<option value='VA'>VA</option>
+															<option value='WA'>WA</option>
+															<option value='WV'>WV</option>
+															<option value='WI'>WI</option>
+															<option value='WY'>WY</option>
                                                         </select>
                                                 </div>
                                                 <b>Zip</b> <input name='postal' type='text' size='10' placeholder='00000-0000' class='textfzip'/>
@@ -1692,7 +1692,6 @@ subscribeListsArticle is used for authenticated buyers
                                         <input type="submit" value="Create an Account" class="createButton blackSecondaryColorHover"></input>
                                 </form>
                         </div>
-
                 </div>
         </div>
 
