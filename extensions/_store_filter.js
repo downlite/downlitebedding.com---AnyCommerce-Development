@@ -46,7 +46,7 @@ var _store_filter = function(_app) {
 		//HOTEL FINDER
 			".hotels":{
 			"filter": "hotelFinderFilterForm",
-			"exec" : function($form,infoObj){_app.ext._store_filter.u.renderSlider($form, infoObj, {MIN:0,MAX:10000});}
+			"exec" : function($form,infoObj){_app.ext._store_filter.u.renderSlider($form, infoObj, {MIN:0,MAX:1000});}
 			},
 			
 			
@@ -234,168 +234,170 @@ var _store_filter = function(_app) {
 			
 			execFilter : function($form,$page){
 
-_app.u.dump("BEGIN store_filter.a.filter");
-var $prodlist = $("[data-app-role='productList']",$page).first().empty();
-
-
-$('.categoryList',$page).hide(); //hide any subcategory lists in the main area so customer can focus on results
-$('.categoryText',$page).hide(); //hide any text blocks.
-
-if(_app.ext._store_filter.u.validateFilterProperties($form))	{
-//	_app.u.dump(" -> validated Filter Properties.")
-	var query = {
-		"mode":"elastic-native",
-		"size":50,
-		"filter" : _app.ext._store_filter.u.buildElasticFilters($form),
-		}//query
-//	_app.u.dump(" -> Query: "); _app.u.dump(query);
-	if(query.filter.and.length > 0)	{
-		$prodlist.addClass('loadingBG');
-		_app.ext.store_search.calls.appPublicProductSearch.init(query,{'callback':function(rd){
-
-			if(_app.model.responseHasErrors(rd)){
-				$page.anymessage({'message':rd});
-				}
-			else	{
-				var L = _app.data[rd.datapointer]['_count'];
-				$prodlist.removeClass('loadingBG')
-				if(L == 0)	{
-					$page.anymessage({"message":"Your query returned zero results."});
+				_app.u.dump("BEGIN store_filter.a.filter");
+				var $prodlist = $("[data-app-role='productList']",$page).first().empty();
+				
+				
+				$('.categoryList',$page).hide(); //hide any subcategory lists in the main area so customer can focus on results
+				$('.categoryText',$page).hide(); //hide any text blocks.
+				
+				if(_app.ext._store_filter.u.validateFilterProperties($form))	{
+				//	_app.u.dump(" -> validated Filter Properties.")
+					var query = {
+						"mode":"elastic-native",
+						"size":50,
+						"filter" : _app.ext._store_filter.u.buildElasticFilters($form),
+						}//query
+				//	_app.u.dump(" -> Query: "); _app.u.dump(query);
+					if(query.filter.and.length > 0)	{
+						$prodlist.addClass('loadingBG');
+						_app.ext.store_search.calls.appPublicProductSearch.init(query,{'callback':function(rd){
+				
+							if(_app.model.responseHasErrors(rd)){
+								$page.anymessage({'message':rd});
+								}
+							else	{
+								var L = _app.data[rd.datapointer]['_count'];
+								$prodlist.removeClass('loadingBG')
+								if(L == 0)	{
+									$page.anymessage({"message":"Your query returned zero results."});
+									}
+								else	{
+									$prodlist.append(_app.ext.store_search.u.getElasticResultsAsJQObject(rd));
+									}
+								}
+							
+							},'datapointer':'appPublicSearch|elasticFiltering',
+							'templateID': $form.data('loadstemplate') || 'productListHotelFilteredSearch'
+							});
+							_app.u.dump(JSON.stringify(query));
+						_app.model.dispatchThis();
+						}
+					else	{
+						$page.anymessage({'message':"Please make some selections from the list of filters"});
+						}
 					}
 				else	{
-					$prodlist.append(_app.ext.store_search.u.getElasticResultsAsJQObject(rd));
+					$page.anymessage({"message":"Uh Oh! It seems an error occured. Please try again or contact the site administator if error persists."});
 					}
+				var width = $(window).width();
+				//dump(width);
+				if (width >= 990){
+					$('html, body').animate({scrollTop : 860},0); //new page content loading. scroll to top.
 				}
-			
-			},'datapointer':'appPublicSearch|elasticFiltering',
-			'templateID': $form.data('loadstemplate') || 'productListHotelFilteredSearch'
-			});
-			_app.u.dump(JSON.stringify(query));
-		_app.model.dispatchThis();
-		}
-	else	{
-		$page.anymessage({'message':"Please make some selections from the list of filters"});
-		}
-	}
-else	{
-	$page.anymessage({"message":"Uh Oh! It seems an error occured. Please try again or contact the site administator if error persists."});
-	}
-var width = $(window).width();
-//dump(width);
-if (width >= 990){
-	$('html, body').animate({scrollTop : 860},0); //new page content loading. scroll to top.
-}
-else if ((width < 990) && (width >= 800)) {
-	$('html, body').animate({scrollTop : 1100},0);
-}
-else if ((width < 800) && (width >= 640)) {
-	$('html, body').animate({scrollTop : 1100},0);
-}
-else if ((width < 640) && (width >= 480)) {
-	$('html, body').animate({scrollTop : 1100},0);
-}
-else if (width < 480) {
-	$('html, body').animate({scrollTop : 1100},0);
-}
+				else if ((width < 990) && (width >= 800)) {
+					$('html, body').animate({scrollTop : 1100},0);
+				}
+				else if ((width < 800) && (width >= 640)) {
+					$('html, body').animate({scrollTop : 1100},0);
+				}
+				else if ((width < 640) && (width >= 480)) {
+					$('html, body').animate({scrollTop : 1100},0);
+				}
+				else if (width < 480) {
+					$('html, body').animate({scrollTop : 1100},0);
+				}
 
 				
-				},//filter
+			},//filter
 				
 				
-				showFilterResultsOnPriceChange : function($context){
-					//Make all altering of the price slider submit the form and show results list.
-						$context.submit(); 
-						//_app.u.dump("The price slider was moved.");
-						$("#resultsProductListContainer",$context).hide();  
-		
-						$group1 = $('.fsCheckbox',$context);
-						$priceGroup = $( ".sliderValue",$context ).val().toString();
-						
-						if($(".sliderValue",$context).val() == "$0 - $1000"){
-							//_app.u.dump("Price slider is set to stock. Checking For filter options being checked.");
-							if($group1.filter(':checked').length === 0){
-								//_app.u.dump("No filter options checked. Showing stock product list.");
-								$(".nativeProductList", ($context.parent().parent().parent())).show(); 
-								$(".searchFilterResults", ($context.parent().parent().parent())).hide(); 
-							}
-							else{
-								//_app.u.dump("One or more filter options were checked. Still showing filter search results.");
-							}
+			showFilterResultsOnPriceChange : function($context){
+				//Make all altering of the price slider submit the form and show results list.
+					$context.submit(); 
+					//_app.u.dump("The price slider was moved.");
+					$("#resultsProductListContainer",$context).hide();  
+	
+					$group1 = $('.fsCheckbox',$context);
+					$priceGroup = $( ".sliderValue",$context ).val().toString();
+					
+					if($(".sliderValue",$context).val() == "$0 - $1000"){
+						//_app.u.dump("Price slider is set to stock. Checking For filter options being checked.");
+						if($group1.filter(':checked').length === 0){
+							//_app.u.dump("No filter options checked. Showing stock product list.");
+							$(".nativeProductList", ($context.parent().parent().parent())).show(); 
+							$(".searchFilterResults", ($context.parent().parent().parent())).hide(); 
 						}
 						else{
-							//_app.u.dump("Price slider is set to custom value. Showing Search results.");
-							$(".nativeProductList", ($context.parent().parent().parent())).hide(); 
-							$(".searchFilterResults", ($context.parent().parent().parent())).show();  
-						}  
-				},
-				
-				
-				filterSelected : function(checkbox,$context){
-					//dump(checkbox);
-					//dump($context);
-					$("input.fsCheckbox", $context).removeClass("fsCBSelected");
-					$(checkbox).addClass("fsCBSelected");
-					$("input.fsCheckbox:not(input.fsCBSelected)", $context).attr('checked', false);
-				},
-				
-				
-				hotelTypeSelected : function(radioButton,$context){
-					var hotelType = $(radioButton, $context).val();
-					dump(hotelType);
-					switch(hotelType){
-						case "natChainHotel":
-							$(".filterCat", $context).hide();
-							$(".filterNatHotelCat", $context).slideDown(1000);
-						break;
-						case "luxResortHotel":
-							$(".filterCat", $context).hide();
-							$(".filterLuxResortCat", $context).slideDown(1000);
-						break;
-						case "luxHotel":
-							$(".filterCat", $context).hide();
-							$(".filterluxHotelCat", $context).slideDown(1000);
-						break;
-						case "boutHotel":
-							$(".filterCat", $context).hide();
-							$(".filterBoutHotelCat", $context).slideDown(1000);
-						break;
-						case "cruiseLine":
-							$(".filterCat", $context).hide();
-							$(".filterCruiseLineCat", $context).slideDown(1000);
-						break;
-						case "bnb":
-							$(".filterCat", $context).hide();
-							$(".filterBNBCat", $context).slideDown(1000);
-						break;
-						case "lasVegasHotel":
-							$(".filterCat", $context).hide();
-							$(".filterLasVegasHotelCat", $context).slideDown(1000);
-						break;
-						case "casinoHotel":
-							$(".filterCat", $context).hide();
-							$(".filterCasinoHotelCat", $context).slideDown(1000);
-						break;
-						case "golfResort":
-							$(".filterCat", $context).hide();
-							$(".filterGolfResortCat", $context).slideDown(1000);
-						break;
-						case "beachHotel":
-							$(".filterCat", $context).hide();
-							$(".filterBeachHotelCat", $context).slideDown(1000);
-						break;
-						case "confCenterHotel":
-							$(".filterCat", $context).hide();
-							$(".filterConfCenterHotelCat", $context).slideDown(1000);
-						break;
-						case "nycHotel":
-							$(".filterCat", $context).hide();
-							$(".filterNYCHotelCat", $context).slideDown(1000);
-						break;
+							//_app.u.dump("One or more filter options were checked. Still showing filter search results.");
+						}
 					}
+					else{
+						//_app.u.dump("Price slider is set to custom value. Showing Search results.");
+						$(".nativeProductList", ($context.parent().parent().parent())).hide(); 
+						$(".searchFilterResults", ($context.parent().parent().parent())).show();  
+					}  
+			},
+				
+				
+			filterSelected : function(checkbox,$context){
+				//dump(checkbox);
+				//dump($context);
+				$("input.fsCheckbox", $context).removeClass("fsCBSelected");
+				$(checkbox).addClass("fsCBSelected");
+				$("input.fsCheckbox:not(input.fsCBSelected)", $context).attr('checked', false);
+			},
+				
+				
+			hotelTypeSelected : function(radioButton,$context){
+				dump("Context = ")
+				dump($context);
+				var hotelType = $(radioButton, $context).val();
+				dump(hotelType);
+				switch(hotelType){
+					case "natChainHotel":
+						$(".filterCat", $context).hide();
+						$(".filterNatHotelCat", $context).slideDown(1000);
+					break;
+					case "luxResortHotel":
+						$(".filterCat", $context).hide();
+						$(".filterLuxResortCat", $context).slideDown(1000);
+					break;
+					case "luxHotel":
+						$(".filterCat", $context).hide();
+						$(".filterluxHotelCat", $context).slideDown(1000);
+					break;
+					case "boutHotel":
+						$(".filterCat", $context).hide();
+						$(".filterBoutHotelCat", $context).slideDown(1000);
+					break;
+					case "cruiseLine":
+						$(".filterCat", $context).hide();
+						$(".filterCruiseLineCat", $context).slideDown(1000);
+					break;
+					case "bnb":
+						$(".filterCat", $context).hide();
+						$(".filterBNBCat", $context).slideDown(1000);
+					break;
+					case "lasVegasHotel":
+						$(".filterCat", $context).hide();
+						$(".filterLasVegasHotelCat", $context).slideDown(1000);
+					break;
+					case "casinoHotel":
+						$(".filterCat", $context).hide();
+						$(".filterCasinoHotelCat", $context).slideDown(1000);
+					break;
+					case "golfResort":
+						$(".filterCat", $context).hide();
+						$(".filterGolfResortCat", $context).slideDown(1000);
+					break;
+					case "beachHotel":
+						$(".filterCat", $context).hide();
+						$(".filterBeachHotelCat", $context).slideDown(1000);
+					break;
+					case "confCenterHotel":
+						$(".filterCat", $context).hide();
+						$(".filterConfCenterHotelCat", $context).slideDown(1000);
+					break;
+					case "nycHotel":
+						$(".filterCat", $context).hide();
+						$(".filterNYCHotelCat", $context).slideDown(1000);
+					break;
 				}
+			}
 				
 			
-			}, //actions
+		}, //actions
 
 
 ////////////////////////////////////   UTIL    \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
@@ -433,31 +435,31 @@ else if (width < 480) {
 			
 			buildElasticFilters : function($form)	{
 
-var filters = {
-	"and" : [] //push on to this the values from each fieldset.
-	}//query
-
-
-$('fieldset',$form).each(function(){
-	var $fieldset = $(this),
-	filter = _app.ext._store_filter.getElasticFilter[$fieldset.attr('data-filtertype')]($fieldset);
-	if(filter)	{
-		filters.and.push(filter);
-		}
-	});
-
-	filters.and.push({'not':{'term':{'prod_outofstock':'1'}}});
-
-//and requires at least 2 inputs, so add a match_all.
-//if there are no filters, don't add it. the return is also used to determine if any filters are present
- 	if(filters.and.length == 1)	{
-		filters.and.push({match_all:{}})
- 		}
-		_app.u.dump("$( '.sliderValue',$form ).val() = " + $( ".sliderValue",$form ).val())
-
-return filters;				
+				var filters = {
+					"and" : [] //push on to this the values from each fieldset.
+					}//query
 				
-				},
+				
+				$('fieldset',$form).each(function(){
+					var $fieldset = $(this),
+					filter = _app.ext._store_filter.getElasticFilter[$fieldset.attr('data-filtertype')]($fieldset);
+					if(filter)	{
+						filters.and.push(filter);
+					}
+				});
+				
+				filters.and.push({'not':{'term':{'prod_outofstock':'1'}}});
+				
+				//and requires at least 2 inputs, so add a match_all.
+				//if there are no filters, don't add it. the return is also used to determine if any filters are present
+				if(filters.and.length == 1)	{
+					filters.and.push({match_all:{}})
+				}
+				//_app.u.dump("$( '.sliderValue',$form ).val() = " + $( ".sliderValue",$form ).val())
+				
+				return filters;				
+				
+			},
 
 //pass in a jquery object or series of objects for form inputs (ex: $('input:hidden')) and a single term or a terms object will be returned.
 //false is returned in nothing is checked/selected.
@@ -479,7 +481,7 @@ return filters;
 					//nothing is checked.
 					}
 				return r;
-				},
+			},
 
 
 			renderSlider : function($form, infoObj, props){
@@ -496,7 +498,7 @@ return filters;
 						}
 					});
 				$( ".sliderValue",$form ).val( "$" + $( ".slider-range" ).slider( "values", 0 ) + " - $" + $( ".slider-range" ).slider( "values", 1 ) );
-				} //renderSlider
+			} //renderSlider
 
 			} //u
 

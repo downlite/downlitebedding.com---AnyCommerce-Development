@@ -404,7 +404,7 @@ var store_downlite = function(_app) {
 					}
 				else	{
 					$tag.hide(); //if msrp > price, don't show savings because it'll be negative.
-					}
+				}
 				}, //priceRetailSavings
 				
 				priceretailsavingspercentageprodlistitem : function($tag,data)	{
