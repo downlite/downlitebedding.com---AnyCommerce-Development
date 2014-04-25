@@ -115,123 +115,127 @@ myApp.u.showProgress = function(progress)	{
 	}
 
 
-//Any code that needs to be executed after the app init has occured can go here.
-//will pass in the page info object. (pageType, templateID, pid/navcat/show and more)
-myApp.u.appInitComplete = function()	{
-	myApp.u.dump("Executing myAppIsLoaded code...");
+	//Any code that needs to be executed after the app init has occured can go here.
+	//will pass in the page info object. (pageType, templateID, pid/navcat/show and more)
+	myApp.u.appInitComplete = function()	{
+		myApp.u.dump("Executing myAppIsLoaded code...");
 	
-	myApp.ext.order_create.checkoutCompletes.push(function(vars,$checkout){
-//append this to 
-		$("[data-app-role='thirdPartyContainer']",$checkout).append("<h2>What next?</h2><div class='ocm ocmFacebookComment pointer zlink marginBottom checkoutSprite  '></div><div class='ocm ocmTwitterComment pointer zlink marginBottom checkoutSprit ' ></div><div class='ocm ocmContinue pointer zlink marginBottom checkoutSprite'></div>");
-		$('.ocmTwitterComment',$checkout).click(function(){
-			window.open('http://twitter.com/home?status='+cartContentsAsLinks,'twitter');
-			_gaq.push(['_trackEvent','Checkout','User Event','Tweeted about order']);
+		myApp.ext.order_create.checkoutCompletes.push(function(vars,$checkout){
+			//append this to 
+			$("[data-app-role='thirdPartyContainer']",$checkout).append("<h2>What next?</h2><div class='ocm ocmFacebookComment pointer zlink marginBottom checkoutSprite  '></div><div class='ocm ocmTwitterComment pointer zlink marginBottom checkoutSprit ' ></div><div class='ocm ocmContinue pointer zlink marginBottom checkoutSprite'></div>");
+			$('.ocmTwitterComment',$checkout).click(function(){
+				window.open('http://twitter.com/home?status='+cartContentsAsLinks,'twitter');
+				_gaq.push(['_trackEvent','Checkout','User Event','Tweeted about order']);
 			});
-		//the fb code only works if an appID is set, so don't show banner if not present.				
-		if(myApp.u.thisNestedExists("zGlobals.thirdParty.facebook.appId") && typeof FB == 'object')	{
-			$('.ocmFacebookComment',$checkout).click(function(){
-				myApp.ext.quickstart.thirdParty.fb.postToWall(cartContentsAsLinks);
-				_gaq.push(['_trackEvent','Checkout','User Event','FB message about order']);
+			//the fb code only works if an appID is set, so don't show banner if not present.				
+			if(myApp.u.thisNestedExists("zGlobals.thirdParty.facebook.appId") && typeof FB == 'object')	{
+				$('.ocmFacebookComment',$checkout).click(function(){
+					myApp.ext.quickstart.thirdParty.fb.postToWall(cartContentsAsLinks);
+					_gaq.push(['_trackEvent','Checkout','User Event','FB message about order']);
 				});
 			}
-		else	{$('.ocmFacebookComment').hide()}
+			else	{$('.ocmFacebookComment').hide()}
 		});
 		
 		//Go get the brands and display them.	
-			myApp.ext.store_navcats.calls.appCategoryList.init('.brands',{'callback':'getChildData','extension':'store_navcats','parentID':'brandCategories','templateID':'categoryListTemplateThumb'},'passive');
-			myApp.model.dispatchThis('passive'); //use passive or going into checkout could cause request to get muted.		
+			var addBrands = function(){	
+				myApp.ext.store_navcats.calls.appCategoryList.init('.brands',{'callback':'getChildData','extension':'store_navcats','parentID':'brandCategories','templateID':'categoryListTemplateThumb'},'passive');
+				myApp.model.dispatchThis('passive'); //use passive or going into checkout could cause request to get muted.		
+			};
+			setTimeout(addBrands, 1000);
+		
 		//EB+ND 
-//Adding category nav tabs
-	myApp.ext.quickstart.renderFormats.simpleSubcats = function($tag,data)	{
-		//app.u.dump("BEGIN control.renderFormats.subcats");
-		var L = data.value.length;
-		var thisCatSafeID; //used in the loop below to store the cat id during each iteration
-		//app.u.dump(data);
-		for(var i = 0; i < L; i += 1)	{
-			thisCatSafeID = data.value[i].id;
-			if(data.value[i].pretty.charAt(0) == '!')	{
-				//categories that start with ! are 'hidden' and should not be displayed.
+	//Adding category nav tabs
+		myApp.ext.quickstart.renderFormats.simpleSubcats = function($tag,data)	{
+			//app.u.dump("BEGIN control.renderFormats.subcats");
+			var L = data.value.length;
+			var thisCatSafeID; //used in the loop below to store the cat id during each iteration
+			//app.u.dump(data);
+			for(var i = 0; i < L; i += 1)	{
+				thisCatSafeID = data.value[i].id;
+				if(data.value[i].pretty.charAt(0) == '!')	{
+					//categories that start with ! are 'hidden' and should not be displayed.
+				}
+				else{
+					$tag.append(myApp.renderFunctions.transmogrify({'id':thisCatSafeID,'catsafeid':thisCatSafeID},data.bindData.loadsTemplate,data.value[i]));
+				}
+			}
+		} //simpleSubcats
+	
+		//TOP NAV CAROUSEL.
+			
+		setTimeout(function(){
+		$('#tier1categories').carouFredSel({
+			width   : "100%",
+			//height	: 500,
+			//items   : hpTopNavItems,
+			scroll: 1,
+			auto : false,
+			prev : ".headerTopNavPrev",
+			next : ".headerTopNavNext"
+		});
+		}, 1100);
+	
+		//CONTROLING FUNCTION FOR POSITIONING THE TOP NAV CAROUSEL CORRECTLY AT ANY RESOLUTION
+		$(window).resize(function(){
+			if($(window).width() >= 990){
+				setTimeout(function(){
+					$("div.nav_menu div.caroufredsel_wrapper ul#tier1categories").css("left","20px");
+				}, 100);
+			}
+			else if(($(window).width() < 990) && ($(window).width() >= 800)){
+				setTimeout(function(){
+					$("div.nav_menu div.caroufredsel_wrapper ul#tier1categories").css("left","0");
+				}, 100);
+				
+			}
+			else if(($(window).width() < 800) && ($(window).width() >= 640)){
+				setTimeout(function(){
+					$("div.nav_menu div.caroufredsel_wrapper ul#tier1categories").css("left","15px");
+				}, 100);
+			}
+			else if(($(window).width() < 640) && ($(window).width() >= 480)){
+				setTimeout(function(){
+					$("div.nav_menu div.caroufredsel_wrapper ul#tier1categories").css("left","1px");
+				}, 100);
+			}
+			else if(($(window).width() < 480) && ($(window).width() >= 320)){
+				setTimeout(function(){
+					$("div.nav_menu div.caroufredsel_wrapper ul#tier1categories").css("left","8px");
+				}, 100);
+			}
+		})
+	
+		//BEGIN FACEBOOK COUPON CODE
+		//var showCart = function(){showContent('cart',{'show':'cart'})};
+		//setTimeout(showCart, 5000);
+		
+		var facebookCoupon = function(){
+			var referral = document.referrer;
+			app.u.dump("User is coming from " + referral);	
+			
+			if(referral.indexOf("www.facebook.com") != -1){
+				app.u.dump("User is coming from facebook. Add coupon.");
+				app.ext.cco.calls.cartCouponAdd.init("FACEBOOK",{'callback':function(rd) {
+					if(app.model.responseHasErrors(rd)) {
+						$('#cartMessaging').anymessage({'message':rd})
+					}
+					else {
+						app.u.dump("Coupon added successfully")
+						//Do nothing
+					}
+				}});
+				app.model.dispatchThis('immutable');
 			}
 			else{
-				$tag.append(myApp.renderFunctions.transmogrify({'id':thisCatSafeID,'catsafeid':thisCatSafeID},data.bindData.loadsTemplate,data.value[i]));
+				app.u.dump("User is not coming from facebook. Do nothing.");
 			}
-		}
-	} //simpleSubcats
+		};
 	
-	//TOP NAV CAROUSEL.
-		
-	setTimeout(function(){
-	$('#tier1categories').carouFredSel({
-		width   : "100%",
-		//height	: 500,
-		//items   : hpTopNavItems,
-		scroll: 1,
-		auto : false,
-		prev : ".headerTopNavPrev",
-		next : ".headerTopNavNext"
-	});
-	}, 1000);
+		setTimeout(facebookCoupon, 5000);
+		//END FACEBOOK COUPON CODE
 	
-	//CONTROLING FUNCTION FOR POSITIONING THE TOP NAV CAROUSEL CORRECTLY AT ANY RESOLUTION
-	$(window).resize(function(){
-		if($(window).width() >= 990){
-			setTimeout(function(){
-				$("div.nav_menu div.caroufredsel_wrapper ul#tier1categories").css("left","20px");
-			}, 100);
-		}
-		else if(($(window).width() < 990) && ($(window).width() >= 800)){
-			setTimeout(function(){
-				$("div.nav_menu div.caroufredsel_wrapper ul#tier1categories").css("left","0");
-			}, 100);
-			
-		}
-		else if(($(window).width() < 800) && ($(window).width() >= 640)){
-			setTimeout(function(){
-				$("div.nav_menu div.caroufredsel_wrapper ul#tier1categories").css("left","15px");
-			}, 100);
-		}
-		else if(($(window).width() < 640) && ($(window).width() >= 480)){
-			setTimeout(function(){
-				$("div.nav_menu div.caroufredsel_wrapper ul#tier1categories").css("left","1px");
-			}, 100);
-		}
-		else if(($(window).width() < 480) && ($(window).width() >= 320)){
-			setTimeout(function(){
-				$("div.nav_menu div.caroufredsel_wrapper ul#tier1categories").css("left","8px");
-			}, 100);
-		}
-	})
-	
-	//BEGIN FACEBOOK COUPON CODE
-	//var showCart = function(){showContent('cart',{'show':'cart'})};
-	//setTimeout(showCart, 5000);
-	
-	var facebookCoupon = function(){
-		var referral = document.referrer;
-		app.u.dump("User is coming from " + referral);	
-		
-		if(referral.indexOf("www.facebook.com") != -1){
-			app.u.dump("User is coming from facebook. Add coupon.");
-			app.ext.cco.calls.cartCouponAdd.init("FACEBOOK",{'callback':function(rd) {
-				if(app.model.responseHasErrors(rd)) {
-					$('#cartMessaging').anymessage({'message':rd})
-				}
-				else {
-					app.u.dump("Coupon added successfully")
-					//Do nothing
-				}
-			}});
-			app.model.dispatchThis('immutable');
-		}
-		else{
-			app.u.dump("User is not coming from facebook. Do nothing.");
-		}
-	};
-	
-	setTimeout(facebookCoupon, 5000);
-	//END FACEBOOK COUPON CODE
-	
-}
+	}//END myApp.u.appInitComplete
 
 /*$(document).ready(function(){
 		myApp.u.handleRQ(0);
