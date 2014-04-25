@@ -113,6 +113,29 @@ label.break{
 	float:left;
 	list-style:none;
 }
+.searchResultsProduct{
+}
+.searchResultsProduct a{
+	text-decoration: none;
+}
+.searchResultsProduct a h5{
+	color: #6F7376;
+    font-size: 100%;
+    font-style: italic;
+    font-weight: normal;
+    margin-bottom: 8px;
+}
+.searchResultsProduct a h6{
+	color:#D65E00;
+	font-size: 22px;
+    font-weight: bold;
+	font-style: italic;
+}
+.searchResultsProduct a h6 span.pricePrefix{
+	font-size: 15px;
+    font-style: italic;
+    font-weight: 400;
+}
 .filterCategoryCont{
 }
 .resetButton{

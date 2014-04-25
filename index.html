@@ -902,12 +902,12 @@ SANITY -> if you change the height and width of this image, change the .minimalM
 <li id='productListHotelFilteredSearch' class='loadingBG searchResultsProduct ' >
 	<a data-tlc="bind $var '.'; store_routing#seoanchor --type='product' --seo; apply --attrib='href';" class="pointer">
 		<div class="prodThumbContainer">
-		<img data-tlc="bind $var '.images.0'; if (is $var --notblank;) {{apply --img --media=$var --width=120 --height=120 --bgcolor='#ffffff' --replace;}};" src="blank.gif" class="prodThumb" alt="" height="120" width="120">
+		<img data-tlc="bind $var '.images.0'; if (is $var --notblank;) {{apply --img --media=$var --width=230 --height=230 --bgcolor='#ffffff' --replace;}};" src="blank.gif" class="prodThumb" alt="" height="230" width="230">
 		</div>
 
 		<h5 data-tlc="bind $var '.prod_name'; if (is $var --notblank;) {{apply --append;}};" class="hideInMinimalMode"></h5>
 
-		<h6 data-tlc="bind $var '.base_price'; if (is $var --notblank;) {{format --currency='USD'; format --prepend='Our Price: '; apply --add --class='price'; apply --append;}};" class="hideInMinimalMode"></h6>
+		<h6 class='value' data-tlc="bind $var '.base_price'; if (is $var --notblank;) {{store_downlite#searchcurrencyprodlist --legacy; apply --append;}};"></h6>
 	</a>
 	<a class="hideInMinimalMode pointer moreDetails" data-tlc="bind $var '.'; store_routing#seoanchor --type='product' --seo; apply --attrib='href';">more details</a>
 </li>

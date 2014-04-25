@@ -845,7 +845,7 @@ fallback is to just output the value.
 			priceretailsavingsdifference : function($tag,data)	{
 				var o; //output generated.
 				var pData = data.value;
-				dump("pid value for this product is = ");
+				//dump("pid value for this product is = ");
 	//use original pdata vars for display of price/msrp. use parseInts for savings computation only.
 				var price = Number(pData['zoovy:base_price']);
 				var msrp = Number(pData['zoovy:prod_msrp']);

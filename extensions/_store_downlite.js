@@ -422,7 +422,29 @@ var store_downlite = function(_app) {
 				else	{
 					$tag.hide(); //if msrp > price, don't show savings because it'll be negative.
 					}
-				} //priceRetailSavings	
+				}, //priceRetailSavings	
+				
+				searchcurrencyprodlist : function($tag,data)	{
+					//dump("Begin currency product list format");
+					//dump(data);
+					//dump($tag);
+					dump("data.value = ");
+					dump(data.value);
+					
+					var r = data.value;
+					var b = ".";
+					var position = r.length - 2;
+					dump("position = ");
+					dump(position);
+					
+					var r = [r.slice(0, position), b, r.slice(position)].join('');
+					
+					r = "<span class='pricePrefix'>Our price:</span> $" + r;
+					
+					
+					//dump(r);
+					$tag.append(r);
+				}, //searchcurrencyprodlist
 				
 				
 
