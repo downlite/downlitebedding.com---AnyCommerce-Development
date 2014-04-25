@@ -448,7 +448,7 @@ var _store_filter = function(_app) {
 					}
 				});
 				
-				filters.and.push({'not':{'term':{'prod_outofstock':'1'}}});
+				filters.and.push({'term':{'hotel_product':'1'}});
 				
 				//and requires at least 2 inputs, so add a match_all.
 				//if there are no filters, don't add it. the return is also used to determine if any filters are present
