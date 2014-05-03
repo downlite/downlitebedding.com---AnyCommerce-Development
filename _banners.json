@@ -1,16 +1,34 @@
 {
 	"slides" : [
 		{
-			"src": "B/best_pillow_image.jpg",
+			"src": "6/600x400_spring_2014_tencel_sheets.jpg",
 			"alt": "",
 			"title": "",
-			"catLink": ".100-pillows"
+			"prodLink": "SDL100SH0040"
 		},
 		{
-			"src": "B/best_comforter_image.jpg",
+			"src": "6/600x400_sealy_optimum_blanket.jpg",
 			"alt": "",
 			"title": "",
-			"catLink": ".100-pillows"
+			"prodLink": "DOW555BL0000"
+		},
+		{
+			"src": "6/600x400_optimum_pillow.jpg",
+			"alt": "",
+			"title": "",
+			"prodLink": "DOW555PI0090"
+		},
+		{
+			"src": "6/600x400_cool_touch_topper_cover.jpg",
+			"alt": "",
+			"title": "",
+			"prodLink": "SDL100FP0000"
+		},
+		{
+			"src": "6/600x400_sealy_optimum_mattress_protector.jpg",
+			"alt": "",
+			"title": "",
+			"prodLink": "DOW555MP0050"
 		}
 	],
 	"cycleOptions" : {

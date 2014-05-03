@@ -510,13 +510,13 @@ var store_downlite = function(_app) {
 				$banner.append($img);
 				
 				if(bannerJSON.prodLink){
-					$banner.data("onClick", "appLink").attr("href","#!product?pid="+bannerJSON.prodLink);
+					$banner.data("onClick", "appLink").attr("href","#!product/"+bannerJSON.prodLink);
 					}
 				else if(bannerJSON.catLink){
-					$banner.data("onClick", "appLink").attr("href","#!category?navcat="+bannerJSON.catLink);
+					$banner.data("onClick", "appLink").attr("href","#!category/"+bannerJSON.catLink);
 					}
 				else if(bannerJSON.searchLink){
-					$banner.data("onClick", "appLink").attr("href","#!category?KEYWORDS="+bannerJSON.searchLink);
+					$banner.data("onClick", "appLink").attr("href","#!search/keywords/"+bannerJSON.searchLink);
 					}
 				else {
 					//just a banner!
