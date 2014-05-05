@@ -116,9 +116,7 @@ var partner_addthis = function(_app) {
 				onError : function() {
 					_app.u.dump('BEGIN _app.ext.partner_addthis.callbacks.init.onError');
 				}
-			},
-			
-			
+			}
 		},
 		
 	u : {
