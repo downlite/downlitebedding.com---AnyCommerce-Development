@@ -1,2 +1,5 @@
 1. cart_checkout_order.js:
-Add this commit: https://github.com/onlineformals/onlineformals/commit/bcf08ed5097eee5ac1e8e6b13a9c5738d65a12bc
+- Add this commit: https://github.com/onlineformals/onlineformals/commit/bcf08ed5097eee5ac1e8e6b13a9c5738d65a12bc
+
+2. add_this.js:
+- Copy the init callback into its own startExtension callback. The app should pop an error for you if you forget to do this.
