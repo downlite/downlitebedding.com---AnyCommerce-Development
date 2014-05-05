@@ -50,7 +50,6 @@ var quickstart = function(_app) {
 			'productReviewsTemplateDetail',
 			'imageViewerTemplate',
 			'reviewFrmTemplate',
-			'subscribeFormTemplate',
 			'orderLineItemTemplate',
 			'invoiceTemplate',
 			'buyerListTemplate',
@@ -210,7 +209,8 @@ document.write = function(v){
 				
 				if(cartID)	{
 					_app.model.addDispatchToQ({"_cmd":"whoAmI",_cartid : cartID, "_tag":{"datapointer":"whoAmI",callback:function(rd){
-						_app.ext.quickstart.u.handleAppInit(); //checks url and will load appropriate page content. returns object {pageType,pageInfo}
+						myApp.router.init();//instantiates the router.
+						_app.ext.quickstart.u.handleAppInit(); //finishes loading RQ. handles some authentication based features.
 						_app.calls.refreshCart.init({'callback':'updateMCLineItems','extension':'quickstart'},'mutable');
 						_app.model.dispatchThis('mutable');
 						
@@ -329,7 +329,6 @@ document.write = function(v){
 
 // passing in unsanitized tagObj caused an issue with showPageContent
 				_app.ext.quickstart.u.buildQueriesFromTemplate($.extend(true, {}, tagObj));
-				dump(" ----> queries were just built");
 				_app.model.dispatchThis();
 				},
 			onError : function(responseData)	{
@@ -379,7 +378,7 @@ document.write = function(v){
 					if(pData && pData['%attribs'] && pData['%attribs']['zoovy:grp_type'] == 'CHILD')	{
 						if(pData['%attribs']['zoovy:grp_parent'] && _app.data['appProductGet|'+pData['%attribs']['zoovy:grp_parent']])	{
 							dump(" -> this is a child product and the parent prod is available. Fetch child data for siblings.");
-							$("[data-app-role='childrenSiblingsContainer']",$(_app.u.jqSelector('#',tagObj.parentID))).show().tlc({'dataset':_app.data['appProductGet|'+pData['%attribs']['zoovy:grp_parent']]});
+							$("[data-app-role='childrenSiblingsContainer']",$(_app.u.jqSelector('#',tagObj.parentID))).show().tlc({'verb':'translate','dataset':_app.data['appProductGet|'+pData['%attribs']['zoovy:grp_parent']]});
 							}
 						else if(!pData['%attribs']['zoovy:grp_parent']) 	{
 							dump("WARNING! this item is a child, but no parent is set. Not a critical error.");
@@ -501,13 +500,24 @@ need to be customized on a per-ria basis.
 				}
 			}, //wiki
 
-
-		pageTransition : function($o,$n)	{
+// * 201403 -> infoObj now passed into pageTransition.
+		pageTransition : function($o,$n, infoObj)	{
 //if $o doesn't exist, the animation doesn't run and the new element doesn't show up, so that needs to be accounted for.
 //$o MAY be a jquery instance but have no length, so check both.
 			if($o instanceof jQuery && $o.length)	{
-				dump(" -> got here.  n.is(':visible'): "+$n.is(':visible'));
-				$o.fadeOut(1000, function(){$n.fadeIn(1000)}); //fade out old, fade in new.
+/* *** 201403 -> move the scroll to top into the page transition for 2 reasons:
+1. allows the animations to be performed sequentially, which will be less jittery than running two at the same time
+2. Puts control of this into custom page transitions.
+*/
+				if(infoObj.performJumpToTop && $('html, body').scrollTop() > 0)	{
+					//new page content loading. scroll to top.
+					$('html, body').animate({scrollTop : ($('header','#appView').length ? $('header','#appView').first().height() : 0)},500,function(){
+						$o.fadeOut(1000, function(){$n.fadeIn(1000)}); //fade out old, fade in new.
+						})
+					} 
+				else	{
+					$o.fadeOut(1000, function(){$n.fadeIn(1000)}); //fade out old, fade in new.
+					}
 				}
 			else if($n instanceof jQuery)	{
 				$n.fadeIn(1000);
@@ -524,7 +534,7 @@ need to be customized on a per-ria basis.
 			
 			searchbytag : function(data,thisTLC)	{
 				var argObj = thisTLC.args2obj(data.command.args,data.globals); //this creates an object of the args
-				var query = {"size":(argObj.size || 4),"mode":"elastic-native","filter":{"term":{"tags":argObj.tag}}};
+				var query = {"size":(argObj.size || 4),"mode":"elastic-search","filter":{"term":{"tags":argObj.tag}}};
 				_app.ext.store_search.calls.appPublicProductSearch.init(query,$.extend({'datapointer':'appPublicSearch|tag|'+argObj.tag,'templateID':argObj.templateid,'extension':'store_search','callback':'handleElasticResults','list':data.globals.tags[data.globals.focusTag]},argObj));
 				_app.model.dispatchThis('mutable');
 				return false; //in this case, we're off to do an ajax request. so we don't continue the statement.
@@ -742,7 +752,7 @@ fallback is to just output the value.
 					//link is formatted correctly. do nothing.
 					}
 				else if(data.value)	{
-					$tag.attrib('href',_app.ext.quickstart.u.getHashFromPageInfo(_app.ext.quickstart.u.detectRelevantInfoToPage(data.value)));
+					$tag.attr('href',_app.ext.quickstart.u.getHashFromPageInfo(_app.ext.quickstart.u.detectRelevantInfoToPage(data.value)));
 					}
 				else	{
 					//data.value is not set. do nothing.
@@ -845,7 +855,6 @@ fallback is to just output the value.
 			priceretailsavingsdifference : function($tag,data)	{
 				var o; //output generated.
 				var pData = data.value;
-				//dump("pid value for this product is = ");
 	//use original pdata vars for display of price/msrp. use parseInts for savings computation only.
 				var price = Number(pData['zoovy:base_price']);
 				var msrp = Number(pData['zoovy:prod_msrp']);
@@ -971,7 +980,7 @@ for legacy browsers. That means old browsers will use the anchor to retain 'back
 						break;
 	
 					case 'customer':
-						if('file:' == document.location.protocol || 'https:' == document.location.protocol)	{
+						if('file:' == document.location.protocol || !_app.ext.quickstart.u.thisArticleRequiresLogin(infoObj) || 'https:' == document.location.protocol)	{
 							 //perform jump can be forced on. authenticate/require login indicate a login dialog is going to show and a jump should NOT occur so that the dialog is not off screen after the jump.
 							if(!infoObj.performJumpToTop && !_app.u.buyerIsAuthenticated() && _app.ext.quickstart.u.thisArticleRequiresLogin(infoObj))	{
 								infoObj.performJumpToTop = false;
@@ -998,7 +1007,6 @@ for legacy browsers. That means old browsers will use the anchor to retain 'back
 						infoObj.templateID = 'checkoutTemplate'
 						infoObj.state = 'init'; //needed for handleTemplateEvents.
 						var $checkoutContainer = $("#checkoutContainer");
-						$new = $checkoutContainer;
 						_app.renderFunctions.handleTemplateEvents($checkoutContainer,infoObj);
 
 //for local, don't jump to secure. ### this may have to change for a native _app. what's the protocol? is there one?
@@ -1022,7 +1030,8 @@ for legacy browsers. That means old browsers will use the anchor to retain 'back
 							}
 						infoObj.state = 'complete'; //needed for handleTemplateEvents.
 						_app.renderFunctions.handleTemplateEvents($checkoutContainer,infoObj);
-
+// **201403 moved this to the bottom so $new gets the right pointer. -mc  
+						$new = $checkoutContainer;
 						break;
 	
 					case 'company':
@@ -1056,7 +1065,6 @@ for legacy browsers. That means old browsers will use the anchor to retain 'back
 		
 //transition appPreView out on init.
 				if($('#appPreView').is(':visible'))	{
-//					_app.ext.quickstart.pageTransition($('#appPreView'),$('#appView'));
 //appPreViewBG is an optional element used to create a layer between the preView and the view when the preView is loaded 'over' the view.
 					var $bg = $('#appPreViewBG');
 					if($bg.length)	{
@@ -1071,9 +1079,7 @@ for legacy browsers. That means old browsers will use the anchor to retain 'back
 				else if(infoObj.performTransition == false)	{
 					}
 				else if(typeof _app.ext.quickstart.pageTransition == 'function')	{
-
-//					dump(" -> parentID.length: "+$(_app.u.jqSelector('#',infoObj.parentID)).length);
-					_app.ext.quickstart.pageTransition($old,$new);
+					_app.ext.quickstart.pageTransition($old,$new,infoObj);
 					}
 				else if($new instanceof jQuery)	{
 //no page transition specified. hide old content, show new. fancy schmancy.
@@ -1083,8 +1089,7 @@ for legacy browsers. That means old browsers will use the anchor to retain 'back
 				else	{
 					dump("WARNING! in showContent and no parentID is set for the element being translated.");
 					}
-				//if a header is defined in the appview, the height of that header will be the jumpto point, which effectively 'chops' off the header w/ each page load.
-				if(infoObj.performJumpToTop)	{$('html, body').animate({scrollTop : ($('header','#appView').length ? $('header','#appView').first().height() : 0)},1000)} //new page content loading. scroll to top.
+
 //NOT POSTING THIS MESSAGE AS ASYNC BEHAVIOR IS NOT CURRENTLY QUANTIFIABLE					
 				//Used by the SEO generation utility to signal that a page has finished loading. 
 				//parent.postMessage("renderFinished","*");
@@ -1364,7 +1369,8 @@ setTimeout(function(){
 				if($ele.length == 0)	{
 					$ele = $("<div />").attr('id','youtubeVideoModal').appendTo('body');
 					}
-				$ele.empty().append("<iframe style='z-index:1;' width='560' height='315' src='https://www.youtube.com/embed/"+videoid+"' frameborder='0' allowfullscreen></iframe>"); //clear any past videos.
+// * 201403 -> adding the ?rel=0 to the end of the URL will disable the suggested videos feature
+				$ele.empty().append("<iframe style='z-index:1;' width='560' height='315' src='https://www.youtube.com/embed/"+videoid+"?rel=0' frameborder='0' allowfullscreen></iframe>"); //clear any past videos.
 				$ele.dialog({
 					modal:true,
 					width:600,
@@ -1417,7 +1423,7 @@ setTimeout(function(){
 
 //assumes the faq are already in memory.
 			showFAQbyTopic : function(topicID)	{
-				dump("BEGIN showFAQbyTopic ["+topicID+"]");
+//				dump("BEGIN showFAQbyTopic ["+topicID+"]");
 				var templateID = 'faqQnATemplate'
 				
 				if(!topicID)	{
@@ -1432,13 +1438,13 @@ setTimeout(function(){
 					if($target.children().length)	{} //if children are present, this faq topic has been opened before or is empty. no need to re-render content.
 					else	{
 						var L = _app.data['appFAQs']['@detail'].length;
-						dump(" -> total #faq: "+L);
+//						dump(" -> total #faq: "+L);
 						for(var i = 0; i < L; i += 1)	{
 							if(_app.data['appFAQs']['@detail'][i]['TOPIC_ID'] == topicID)	{
-								dump(" -> faqid matches topic: "+_app.data['appFAQs']['@detail'][i]['ID']);
+//								dump(" -> faqid matches topic: "+_app.data['appFAQs']['@detail'][i]['ID']);
 //								$target.append(_app.renderFunctions.transmogrify({'id':topicID+'_'+_app.data['appFAQs']['@detail'][i]['ID'],'data-faqid':+_app.data['appFAQs']['@detail'][i]['ID']},templateID,_app.data['appFAQs']['@detail'][i]))
 $target.tlc({
-	dataAttribs : {'id':topicID+'_'+_app.data['appFAQs']['@detail'][i]['ID'],'data-faqid':+_app.data['appFAQs']['@detail'][i]['ID']},
+//	dataAttribs : {'id':topicID+'_'+_app.data['appFAQs']['@detail'][i]['ID'],'data-faqid':+_app.data['appFAQs']['@detail'][i]['ID']},
 	templateid : templateID,
 	dataset : _app.data['appFAQs']['@detail'][i]
 	})
@@ -1527,7 +1533,8 @@ $target.tlc({
 //will change what state of the world is (infoObj) and add it to History of the world.
 //will make sure history keeps only last 15 states.
 			handleSandHOTW : function(infoObj){
-				infoObj.dateObj = new Date(); //milliseconds timestamp
+				infoObj.dateObj = new Date(); //date object -> deprecated. use the ts. ## FUTURE -> remove this in 201406.
+				infoObj.ts = Math.round(+new Date()/1000); //milliseconds timestamp
 				_app.ext.quickstart.vars.sotw = infoObj;
 				_app.ext.quickstart.vars.hotw.unshift(infoObj);
 				_app.ext.quickstart.vars.hotw.pop(); //remove last entry in array. is created with array(15) so this will limit the size.
@@ -1934,24 +1941,36 @@ $target.tlc({
 
 /*
 effects the display of the nav buttons only. should be run just after the handleAppNavData function in showContent.
+// ** 201403 -> appNav is now toggled on/off as well, using a class, so that in a responsive design, appnav height can be easily adjusted w/out impact when it's hidden.
 */
 			handleAppNavDisplay : function(infoObj)	{
-//				dump("BEGIN quickstart.u.handleNavButtonsForDetailPage");
+				dump("BEGIN quickstart.u.handleNavButtonsForDetailPage");
 //				dump(" -> history of the world: "); dump(_app.ext.quickstart.vars.hotw[1]);
 
 				var r = false, //what is returned. true if buttons are visible. false if not.
-				$nextBtn = $("[data-app-role='prodDetailNextItemButton']","#appNav"),
-				$prevBtn = $("[data-app-role='prodDetailPrevItemButton']","#appNav");
-				
+				$nav = $('#appNav'),
+				$nextBtn = $("[data-app-role='prodDetailNextItemButton']",$nav),
+				$prevBtn = $("[data-app-role='prodDetailPrevItemButton']",$nav);
+
 //				dump(" -> $prevBtn.data('datapointer'): "+$prevBtn.data('datapointer'));
 				
 //The buttons are only shown on product detail pages. if no datapointer is set, no reason to show the buttons because there's no reference for what product would be 'next'.		
 				if(infoObj.pageType == 'product' && $prevBtn.data('datapointer'))	{
-					$nextBtn.show();
-					$prevBtn.show();
-					r = true;
+// * 201403 -> only show the buttons if more than 1 product is in the list.
+// do not use doesNestedExist cuz the datapointer has periods in it.
+					if(_app.data[$prevBtn.data('datapointer')] && _app.data[$prevBtn.data('datapointer')]['@products'] && _app.data[$prevBtn.data('datapointer')]['@products'].length > 1)	{
+						dump(" -> have category data and @products contains more than 1 item");
+						$nav.removeClass('displayNone');
+						$nextBtn.show();
+						$prevBtn.show();
+						r = true;
+						}
+					else	{
+						dump(" -> category data is not in memory OR there is only 1 product in the referring @products");
+						}
 					}
 				else	{
+					$nav.addClass('displayNone');
 					$prevBtn.hide();
 					$nextBtn.hide();
 					} //no historical data yet. perfectly normal. make sure buttons are hidden.
@@ -2037,7 +2056,7 @@ effects the display of the nav buttons only. should be run just after the handle
 						var $tmp = $("<div \/>");
 						$tmp.tlc({templateid:infoObj.templateID,'verb':'template'});
 						$product = $tmp.children();
-						$product.attr('id',infoObj.parentID);
+						$product.attr('id',infoObj.parentID).data('pid',pid);
 						$product.addClass('displayNone').appendTo($('#mainContentArea')); //hidden by default for page transitions
 						_app.u.handleCommonPlugins($product);
 						var nd = 0; //Number of Dispatches.
@@ -2119,8 +2138,7 @@ effects the display of the nav buttons only. should be run just after the handle
 				
 				
 			showSearch : function(infoObj)	{
-//				dump("BEGIN quickstart.u.showSearch. infoObj follows: ");
-//				dump(infoObj);
+//				dump("BEGIN quickstart.u.showSearch. infoObj follows: "); dump(infoObj);
 				infoObj.templateID = 'searchTemplate';
 				infoObj.parentID = 'mainContentArea_search';
 				infoObj.state = 'init';
@@ -2143,23 +2161,31 @@ effects the display of the nav buttons only. should be run just after the handle
 					}
 					
 //If raw elastic has been provided, use that.  Otherwise build a query.
-				var elasticsearch;
 				if(infoObj.elasticsearch){
 					elasticsearch = _app.ext.store_search.u.buildElasticRaw(infoObj.elasticsearch);
 					}
-				else if(infoObj.TAG)	{
-					elasticsearch = {"filter":{"term":{"tags":infoObj.TAG}}}
-					elasticsearch = _app.ext.store_search.u.buildElasticRaw(elasticsearch);
+				else if(infoObj.tag)	{
+					elasticsearch = _app.ext.store_search.u.buildElasticRaw({
+					   "filter":{
+						  "and" : [
+							 {"term":{"tags":infoObj.tag}},
+							 {"has_child":{"type":"sku","query": {"range":{"available":{"gte":100}}}}} //only return item w/ inventory
+							 ]
+						  }});
 					}
 				else if (infoObj.KEYWORDS) {
-					var qObj = {'query':infoObj.KEYWORDS} //what is submitted to the query generator.
-					if(infoObj.fields)	{qObj.fields = infoObj.fields}
-					elasticsearch = _app.ext.store_search.u.buildElasticSimpleQuery(qObj);
+					elasticsearch = _app.ext.store_search.u.buildElasticRaw({
+					   "filter":{
+						  "and" : [
+							 {"query":{"query_string":{"query":infoObj.KEYWORDS, "fields":["prod_name^5","pid","prod_desc"]}}},
+							 {"has_child":{"type":"sku","query": {"range":{"available":{"gte":1}}}}} //only return item w/ inventory
+							 ]
+						  }});
 					}
 				else	{
 					
 					}
-				//dump(elasticsearch);
+				dump(elasticsearch);
 /*
 #####
 if you are going to override any of the defaults in the elasticsearch, such as size, do it here BEFORE the elasticsearch is added as data on teh $page.
@@ -2195,6 +2221,7 @@ elasticsearch.size = 50;
 				if(typeof infoObj != 'object'){var infoObj = {}}
 				infoObj.templateID = 'cartTemplate';
 				infoObj.parentID = 'mainContentArea_cart';
+				infoObj.trigger = '';
 				infoObj.state = 'init'; //needed for handleTemplateEvents.
 				
 				var $cart = $('#'+infoObj.parentID);
@@ -2204,12 +2231,12 @@ elasticsearch.size = 50;
 //only create instance once.
 				$cart = $('#mainContentArea_cart');
 				if($cart.length)	{
-					//show cart
-					$cart.hide().trigger('refresh');
-					infoObj.state = 'complete';
-					_app.renderFunctions.handleTemplateEvents($cart,infoObj);
+					//the cart has already been rendered.
+					infoObj.trigger = 'refresh';
+					$cart.hide();
 					}
 				else	{
+					infoObj.trigger = 'fetch';
 					infoObj.cartid = _app.model.fetchCartID();
 					$cart = _app.ext.cco.a.getCartAsJqObj(infoObj);
 					$cart.hide().on('complete',function(){
@@ -2222,11 +2249,9 @@ elasticsearch.size = 50;
 					}
 //This will load the cart from memory, if set. otherwise it will fetch it.
 //so if you need to update the cart, run a destroy prior to showCart.
-				$cart.trigger((_app.data['cartDetail|'+infoObj.cartid] ? 'refresh' : 'fetch'),{'Q':'mutable'});
-				_app.model.dispatchThis();
-
 				infoObj.state = 'complete'; //needed for handleTemplateEvents.
-				_app.renderFunctions.handleTemplateEvents($cart,infoObj);
+				$cart.trigger(infoObj.trigger,$.extend({'Q':'mutable'},infoObj));
+				_app.model.dispatchThis('mutable');
 				return $cart;
 				}, //showCart
 
@@ -2313,40 +2338,38 @@ either templateID needs to be set OR showloading must be true. TemplateID will t
 					}
 //should only get here if the page does not require authentication or the user is logged in.
 				else	{
-					$('#newsletterArticle').hide(); //hide the default.
+
 					var $article = $('#'+infoObj.show+'Article',$customer)
 					$article.show(); //only show content if page doesn't require authentication.
+
+//					dump(" -> $article.data('isTranslated'): "+$article.data('isTranslated')); dump($article.data());
 
 //already rendered the page and it's visible. do nothing. Orders is always re-rendered cuz the data may change.
 					if($article.data('isTranslated') && infoObj.show != 'orders')	{}
 					else	{
-					
 						switch(infoObj.show)	{
 							case 'help':
 								myApp.ext.quickstart.a.showBuyerCMUI();
 								break;
-						
+
+							case 'subscriberLists':
+								_app.model.addDispatchToQ({"_cmd":"buyerDetail",'cartid':_app.model.fetchCartID(),"_tag":{"datapointer":"buyerDetail"}},"mutable");
+								//executes same code as newsletter.
+
 							case 'newsletter':
 								$article.showLoading({'message':'Fetching newsletter list'});
 								_app.model.addDispatchToQ({"_cmd":"appNewsletterList","_tag" : {
 									"datapointer" : "appNewsletterList",
 									callback : 'tlc',
+									extendByDatapointers : ["buyerDetail","cartDetail|"+_app.model.fetchCartID()], //including the cart allows name and email address to be populated.
+									verb : 'translate',
 									jqObj : $article
 									}},'mutable');
 								_app.model.dispatchThis('mutable');
-								break;
-							
-							case 'subscriberLists':
-								_app.model.addDispatchToQ({"_cmd":"buyerNewsletters","_tag":{"datapointer":"buyerNewsletters"}},"mutable");
-								_app.model.addDispatchToQ({"_cmd":"appNewsletterList","_tag" : {
-									"datapointer" : "appNewsletterList",
-									callback : 'tlc',
-									jqObj : $article
-									}},'mutable');
-								_app.model.dispatchThis('mutable');
+								$article.data('isTranslated',true);
 								break;	
 							case 'invoice':
-							
+
 								var orderID = infoObj.uriParams.orderid;
 								var cartID = infoObj.uriParams.cartid;
 								if(cartID && orderID)	{
@@ -2388,7 +2411,10 @@ either templateID needs to be set OR showloading must be true. TemplateID will t
 										populateBuyerProdlist(data[i].id,rd.jqObj)
 										}
 									_app.model.dispatchThis('mutable');
-									$('.applyAccordion',rd.jqObj).accordion({heightStyle: "content"});
+									//no sense putting 1 list into an accordion.
+									if(L > 1)	{
+										$('.applyAccordion',rd.jqObj).accordion({heightStyle: "content"});
+										}
 									}}},"mutable");
 								break;
 							case 'myaccount':
@@ -2422,6 +2448,7 @@ either templateID needs to be set OR showloading must be true. TemplateID will t
 				switch(infoObj.show)	{
 					case 'myaccount':
 					case 'changepassword':
+					case 'subscriberLists':
 					case 'lists':
 					case 'orders':
 						r = true;
@@ -2622,9 +2649,7 @@ buyer to 'take with them' as they move between  pages.
 					infoObj.state = 'init';
 					var parentID = infoObj.parentID || infoObj.templateID+'_'+_app.u.makeSafeHTMLId(catSafeID);
 					var $parent = $(_app.u.jqSelector('#',parentID));
-					
-					dump(" -> $parent.length: "+$parent.length);
-					
+				
 					infoObj.parentID = parentID;
 					_app.renderFunctions.handleTemplateEvents($parent,infoObj);
 //only have to create the template instance once. showContent takes care of making it visible again. but the onComplete are handled in the callback, so they get executed here.
@@ -2681,7 +2706,7 @@ tagObj.lists = new Array(); // all the list id's needed.
 var bindArr = new tlc().getBinds(tagObj.templateID);
 
 if(tagObj.pid)	{
-	if($.inArray('%ATTRIBS.zoovy:grp_children',bindArr) >= 0 && _app.u.thisNestedExists("data.appProductGet|"+tagObj.pid+".%attribs",_app) && _app.data['appProductGet|'+tagObj.pid]['%attribs']['zoovy:grp_type'] == 'CHILD' && _app.data['appProductGet|'+tagObj.pid]['%attribs']['zoovy:grp_parent'])	{
+	if($.inArray('%attribs.zoovy:grp_children',bindArr) >= 0 && _app.u.thisNestedExists("data.appProductGet|"+tagObj.pid+".%attribs",_app) && _app.data['appProductGet|'+tagObj.pid]['%attribs']['zoovy:grp_type'] == 'CHILD' && _app.data['appProductGet|'+tagObj.pid]['%attribs']['zoovy:grp_parent'])	{
 		numRequests += _app.calls.appProductGet.init({'pid':_app.data['appProductGet|'+tagObj.pid]['%attribs']['zoovy:grp_parent']},{},'mutable');
 		}
 	}
@@ -2785,9 +2810,9 @@ else	{
 				var total = 0;
 				if(_app.data[tagObj.datapointer] && _app.data[tagObj.datapointer].sum)	{
 					r = true;
-					var itemCount = _app.u.isSet(_app.data[tagObj.datapointer].sum.items_count) || 0;
-					var subtotal = _app.data[tagObj.datapointer].sum.items_total;
-					var total = _app.data[tagObj.datapointer].sum.order_total;
+					itemCount = _app.u.isSet(_app.data[tagObj.datapointer].sum.items_count) || 0;
+					subtotal = _app.data[tagObj.datapointer].sum.items_total;
+					total = _app.data[tagObj.datapointer].sum.order_total;
 					}
 				else	{
 					//cart not in memory yet. use defaults.
@@ -3030,7 +3055,7 @@ else	{
 
 			subscribeSubmit : function($ele,p)	{
 				p.preventDefault();
-				_app.ext.store_crm.u.handleSubscribe($ele.attr('id'));
+				_app.ext.store_crm.u.handleSubscribe($ele);
 				return false;
 				},
 

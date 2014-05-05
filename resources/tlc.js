@@ -154,6 +154,7 @@ var tlc = function()	{
 		return r;
 		}
 
+//This is used for a '<template>' which is INSIDE of an element that is being translated.
 	this.handleTemplates = function($target)	{
 		$("template",$target).each(function(index){
 			//for a <template>, the content makes up the template itself. adding <template> back onto the DOM wouldn't accomplish much.
@@ -203,7 +204,6 @@ var tlc = function()	{
 					dump("couldn't parse a tlc: "+$tag.data('tlc'),'warn');
 					//could not parse tlc. error already reported.
 					}
-	//			dump("----------------> end $tag <-----------------");
 				});
 			}
 		else	{
@@ -544,14 +544,19 @@ This one block should get called for both img and imageurl but obviously, imageu
 				if(p1 == p2){ r = true;} break;
 			case "ne":
 				if(p1 != p2){ r = true;} break;
+			case "inteq":
+				if(Number(p1) === Number(p2)){ r = true;} break;
+			case "intne":
+				if(Number(p1) != Number(p2)){ r = true;} break;
+// for gt, gte, lt and lte, undefined == 0.
 			case "gt":
-				if(Number(p1) > Number(p2)){r = true;} break;
+				if(Number(p1 || 0) > Number(p2)){r = true;} break;
 			case "gte":
-				if(Number(p1) >= Number(p2)){r = true;} break;
+				if(Number(p1 || 0) >= Number(p2)){r = true;} break;
 			case "lt":
-				if(Number(p1) < Number(p2)){r = true;} break;
+				if(Number(p1 || 0) < Number(p2)){r = true;} break;
 			case "lte":
-				if(Number(p1) <= Number(p2)){r = true;} break;
+				if(Number(p1 || 0) <= Number(p2)){r = true;} break;
 			case "true":
 				if(p1){r = true}; break;
 			case "false":
@@ -599,12 +604,41 @@ This one block should get called for both img and imageurl but obviously, imageu
 //passing the command into this will verify that the format exists (whether it be core or not)
 
 	this.format_currency = function(argObj,globals)	{
-		var r = "$"+globals.binds[argObj.bind]; //+" ("+arg.value.value+")";
+//		dump("BEGIN format_currency");
+		var
+			decimalPlace = 2,
+			a = argObj.bind ? globals.binds[argObj.bind] : globals.binds[globals.focusBind];
+
+		if(!isNaN(a))	{
+			a = Number(a);
+			var 
+				b = a.toFixed(decimalPlace),  //get 12345678.90
+				r;
+			a = parseInt(a); // get 12345678
+			b = (b-a).toPrecision(decimalPlace); //get 0.90
+			b = parseFloat(b).toFixed(decimalPlace); //in case we get 0.0, we pad it out to 0.00
+			a = a.toLocaleString();//put in commas - IE also puts in .00, so we'll get 12,345,678.00
+			//if IE (our number ends in .00)
+			if(a.indexOf('.00') > 0)	{
+				a=a.substr(0, a.length-3); //delete the .00
+	//				_app.u.dump(" -> trimmed. a. a now = "+a);
+				}
+			r = a+b.substr(1);//remove the 0 from b, then return a + b = 12,345,678.90
+	
+	//if the character before the decimal is just a zero, remove it.
+			if(r.split('.')[0] == 0){
+				r = '.'+r.split('.')[1]
+				}
+			r = '$'+r;
+			}
+		else	{
+			r = a;
+			}
 		return r;
 		} //currency
 
 	this.format_prepend = function(argObj,globals,arg)	{
-		var r = (arg.type == 'longopt' ? arg.value.value : arg.value)+globals.binds[argObj.bind]
+		var r = (arg.type == 'longopt' ? arg.value.value : arg.value)+globals.binds[argObj.bind];
 		return r;
 		} //prepend
 
@@ -612,6 +646,16 @@ This one block should get called for both img and imageurl but obviously, imageu
 		var r = globals.binds[argObj.bind]+(arg.type == 'longopt' ? arg.value.value : arg.value);
 		return r;
 		} //append
+
+	this.format_lowercase = function(argObj,globals,arg)	{
+		globals.binds[argObj.bind] = globals.binds[argObj.bind].toLowerCase();
+		return globals.binds[argObj.bind];
+		} //lowercase
+
+	this.format_uppercase = function(argObj,globals,arg)	{
+		globals.binds[argObj.bind] = globals.binds[argObj.bind].toUpperCase();
+		return globals.binds[argObj.bind];
+		} //lowercase
 
 	this.format_default = function(argObj,globals,arg)	{
 		var r = (arg.type == 'longopt' ? arg.value.value : arg.value);
@@ -841,7 +885,7 @@ returning a 'false' here will exit the statement loop.
 		//NOTE -> change '2' to args.length to support multiple args. ex: if (is $var --lt='100' --gt='5') {{ apply --append; }};
 
 //SANITY -> in args, args[0] is the variable declaration (type/value).  args[1]+ is the comparison (key, type, value where key = comparison operand).
-		
+
 		if(args.length)	{
 			if(args[0].type == 'variable')	{
 //				dump(" -> args[0].value: "+args[0].value);
@@ -855,7 +899,7 @@ returning a 'false' here will exit the statement loop.
 				var p2;
 				if(args[i])	{
 					if(args[i].type == 'longopt')	{
-						p2 = (args[i].value == null) ? args[i].value : args[i].value.value;
+						p2 = this.handleArg(args[i],globals)[args[i].key];
 						}
 					else {p2 = args[i].value || null}
 					if(this.comparison(args[i].key,p1,p2))	{}
@@ -890,7 +934,9 @@ returning a 'false' here will exit the statement loop.
 //						dump(" -> cmd.args[i].key: "+cmd.args[i].key); dump(cmd.args[i]);
 						globals.binds[argObj.bind] = this['format_'+cmd.args[i].key](argObj,globals,cmd.args[i]);
 						}
-					catch(e)	{}
+					catch(e)	{
+						dump(e);
+						}
 					}
 				}
 			}
@@ -1034,16 +1080,7 @@ returning a 'false' here will exit the statement loop.
 		if(!isNaN(bind))	{
 			for(var i = 0, L = cmd.args.length; i < L; i += 1)	{
 				//var value = Number((cmd.args[i].type == 'longopt' && cmd.args[i].value) ? cmd.args[i].value.value : cmd.args[i].value);
-				var value = cmd.args[i].value;
-				if(cmd.args[i].type == 'longopt'){
-					if(value.type == 'variable'){
-						value = globals.binds[value.value];
-						}
-					else {
-						value = value.value
-						}
-					}
-				value = Number(value);
+				var value = Number(this.handleArg(cmd.args[i],globals)[cmd.args[i].key]);
 				if(!isNaN(value))	{
 					switch(cmd.args[i].key)	{
 						case "add":

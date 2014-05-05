@@ -17,6 +17,14 @@ body,html	{font-size:85%;} /* increased for non mobile devices w/ a media query 
 section	{display:block;}
 
 /*
+*** 201338 -> here to fix a bug in jqueryUI. the dialogs, when attempting to move, would jump away from the cursor in FF. This fixed it.
+Put this high in the doc as a reminder to occassionally re-check if it can be removed
+*/
+.ui-dialog {
+    position: fixed;
+	}
+
+/*
 loading class. add class to your templates if you want a loading graphic to appear while data is requested. add only to the parent element. 
 loadingBG classname is removed once template is rendered.
 note - wait should only be used in cases where the entire template is being reloaded. the class is NOT automatically removed ever.
@@ -170,7 +178,7 @@ and offMenu is toggle off, hiding the change button.
 
 .mainColumn	{width:75%;}
 .sideline	{float:right; width:20%; margin:0 0 2em 0;}
-.sideline a	{padding:1em 0; text-decoration:none; display:block;} /* recommend at least 5px vert padding for mobile/pad */
+.sideline a	{padding:.3em 0; text-decoration:none; display:block;} /* recommend at least 5px vert padding for mobile/pad */
 
 
 
@@ -200,7 +208,7 @@ a.blockLink {border:none; display:block;}
 
 /* over rides - height and width ensure each row is the same height. percentages could be used for width */
 .productList > li	{width:150px; height:250px; position:relative;}
-.lineItemProdlist > li	{position:relative; display:block; padding:1em 0; width:100% !important; height:auto !important; border-bottom:1px dotted #efefef;} /* single column product list - used in cart, checkout, etc. productList class is also defined in these cases. */
+.lineItemProdlist > li	{position:relative; display:block; padding:1em 0; float:none; width:auto; height:auto !important; border-bottom:1px dotted #efefef;} /* single column product list - used in cart, checkout, etc. productList class is also defined in these cases. */
 
 .lineItemProdlist .prodThumb	{margin-right:1em;}
 
@@ -433,30 +441,6 @@ CART
 
 
 
-
-
-
-
-/*
-
-CHECKOUT
-
-*/
-
-#paybySupplemental_CREDIT .ui-icon-help	{display:inline-block; margin-left:.5em;}
-
-
-.paybySupplemental {padding:1em; font-weight:normal; border-top-width:0;}
-.paybySupplemental select {margin-right:1em;}
-
-.addressList address	{float:left; margin:0 1em 1em 0;}
-
-.creditCardCVVIcon	{display:inline-block !important;}
-
-.checkoutFormContainer input, checkoutFormContainer select	{margin:.3em .5em .3em 0;}
-.checkoutFormContainer input[type='password']	{width:200px;} /* class affects both login password and create account passwords */
-
-.headerPadding label	{padding:.3em .5em;}
 
 /* Pure CSS3 Multi Level Drop Down Navigation Menu */
 /*             http://www.bloggermint.com/demos/darknavmenu/#            */

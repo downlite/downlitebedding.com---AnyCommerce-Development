@@ -53,9 +53,13 @@ function runTests()	{
 		'small-array' : ["frank","albert","tom","harry"],
 		'small-hash' : {'name':'ron','nickname' : 'tater salad'},
 		'price' : 24.95,
+		'decimal' : 18.9,
+		'negative' : -3,
+		'cents' : .71,
 		'boolean-true' : true,
 		'boolean-false' : false,
-		'string-false' : 'false'
+		'string-false' : 'false',
+		'uppercase' : 'HAN'
 		}
 
 	$('#sample-template').tlc({'verb':'translate','dataset':dataset});
@@ -113,7 +117,8 @@ function runTests()	{
 			}); //loop
 		//now run the 'unique' tests.
 		ok($('#child-gets-replaced').html() == 'bob', "replace" );
-		ok($('#child-gets-replaced2').text() == 'testing', "replace" );
+		ok($('#child-gets-replaced2').text() == 'testing', "replace 2" );
+		ok($.trim($('#this-should-be-empty').html()) == '', "remove" );
 		});
 	test( "TLC Formats", function() {
 		$("[data-testtype]",'#format-tests').each(function(index){
