@@ -1604,7 +1604,7 @@ function handleAnimation()	{
 								if(!handleAnimation())	{$li.show();}
 								$("button[data-taskmode='close']",$li).hide();
 								$("button[data-taskmode='edit']",$li).show();
-	
+
 								$li.showLoading({'message':'Fetching Product Detail'});
 								_app.model.addDispatchToQ({
 									'_cmd':'adminProductDetail',
@@ -1614,7 +1614,11 @@ function handleAnimation()	{
 									_tag : {
 										'datapointer':'adminProductDetail|'+P.pid,
 										'jqObj' : $li,
-										'callback' : 'anycontent'
+										'callback' : 'anycontent',
+										'onMissing' : function(rd)	{
+											_app.ext.admin_prodedit.u.addProductAsTask({'pid':P.pid,'tab':'product','mode':'remove'},$li);
+											$('#globalMessaging').anymessage({'message' : 'Product '+P.pid+' was removed from the product task list because it no longer exists'});
+											}
 										}
 									},'passive');
 								_app.model.dispatchThis('passive');

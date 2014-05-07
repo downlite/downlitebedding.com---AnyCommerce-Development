@@ -171,10 +171,12 @@ document.write = function(v){
 				var cartID = false;
 //				_app.u.dump("BEGIN quickstart.callbacks.addCart2CM.onSuccess");
 				if(_rtag.datapointer == 'appCartExists' && _app.data[_rtag.datapointer].exists)	{
-					_app.u.dump(" -> existing cart is valid. add to cart manager"); 
+//					_app.u.dump(" -> existing cart is valid. add to cart manager"); 
+//					dump(" -> _rtag:"); dump(_rtag);
+					cartID = _rtag.cartid;
+					_app.model.addCart2Session(cartID);
+//					dump(" -> cart id is valid. added the cart to the session is "+_app.model.addCart2Session(cartID)); //this function updates _app.vars.carts
 					if($('#cartMessenger').length)	{
-						cartID = _rtag.cartid;
-						_app.model.addCart2Session(cartID); //this function updates _app.vars.carts
 						_app.ext.cart_message.u.initCartMessenger(cartID,$('#cartMessenger')); //starts the cart message polling
 						$('#cartMessenger').tlc({'verb':'translate','dataset':_app.data['cartDetail|'+cartID]}).attr('data-cartid',cartID);
 						$("textarea[name='message']",'#cartmessenger').on('keypress',function(event){
@@ -769,7 +771,7 @@ fallback is to just output the value.
 				else if(_app.u.buyerIsAuthenticated())	{
 					$tag.show().button({icons: {primary: "ui-icon-heart"},text: false});
 					$tag.off('click.moveToWishlist').on('click.moveToWishList',function(){
-						_app.ext.quickstart.a.moveItemFromCartToWishlist(data.value);
+						_app.ext.quickstart.a.moveItemFromCartToWishlist(data.value,$tag.closest("[data-template-role='cart']"));
 						});
 					}
 				else	{$tag.hide();}
@@ -1035,8 +1037,8 @@ for legacy browsers. That means old browsers will use the anchor to retain 'back
 						break;
 	
 					case 'company':
-						$new = $('#mainContentArea_company');
 						_app.ext.quickstart.u.showCompany(infoObj);
+						$new = $('#mainContentArea_company');
 						break;
 	
 					case 'cart':
@@ -1153,29 +1155,29 @@ the ui also helps the buyer show the merchant what they're looking at and, optio
 				},
 
 //each item in the cart has a UUID. The UUID is used (not the stid) to modify the cart
-			moveItemFromCartToWishlist : function(obj)	{
+			moveItemFromCartToWishlist : function(obj,$cart)	{
 				if(obj && obj.uuid && obj.stid)	{
 					//adds item to wishlist. cart removal ONLY occurs if this is successful.
-					$('#modalCartContents').showLoading({'message':'Moving item '+obj.stid+' from your cart to your wishlist'});
+					$cart.showLoading({'message':'Moving item '+obj.stid+' from your cart to your wishlist'});
 					_app.calls.buyerProductListAppendTo.init({sku:obj.stid,'listid':'wishlist'},{'callback':function(rd){
 						if(_app.model.responseHasErrors(rd)){
-							$('#modalCartContents').hideLoading(); //only close on error. otherwise leave for removal in subsequent call.
-							$('#cartMessaging').anymessage({'message':rd});
+							$cart.hideLoading(); //only close on error. otherwise leave for removal in subsequent call.
+							$cart.anymessage({'message':rd});
 							}
 						else	{
 							//by now, item has been added to wishlist. So remove it from the cart.
-							
-							_app.ext.cco.calls.cartItemUpdate.init({'stid':obj.stid,'quantity':0},{callback:function(rd){
-								$('#modalCartContents').hideLoading();
+							_app.ext.cco.calls.cartItemUpdate.init({'stid':obj.stid,'quantity':0,'_cartid':$cart.data('cartid')},{callback:function(rd){
+								$cart.hideLoading();
 								if(_app.model.responseHasErrors(rd)){
-									$('#cartMessaging').anymessage({'message':rd});
+									$cart.anymessage({'message':rd});
 									}
 								else	{
 									//item successfully removed from the cart.
-									$('#cartMessaging').anymessage({'message':'Thank you. '+obj.stid+' has been added to your wishlist and removed from the cart.'}); //!!! need to make this a success message.
+									$cart.anymessage({'message':'Thank you. '+obj.stid+' has been added to your wishlist and removed from the cart.'}); //!!! need to make this a success message.
 									}
 								}});
-							_app.calls.refreshCart.init({'callback':'handleCart','templateID':'cartTemplate','extension':'quickstart','parentID':'modalCartContents'},'immutable');
+							$cart.trigger('fetch',{'Q':'immutable'});
+//							_app.calls.refreshCart.init({'callback':'handleCart','templateID':'cartTemplate','extension':'quickstart','parentID':'modalCartContents'},'immutable');
 							_app.model.dispatchThis('immutable');
 							}
 						}},'immutable'); 
@@ -1944,7 +1946,7 @@ effects the display of the nav buttons only. should be run just after the handle
 // ** 201403 -> appNav is now toggled on/off as well, using a class, so that in a responsive design, appnav height can be easily adjusted w/out impact when it's hidden.
 */
 			handleAppNavDisplay : function(infoObj)	{
-				dump("BEGIN quickstart.u.handleNavButtonsForDetailPage");
+//				dump("BEGIN quickstart.u.handleNavButtonsForDetailPage");
 //				dump(" -> history of the world: "); dump(_app.ext.quickstart.vars.hotw[1]);
 
 				var r = false, //what is returned. true if buttons are visible. false if not.
@@ -2168,8 +2170,8 @@ effects the display of the nav buttons only. should be run just after the handle
 					elasticsearch = _app.ext.store_search.u.buildElasticRaw({
 					   "filter":{
 						  "and" : [
-							 {"term":{"tags":infoObj.tag}},
-							 {"has_child":{"type":"sku","query": {"range":{"available":{"gte":100}}}}} //only return item w/ inventory
+							 {"term":{"tags":decodeURIComponent(infoObj.tag)}},
+							 {"has_child":{"type":"sku","query": {"range":{"available":{"gte":1}}}}} //only return item w/ inventory
 							 ]
 						  }});
 					}
@@ -2177,7 +2179,7 @@ effects the display of the nav buttons only. should be run just after the handle
 					elasticsearch = _app.ext.store_search.u.buildElasticRaw({
 					   "filter":{
 						  "and" : [
-							 {"query":{"query_string":{"query":infoObj.KEYWORDS, "fields":["prod_name^5","pid","prod_desc"]}}},
+							 {"query":{"query_string":{"query":decodeURIComponent(infoObj.KEYWORDS), "fields":["prod_name^5","pid","prod_desc"]}}},
 							 {"has_child":{"type":"sku","query": {"range":{"available":{"gte":1}}}}} //only return item w/ inventory
 							 ]
 						  }});

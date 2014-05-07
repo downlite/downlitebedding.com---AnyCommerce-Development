@@ -57,7 +57,7 @@ css files should be included before any .js file to ensure they are downloaded i
 $(document).ready(function(){
 
 	window.myApp = new initApp({
-		"release":"201403.a",  //increment this with each change. should solve caching issues. format: YYYYMMDDHHMMSS
+		"release":"201404.a",  //increment this with each change. should solve caching issues. format: YYYYMMDDHHMMSS
 		"_clientid":"zmvc", //zmvc for store app, 1pc for one page checkout.
 		"baseURL":baseURL, //used in non-local mode.
 		"checkoutAuthMode" : "active",//can be passive, active or required
@@ -1134,7 +1134,7 @@ This is the template used both within a dialog and inline, unless implicitly ove
 		</div>
 		<div class="ui-state-default cartButtons stdPadding clearfix">
 			<!-- spans are set around the buttons so each element has one consitent tag type around it -->
-			<span class="continueShoppingSpan thisButton"><button class="applyButton continueShoppingButton" data-app-click="myRIA|dialogClose">Continue Shopping</button></span>
+			<span class="continueShoppingSpan thisButton"><button class="applyButton continueShoppingButton" data-app-click="myRIA|dialogCloseExec">Continue Shopping</button></span>
 	
 			<span id="inStoreCheckoutButton" class='thisButton' title="proceed to secure checkout">
 				<a class="applyButton ui-state-highlight checkoutButton" href='#!checkout'>Store Checkout</a>
