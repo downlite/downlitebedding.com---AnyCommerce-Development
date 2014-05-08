@@ -255,6 +255,27 @@ td.tabbedProductContentTD div.prodTabs ul.tabs li.ui-tabs-active{
 	padding: 5px 0;
 }
 
+#prodlistAccessoriesContainer li{
+	float: left;
+}
+.productListTemplateAccessories img{
+	float: left;
+}
+.productListTemplateAccessories div.accessProdName{
+	float: left;
+    margin-left: 5px;
+    width: 170px;
+}
+.productListTemplateAccessories div.basePrice{
+	float: left;
+    margin-left: 5px;
+}
+
+.prodViewerContainer .prodThumbs div{
+	float: left;
+    margin: 5px 10px 5px 0;
+}
+
 
 
 
