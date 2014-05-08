@@ -2431,7 +2431,8 @@ The 'data-action' attribute is used to assign an onclick.
     	<h5>Select your hotel type:</h5>
         <label class='break'><input type='radio' name="hotelType" value='natChainHotel' onClick="myApp.ext._store_filter.a.hotelTypeSelected($(this),$(this).parent().parent().parent());" />National Chain hotels</label>
         <label class='break'><input type='radio' name="hotelType" value='luxResortHotel' onClick="myApp.ext._store_filter.a.hotelTypeSelected($(this),$(this).parent().parent().parent());" />Luxury Resort Hotels</label>
-        <label class='break'><input type='radio' name="hotelType" value='luxHotel' onClick="myApp.ext._store_filter.a.hotelTypeSelected($(this),$(this).parent().parent().parent());" />National Chain Hotels</label>
+        <label class='break'><input type='radio' name="hotelType" value='luxHotel' onClick="myApp.ext._store_filter.a.hotelTypeSelected($(this),$(this).parent().parent().parent());" />Luxury Hotels</label>
+        <label class='break'><input type='radio' name="hotelType" value='luxInn' onClick="myApp.ext._store_filter.a.hotelTypeSelected($(this),$(this).parent().parent().parent());" />Luxury Inns</label>
         <label class='break'><input type='radio' name="hotelType" value='boutHotel' onClick="myApp.ext._store_filter.a.hotelTypeSelected($(this),$(this).parent().parent().parent());" />Boutique Hotels</label>
         <label class='break'><input type='radio' name="hotelType" value='cruiseLine' onClick="myApp.ext._store_filter.a.hotelTypeSelected($(this),$(this).parent().parent().parent());" />Cruise Lines</label>
         <label class='break'><input type='radio' name="hotelType" value='bnb' onClick="myApp.ext._store_filter.a.hotelTypeSelected($(this),$(this).parent().parent().parent());" />BnBs</label>
@@ -2503,6 +2504,16 @@ The 'data-action' attribute is used to assign an onclick.
                 <label class='break'><input class="fsCheckbox" type='checkbox' value='the_inn_at_rancho_santa_fe_bedding' onClick="myApp.ext._store_filter.a.filterSelected($(this),$(this).parent().parent().parent().parent().parent());" />The Inn At Rancho Santa Fe Bedding</label>
                 <label class='break'><input class="fsCheckbox" type='checkbox' value='the_pierre_hotel_bedding' onClick="myApp.ext._store_filter.a.filterSelected($(this),$(this).parent().parent().parent().parent().parent());" />The Pierre Hotel Bedding</label>
                 <label class='break'><input class="fsCheckbox" type='checkbox' value='trump_hotel_bedding' onClick="myApp.ext._store_filter.a.filterSelected($(this),$(this).parent().parent().parent().parent().parent());" />Trump Hotel Bedding</label>
+            </div>
+        </fieldset>
+    </div>
+    <div class="filterluxInnCat filterCat displayNone">
+        <fieldset data-elastic-key="luxury_inns" data-filtertype="checkboxes">
+            <legend class="filterCatTitle">Luxury Inns</legend>
+            <div class="filterCategoryCont">
+                <label class='break'><input class="fsCheckbox" type='checkbox' value='martha_washington_inn_spa_bedding' onClick="myApp.ext._store_filter.a.filterSelected($(this),$(this).parent().parent().parent().parent().parent());" />Martha Washington Inn & Spa Bedding</label>
+                <label class='break'><input class="fsCheckbox" type='checkbox' value='the_inn_at_blackberry_farm_bedding' onClick="myApp.ext._store_filter.a.filterSelected($(this),$(this).parent().parent().parent().parent().parent());" />The Inn At Blackberry Farm Bedding</label>
+                <label class='break'><input class="fsCheckbox" type='checkbox' value='the_inn_at_rancho_santa_fe_bedding' onClick="myApp.ext._store_filter.a.filterSelected($(this),$(this).parent().parent().parent().parent().parent());" />The Inn At Rancho Santa Fe Bedding</label>
             </div>
         </fieldset>
     </div>

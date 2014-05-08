@@ -244,7 +244,7 @@ var _store_filter = function(_app) {
 				if(_app.ext._store_filter.u.validateFilterProperties($form))	{
 				//	_app.u.dump(" -> validated Filter Properties.")
 					var query = {
-						"mode":"elastic-native",
+						"mode":"elastic-search",
 						"size":50,
 						"filter" : _app.ext._store_filter.u.buildElasticFilters($form),
 						}//query
@@ -356,6 +356,10 @@ var _store_filter = function(_app) {
 					case "luxHotel":
 						$(".filterCat", $context).hide();
 						$(".filterluxHotelCat", $context).slideDown(1000);
+					break;
+					case "luxInn":
+						$(".filterCat", $context).hide();
+						$(".filterluxInnCat", $context).slideDown(1000);
 					break;
 					case "boutHotel":
 						$(".filterCat", $context).hide();
