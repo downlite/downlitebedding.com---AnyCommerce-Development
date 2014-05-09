@@ -115,28 +115,29 @@ var store_downlite = function(_app) {
 						}
 							
 						var blogs = function(){
-						$('.blog1').rssfeed('http://blog.downlitebedding.com/rss.xml', {
-							limit: 1,
-							header: false,
-							snippet: false,
-							date: false,
-							showerror: true,
-							errormsg: 'Sorry, the blog couldn\'t be loaded right now due to a technical problem. Please try again later.'
-						});
-						$('.blog2').rssfeed('http://blog.downlitebedding.com/rss.xml', {
-							limit: 1,
-							offset: 2,
-							header: false,
-							snippet: false,
-							date: false
-						});
-						$('.blog3').rssfeed('http://blog.downlitebedding.com/rss.xml', {
-							limit: 1,
-							offset: 3,
-							header: false,
-							snippet: false,
-							date: false
-						});
+							dump('Begin adding blogs to homepage.')
+							$('.blog1').rssfeed('http://blog.downlitebedding.com/rss.xml', {
+								limit: 1,
+								header: false,
+								snippet: false,
+								date: false,
+								showerror: true,
+								errormsg: 'Sorry, the blog couldn\'t be loaded right now due to a technical problem. Please try again later.'
+							});
+							$('.blog2').rssfeed('http://blog.downlitebedding.com/rss.xml', {
+								limit: 1,
+								offset: 2,
+								header: false,
+								snippet: false,
+								date: false
+							});
+							$('.blog3').rssfeed('http://blog.downlitebedding.com/rss.xml', {
+								limit: 1,
+								offset: 3,
+								header: false,
+								snippet: false,
+								date: false
+							});
 						}
 						setTimeout(blogs, 2000);
 						// BEGIN BLOG CONTENT CODE
@@ -211,38 +212,38 @@ var store_downlite = function(_app) {
 			
 			hideShippingOptionWeight : function(){
 				if($(".shippingOptionsList li label").attr("data-weightHidden")){
-					dump("Shipping option trigger value detected.");
+					//dump("Shipping option trigger value detected.");
 					if($(".shippingOptionsList li label").attr('data-weightHidden') == "false"){
-						dump("Shipping option shipping weight has not be hidden. Hiding now.");
+						//dump("Shipping option shipping weight has not be hidden. Hiding now.");
 						var shippingOption = $(".shippingOptionsList li label").text();
-						dump("shippingOption = " + shippingOption);
+						//dump("shippingOption = " + shippingOption);
 						
 						if(shippingOption.indexOf('[') === -1){
-							dump("[ Not detected. Doing nothing.");
+							//dump("[ Not detected. Doing nothing.");
 						}
 						else{
-							dump("[ detected. Removing text between it");
+							//dump("[ detected. Removing text between it");
 							var c = shippingOption.indexOf('[') ; 
 							var L = shippingOption.indexOf(']') ;
 							L = L + 1;
 							var final = shippingOption.slice (c,L) ;
-							dump("c = " + c);
-							dump("L = " + L);
-							dump("final = " + final);
+							//dump("c = " + c);
+							//dump("L = " + L);
+							//dump("final = " + final);
 							shippingOption = shippingOption.replace(final, '');
 							shippingOption = shippingOption.replace('Actual Cost to be Determined', 'Shipping - TBD')
 							$(".shippingOptionsList li label").empty();
 							$(".shippingOptionsList li label").text(shippingOption);
-							dump(shippingOption);
+							//dump(shippingOption);
 							$(".shippingOptionsList li label").attr('data-weightHidden',true).append();
 						}
 					}
 					else{
-						dump("Shipping option shipping weight has been hidden. Doing nothing.");
+						//dump("Shipping option shipping weight has been hidden. Doing nothing.");
 					}
 				}
 				else{
-					dump("Shipping option trigger value not detected. Creating it and re-running function.");
+					//dump("Shipping option trigger value not detected. Creating it and re-running function.");
 					$(".shippingOptionsList li label").attr('data-weightHidden',false);
 					 _app.ext.store_downlite.a.hideShippingOptionWeight();
 				}
@@ -250,34 +251,34 @@ var store_downlite = function(_app) {
 			
 			hideSubtotalWeight : function(){
 				if($("section.cartSummary span.orderShipMethod").attr("data-weightHidden")){
-					dump("Subtotal trigger value detected.");
+					//dump("Subtotal trigger value detected.");
 					if($("section.cartSummary span.orderShipMethod").attr("data-weightHidden") == "false"){
-						dump("Subtotal shipping weight has not be hidden. Hiding now.");
+						//dump("Subtotal shipping weight has not be hidden. Hiding now.");
 						var subtotalShipping = $("section.cartSummary span.orderShipMethod").text();
-						dump("subtotalShipping = " + subtotalShipping);
+						//dump("subtotalShipping = " + subtotalShipping);
 						
 						if(subtotalShipping.indexOf('[') === -1){
-							dump("[ Not detected. Doing nothing.");
+							//dump("[ Not detected. Doing nothing.");
 						}
 						else{
-							dump("[ detected. Removing text between it");
+							//dump("[ detected. Removing text between it");
 							var c = subtotalShipping.indexOf('[') ; 
 							var L = subtotalShipping.indexOf(']') ;
 							L = L + 1;
 							var final = subtotalShipping.slice (c,L) ;
-							dump("c = " + c);
-							dump("L = " + L);
-							dump("final = " + final);
+							//dump("c = " + c);
+							//dump("L = " + L);
+							//dump("final = " + final);
 							subtotalShipping = subtotalShipping.replace(final, '');
 							subtotalShipping = subtotalShipping.replace('Actual Cost to be Determined', 'Shipping - TBD')
 							$("section.cartSummary span.orderShipMethod").text(subtotalShipping);
-							dump(subtotalShipping);
+							//dump(subtotalShipping);
 							$("section.cartSummary span.orderShipMethod").attr('data-weightHidden',true).append();
 						}
 					}
 				}
 				else{
-					dump("Subtotal trigger value not detected. Creating it and re-running function.");
+					//dump("Subtotal trigger value not detected. Creating it and re-running function.");
 					$("section.cartSummary span.orderShipMethod").attr('data-weightHidden',false);
 					 _app.ext.store_downlite.a.hideSubtotalWeight();
 				}
