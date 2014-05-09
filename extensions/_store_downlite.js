@@ -142,7 +142,8 @@ var store_downlite = function(_app) {
 						// BEGIN BLOG CONTENT CODE
 					});
 					_app.templates.cartTemplate.on('complete.downlite',function(event,$context,infoObj){
-						 _app.ext.store_downlite.a.hideShippingOptionWeight();
+						 setTimeout(_app.ext.store_downlite.a.hideShippingOptionWeight(), 1000);
+						  setTimeout(_app.ext.store_downlite.a.hideSubtotalWeight(), 1000);
 					});
 					return r;
 				},
@@ -209,25 +210,76 @@ var store_downlite = function(_app) {
 				},
 			
 			hideShippingOptionWeight : function(){
-				var shippingOption = $(".shippingOptionsList li label").text();
-				dump("shippingOption = ");
-				dump(shippingOption);
-				
-				if(shippingOption.indexOf('[') === -1){
-					dump("[ Not detected. Doing nothing.");
+				if($(".shippingOptionsList li label").attr("data-weightHidden")){
+					dump("Shipping option trigger value detected.");
+					if($(".shippingOptionsList li label").attr('data-weightHidden') == "false"){
+						dump("Shipping option shipping weight has not be hidden. Hiding now.");
+						var shippingOption = $(".shippingOptionsList li label").text();
+						dump("shippingOption = " + shippingOption);
+						
+						if(shippingOption.indexOf('[') === -1){
+							dump("[ Not detected. Doing nothing.");
+						}
+						else{
+							dump("[ detected. Removing text between it");
+							var c = shippingOption.indexOf('[') ; 
+							var L = shippingOption.indexOf(']') ;
+							L = L + 1;
+							var final = shippingOption.slice (c,L) ;
+							dump("c = " + c);
+							dump("L = " + L);
+							dump("final = " + final);
+							shippingOption = shippingOption.replace(final, '');
+							shippingOption = shippingOption.replace('Actual Cost to be Determined', 'Shipping - TBD')
+							$(".shippingOptionsList li label").empty();
+							$(".shippingOptionsList li label").text(shippingOption);
+							dump(shippingOption);
+							$(".shippingOptionsList li label").attr('data-weightHidden',true).append();
+						}
+					}
+					else{
+						dump("Shipping option shipping weight has been hidden. Doing nothing.");
+					}
 				}
 				else{
-					dump("[ detected. Removing text between it");
-					var c = shippingOption.indexOf('[') ; 
-					var L = shippingOption.indexOf(']') ;
-					//c = c + 1;							
-					L = L + 1;
-					var final = shippingOption.slice (c,L) ;
-					dump("c = " + c);
-					dump("L = " + L);
-					dump("final = " + final);
-					shippingOption.replace(final, '');
-					dump(shippingOption);
+					dump("Shipping option trigger value not detected. Creating it and re-running function.");
+					$(".shippingOptionsList li label").attr('data-weightHidden',false);
+					 _app.ext.store_downlite.a.hideShippingOptionWeight();
+				}
+			},
+			
+			hideSubtotalWeight : function(){
+				if($("section.cartSummary span.orderShipMethod").attr("data-weightHidden")){
+					dump("Subtotal trigger value detected.");
+					if($("section.cartSummary span.orderShipMethod").attr("data-weightHidden") == "false"){
+						dump("Subtotal shipping weight has not be hidden. Hiding now.");
+						var subtotalShipping = $("section.cartSummary span.orderShipMethod").text();
+						dump("subtotalShipping = " + subtotalShipping);
+						
+						if(subtotalShipping.indexOf('[') === -1){
+							dump("[ Not detected. Doing nothing.");
+						}
+						else{
+							dump("[ detected. Removing text between it");
+							var c = subtotalShipping.indexOf('[') ; 
+							var L = subtotalShipping.indexOf(']') ;
+							L = L + 1;
+							var final = subtotalShipping.slice (c,L) ;
+							dump("c = " + c);
+							dump("L = " + L);
+							dump("final = " + final);
+							subtotalShipping = subtotalShipping.replace(final, '');
+							subtotalShipping = subtotalShipping.replace('Actual Cost to be Determined', 'Shipping - TBD')
+							$("section.cartSummary span.orderShipMethod").text(subtotalShipping);
+							dump(subtotalShipping);
+							$("section.cartSummary span.orderShipMethod").attr('data-weightHidden',true).append();
+						}
+					}
+				}
+				else{
+					dump("Subtotal trigger value not detected. Creating it and re-running function.");
+					$("section.cartSummary span.orderShipMethod").attr('data-weightHidden',false);
+					 _app.ext.store_downlite.a.hideSubtotalWeight();
 				}
 			}
 

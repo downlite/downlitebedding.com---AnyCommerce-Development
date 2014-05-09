@@ -737,7 +737,7 @@ don't modify the 'data-templateid' unless you are changing template names and up
 
 <li id='categoryListTemplateRootCats'>
 	<a class="dropdownCategoryTextCont" data-tlc="bind $var '.'; store_routing#seoanchor --type='category' --seo; apply --attrib='href';">
-		<p style="margin-top:0; margin-bottom:0;" data-tlc="bind $var '.pretty'; if (is $var --notblank;) {{apply --append;}};"></p>
+		<h6 style="margin-top:0; margin-bottom:0;" data-tlc="bind $var '.pretty'; if (is $var --notblank;) {{apply --append;}};"></h6>
     </a>
 	<ul data-tlc="bind $var '.@subcategoryDetail'; controller#loop --templateid='simpleSubcatTemplate'; if (is $var --notblank;) {{apply --append;}};" class="child_menu">
 		<li><div data-tlc="bind $var '.%meta.CAT_THUMB'; store_downlite#showhidearea  --legacy;"><img data-tlc="bind $var '.%meta.CAT_THUMB'; if (is $var --notblank){{apply --img --media=$var --height=155 --width=155 --bgcolor='#ffffff' --replace;}};" alt="" height="155" width="155" /></div></li>
@@ -1062,7 +1062,7 @@ this will likely become more flexible in the future. ###
 	
    
     
-    	<form data-tlc="bind $var '.pid'; store_downlite#atcform  --legacy; apply --append;" class="prodViewerAddToCartForm clearfix marginBottom" action="#" data-app-submit="store_downlite|productAdd2Cart" data-show="modal">
+    	<form data-tlc="bind $var '.pid'; store_downlite#atcform  --legacy; apply --append;" class="prodViewerAddToCartForm clearfix marginBottom" action="#" data-app-submit="store_downlite|productAdd2Cart" data-show="inline">
 	
             <fieldset data-tlc="bind $var '.pid'; store_product#atcvariations  --legacy; apply --append;" class="borderNone"></fieldset>
             <div class='qtyAndATCContainer clearfix qtyInput'>
@@ -1936,8 +1936,8 @@ This is the template used both within a dialog and inline, unless implicitly ove
 
 	<div class="cartZipCodeContainer marginBottom">
 		<label>Zip/Postal Code:
-		<input data-tlc="bind $var '.ship.postal'; if(is $var --blank) {{bind $var '.bill.postal'; }}; apply --select=$var; " size="6" name="ship/postal" value="" maxlength="10" data-app-blur="cco|cartZipUpdateExec" type="text"></label>
-	</div>
+		<input data-tlc="bind $var '.ship.postal'; if(is $var --blank) {{bind $var '.bill.postal'; }}; apply --select=$var; " size="6" name="ship/postal" value="" maxlength="10" data-app-blur="cco|cartZipUpdateExec" type="text" /><input class="displayNone" type="button" /></label>
+    </div>
 
 	<ul data-tlc="order_create#shipmethodsasradiobuttons  --legacy;" class="noPadOrMargin listStyleNone shippingOptionsList" data-bind="useParentData:true; format:shipmethodsasradiobuttons; extension: order_create;" data-app-role="shipMethodsUL"></ul>
 </section>

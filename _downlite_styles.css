@@ -285,6 +285,11 @@ div.cartItemImgCont{
 	margin-right: 10px;
 }
 
+.dropdownCategoryTextCont h6{
+	font-size: 16px;
+    font-weight: 400;
+}
+
 
 
 
@@ -940,8 +945,6 @@ div.cartItemImgCont{
 		padding: 24px 1px;
 		text-align: center;
 		width: 74px;
-	}
-    .dropdownCategoryTextCont p{
 	}
 	
 	.headerTopNavPrev{
