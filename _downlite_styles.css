@@ -278,6 +278,13 @@ td.tabbedProductContentTD div.prodTabs ul.tabs li.ui-tabs-active{
     margin: 5px 10px 5px 0;
 }
 
+ul.lineItemProdlist li.productListTemplateCart {
+	width: 100%;
+}
+div.cartItemImgCont{
+	margin-right: 10px;
+}
+
 
 
 

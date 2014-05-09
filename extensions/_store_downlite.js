@@ -141,6 +141,9 @@ var store_downlite = function(_app) {
 						setTimeout(blogs, 2000);
 						// BEGIN BLOG CONTENT CODE
 					});
+					_app.templates.cartTemplate.on('complete.downlite',function(event,$context,infoObj){
+						 _app.ext.store_downlite.a.hideShippingOptionWeight();
+					});
 					return r;
 				},
 				onError : function()	{
@@ -204,6 +207,29 @@ var store_downlite = function(_app) {
 					}
 				return false;
 				},
+			
+			hideShippingOptionWeight : function(){
+				var shippingOption = $(".shippingOptionsList li label").text();
+				dump("shippingOption = ");
+				dump(shippingOption);
+				
+				if(shippingOption.indexOf('[') === -1){
+					dump("[ Not detected. Doing nothing.");
+				}
+				else{
+					dump("[ detected. Removing text between it");
+					var c = shippingOption.indexOf('[') ; 
+					var L = shippingOption.indexOf(']') ;
+					//c = c + 1;							
+					L = L + 1;
+					var final = shippingOption.slice (c,L) ;
+					dump("c = " + c);
+					dump("L = " + L);
+					dump("final = " + final);
+					shippingOption.replace(final, '');
+					dump(shippingOption);
+				}
+			}
 
 			}, //Actions
 
