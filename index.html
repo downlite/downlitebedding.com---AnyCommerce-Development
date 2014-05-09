@@ -1936,7 +1936,7 @@ This is the template used both within a dialog and inline, unless implicitly ove
 
 	<div class="cartZipCodeContainer marginBottom">
 		<label>Zip/Postal Code:
-		<input data-tlc="bind $var '.ship.postal'; if(is $var --blank) {{bind $var '.bill.postal'; }}; apply --select=$var; " size="6" name="ship/postal" value="" maxlength="10" data-app-blur="cco|cartZipUpdateExec" type="text" /><input class="displayNone" type="button" /></label>
+		<input data-tlc="bind $var '.ship.postal'; if(is $var --blank) {{bind $var '.bill.postal'; }}; apply --select=$var; " size="6" name="ship/postal" value="" maxlength="10" data-app-blur="cco|cartZipUpdateExec" type="text" /></label>
     </div>
 
 	<ul data-tlc="order_create#shipmethodsasradiobuttons  --legacy;" class="noPadOrMargin listStyleNone shippingOptionsList" data-bind="useParentData:true; format:shipmethodsasradiobuttons; extension: order_create;" data-app-role="shipMethodsUL"></ul>
@@ -1951,7 +1951,7 @@ This is the template used both within a dialog and inline, unless implicitly ove
 		</div>
 		<div class="ui-state-default cartButtons stdPadding clearfix">
 			<!-- spans are set around the buttons so each element has one consitent tag type around it -->
-			<span class="continueShoppingSpan thisButton"><button class="applyButton continueShoppingButton" data-app-click="myRIA|dialogCloseExec">Continue Shopping</button></span>
+			<span class="continueShoppingSpan thisButton"><button class="applyButton continueShoppingButton" data-app-click="quickstart|dialogCloseExec">Continue Shopping</button></span>
 	
 			<span id="inStoreCheckoutButton" class='thisButton' title="proceed to secure checkout">
 				<a class="applyButton ui-state-highlight checkoutButton" href='#!checkout'>Store Checkout</a>
