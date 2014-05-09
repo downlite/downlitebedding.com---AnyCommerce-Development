@@ -116,7 +116,7 @@ var store_downlite = function(_app) {
 							
 						var blogs = function(){
 							dump('Begin adding blogs to homepage.')
-							$('.blog1').rssfeed((document.location.protocol == 'https:' ? 'https:' : 'http:')+'//blog.downlitebedding.com/rss.xml', {
+							$('.blog1').rssfeed('//blog.downlitebedding.com/rss.xml', {
 								limit: 1,
 								header: false,
 								snippet: false,
@@ -124,14 +124,14 @@ var store_downlite = function(_app) {
 								showerror: true,
 								errormsg: 'Sorry, the blog couldn\'t be loaded right now due to a technical problem. Please try again later.'
 							});
-							$('.blog2').rssfeed((document.location.protocol == 'https:' ? 'https:' : 'http:')+'//blog.downlitebedding.com/rss.xml', {
+							$('.blog2').rssfeed('//blog.downlitebedding.com/rss.xml', {
 								limit: 1,
 								offset: 2,
 								header: false,
 								snippet: false,
 								date: false
 							});
-							$('.blog3').rssfeed((document.location.protocol == 'https:' ? 'https:' : 'http:')+'//blog.downlitebedding.com/rss.xml', {
+							$('.blog3').rssfeed('//blog.downlitebedding.com/rss.xml', {
 								limit: 1,
 								offset: 3,
 								header: false,
@@ -140,7 +140,7 @@ var store_downlite = function(_app) {
 							});
 						}
 						setTimeout(blogs, 2000);
-						// BEGIN BLOG CONTENT CODE
+						// END BLOG CONTENT CODE
 					});
 					_app.templates.cartTemplate.on('complete.downlite',function(event,$context,infoObj){
 						 setTimeout(_app.ext.store_downlite.a.hideShippingOptionWeight(), 1000);

@@ -102,7 +102,7 @@ css files should be included before any .js file to ensure they are downloaded i
 <script type="text/javascript">
 $(document).ready(function(){
 	window.myApp = new initApp({
-		"release":"201404.aatest6",  //increment this with each change. should solve caching issues. format: YYYYMMDDHHMMSS
+		"release":"201404.aatest7",  //increment this with each change. should solve caching issues. format: YYYYMMDDHHMMSS
 		"_clientid":"zmvc", //zmvc for store app, 1pc for one page checkout.
 		"baseURL":baseURL, //used in non-local mode.
 		"checkoutAuthMode" : "active",//can be passive, active or required
@@ -634,12 +634,14 @@ the homepageTemplate template is loaded into mainContentArea by default when the
 
 
 
-<h3 class="rssTitle">Our Latest Blog Entries</h3>
- <div class="rssfeed">
- 	<div class="blog1"></div>
- 	<div class="blog2"></div>
- 	<div class="blog3"></div>
- </div>
+<div class="hpBlogCont">
+    <h3 class="rssTitle">Our Latest Blog Entries</h3>
+     <div class="rssfeed">
+        <div class="blog1"></div>
+        <div class="blog2"></div>
+        <div class="blog3"></div>
+     </div>
+</div>
  
  <div class="clearfix"></div>
 </div>
