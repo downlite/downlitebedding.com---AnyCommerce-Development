@@ -290,6 +290,10 @@ div.cartItemImgCont{
     font-weight: 400;
 }
 
+.header_contact span.contact_ads{
+	display: none;
+}
+
 
 
 

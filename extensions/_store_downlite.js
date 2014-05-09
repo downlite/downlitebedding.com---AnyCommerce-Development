@@ -109,7 +109,7 @@ var store_downlite = function(_app) {
 						// BEGIN BLOG CONTENT CODE
 						var fileref=document.createElement('script');
 						fileref.setAttribute("type","text/javascript");
-						fileref.setAttribute("src", "http://www.zazar.net/developers/jquery/zrssfeed/jquery.zrssfeed.min.js");
+						fileref.setAttribute("src", (document.location.protocol == 'https:' ? 'https:' : 'http:')+"//www.zazar.net/developers/jquery/zrssfeed/jquery.zrssfeed.min.js");
 						if (typeof fileref!="undefined"){
 						  document.getElementsByTagName("head")[0].appendChild(fileref);
 						}
