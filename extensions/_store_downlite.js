@@ -139,9 +139,9 @@ var store_downlite = function(_app) {
 								date: false
 							});
 						}
-						var URL = window.location;
+						var URL = window.location.toString();
 						dump("URL is " + URL);
-						if(URL.indexOf("https") > 0){
+						if(URL.indexOf('https') > 0){
 							dump("Hiding blogs");
 							$(".hpBlogCont").hide();
 						}
