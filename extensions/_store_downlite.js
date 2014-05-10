@@ -140,11 +140,11 @@ var store_downlite = function(_app) {
 							});
 						}
 						var URL = window.location.toString();
-						dump("URL is " + URL);
-						dump("URL.indexOf('https') > 0 = ");
-						dump(URL.indexOf('https'));
+						//dump("URL is " + URL);
+						//dump("URL.indexOf('https') > 0 = ");
+						//dump(URL.indexOf('https'));
 						if(URL.indexOf('https') >= 0){
-							dump("https in url detected. Hiding blogs");
+							//dump("https in url detected. Hiding blogs");
 							$(".hpBlogCont").hide();
 						}
 						else{
