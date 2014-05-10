@@ -143,7 +143,7 @@ var store_downlite = function(_app) {
 						dump("URL is " + URL);
 						if(URL.indexOf("https") > 0){
 							dump("Hiding blogs");
-							$.(".hpBlogCont").hide();
+							$(".hpBlogCont").hide();
 						}
 						else{
 							setTimeout(blogs, 2000);
