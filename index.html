@@ -105,15 +105,14 @@ $(document).ready(function(){
 		"release":"201404.aatest12",  //increment this with each change. should solve caching issues. format: YYYYMMDDHHMMSS
 		"_clientid":"zmvc", //zmvc for store app, 1pc for one page checkout.
 		"baseURL":baseURL, //used in non-local mode.
-		"checkoutAuthMode" : "active",//can be passive, active or required
+		"checkoutAuthMode" : "required",//can be passive, active or required
 		"testURL":"http://www.downlitebedding.com/", //used ONLY if protocol is file: (for testing)
 		"addjQueryPointer" : true,
 		"initComplete" : function(){
 			myApp.u.loadScript('downlite_init.js',function(){
 				var progress = myApp.u.loadResources(); //the object returns by loadResources will get updated as the resources finish loading.
 				myApp.u.showProgress(progress);
-			});
-			dump(" -> init is complete");
+				});
 			$('#appversion').text(myApp.vars.release);
 			}
 		});
@@ -1581,11 +1580,7 @@ newsletterArticle is intended for buyers who are not logged in or do not have an
 			<form action="#" name="subscribeFrm" data-app-submit="quickstart|subscribeSubmit" class='alignedForm'>
 				<fieldset class="userInfo borderNone">
 					<label>
-					<input placeholder="email address" maxlength="50" size="30" required name="login" value="" type="email" data-tlc="bind $var '.customer.login'; if(is $var --notblank;) {{apply --select=$var;}};">
-					</label>
-				
-					<label>
-					<input placeholder="full name" maxlength="50" size="30" required name="fullname" value="" type="text" data-tlc="bind $var '.bill.fullname'; if(is $var --notblank;) {{apply --select=$var;}};">
+					<input placeholder="email address" maxlength="50" size="30" required name="email" value="" type="email" data-tlc="bind $var '.customer.login'; if(is $var --notblank;) {{apply --select=$var;}};">
 					</label>
 				</fieldset>
 				
@@ -1600,8 +1595,8 @@ subscribeListsArticle is used for authenticated buyers.
 -->
 		<div id="subscriberListsArticle" class="displayNone textContentArea">
 			<h1>Manage your Subscriptions</h1>
-            <!-- save onchange -->
-           		<form action="#" name="subscribeFrm" data-app-submit="store_crm|buyerUpdate" class='alignedForm' onSubmit="return false">
+
+			<form action="#" name="subscribeFrm" data-app-submit="store_crm|buyerUpdate" class='alignedForm' onSubmit="return false">
 				<!-- buyer is logged in. Don't need email/name inputs -->
 				<fieldset data-update-verb='tags' data-tlc="apply --empty; bind $tags '.%info.@tags'; bind $var '.@lists'; controller#loop --templateid='subscriberListItemTemplate'; apply --append;" class="borderNone subscriberLists"></fieldset>
 				<input class="applyButton" value="Subscribe" type="submit">
@@ -1724,21 +1719,21 @@ subscribeListsArticle is used for authenticated buyers.
 
 			<section>
 
-<div class="billAddressContainer" data-app-role="addressContainer" data-app-addresstype="bill">
-	<div class="marginBottom">
-		<button class="floatRight applyButton" data-icon-primary="ui-icon-plus" data-app-click="quickstart|showBuyerAddressAdd">New Billing Address</button>
-		<h2>Billing Address(es)</h2>
-	</div>
-	<div data-tlc="bind $var '.@bill'; controller#loop --templateid='billAddressTemplate'; if (is $var --notblank;) {{apply --empty; apply --append;}};" class="billAddresses"></div>
-</div>
+				<div class="billAddressContainer" data-app-role="addressContainer" data-app-addresstype="bill">
+					<div class="marginBottom">
+						<button class="floatRight applyButton" data-icon-primary="ui-icon-plus" data-app-click="quickstart|showBuyerAddressAdd">New Billing Address</button>
+						<h2>Billing Address(es)</h2>
+					</div>
+					<div data-tlc="bind $var '.@bill'; controller#loop --templateid='billAddressTemplate'; if (is $var --notblank;) {{apply --empty; apply --append;}};" class="billAddresses"></div>
+				</div>
 
-<div class="shipAddressContainer" data-app-role="addressContainer" data-app-addresstype="ship">
-	<div class="marginBottom">
-		<button class="floatRight applyButton" data-icon-primary="ui-icon-plus" data-app-click="quickstart|showBuyerAddressAdd">New Shipping Address</button>
-		<h2>Shipping Address(es)</h2>
-	</div>
-	<div data-tlc="bind $var '.@ship'; controller#loop --templateid='shipAddressTemplate'; if (is $var --notblank;) {{apply --empty; apply --append;}};" class="billAddresses"></div>
-</div>
+				<div class="shipAddressContainer" data-app-role="addressContainer" data-app-addresstype="ship">
+					<div class="marginBottom">
+						<button class="floatRight applyButton" data-icon-primary="ui-icon-plus" data-app-click="quickstart|showBuyerAddressAdd">New Shipping Address</button>
+						<h2>Shipping Address(es)</h2>
+					</div>
+					<div data-tlc="bind $var '.@ship'; controller#loop --templateid='shipAddressTemplate'; if (is $var --notblank;) {{apply --empty; apply --append;}};" class="billAddresses"></div>
+				</div>
 
 
 			</section>
