@@ -361,7 +361,7 @@ document.write = function(v){
 					delete tagObj.datapointer; //delete this so tlc doesn't do an unnecessary extend (data is already merged)
 					tagObj.verb = 'translate';
 //					dump(" -> tagObj: "); dump(tagObj);
-
+					_app.ext.quickstart.u.updateDOMTitle((tagObj.navcat == '.' ? 'Home' : tagObj.dataset.pretty));
 					if(tagObj.lists && tagObj.lists.length)	{
 						var L = tagObj.lists.length;
 						for(var i = 0; i < L; i += 1)	{
@@ -378,6 +378,7 @@ document.write = function(v){
 // the bulk of the product translation has already occured by now (attribs, reviews and session) via callbacks.showProd.
 // product lists are being handled through 'buildProductList'.
 					var pData = _app.data['appProductGet|'+tagObj.pid] //shortcut.
+					_app.ext.quickstart.u.updateDOMTitle(pData['%attribs']['zoovy:prod_seo_title'] || pData['%attribs']['zoovy:prod_name']);
 					if(pData && pData['%attribs'] && pData['%attribs']['zoovy:grp_type'] == 'CHILD')	{
 						if(pData['%attribs']['zoovy:grp_parent'] && _app.data['appProductGet|'+pData['%attribs']['zoovy:grp_parent']])	{
 							dump(" -> this is a child product and the parent prod is available. Fetch child data for siblings.");
@@ -1483,7 +1484,10 @@ $target.tlc({
 					}
 				},
 
-
+			updateDOMTitle : function(title)	{
+				title = (typeof title === "string") ? title : ""; //better blank than 'undefined' or 'object'.
+				document.title = title;
+				},
 
 //used in checkout to populate username: so either login or bill/email will work.
 //never use this to populate the value of an email form field because it may not be an email address.
@@ -2032,8 +2036,6 @@ effects the display of the nav buttons only. should be run just after the handle
 				},
 
 
-
-
 //rather than having all the params in the dom, just call this function. makes updating easier too.
 			showProd : function(infoObj)	{
 				var pid = infoObj.pid
@@ -2050,18 +2052,17 @@ effects the display of the nav buttons only. should be run just after the handle
 					infoObj.parentID = parentID;
 					
 					var $product = $(_app.u.jqSelector('#',parentID));
-					
-					_app.renderFunctions.handleTemplateEvents($product,infoObj);
-	
 //no need to render template again.
 					if(!$product.length){
 //						dump(" -> product is NOT on the DOM yet. Add it.");
 						var $tmp = $("<div \/>");
 						$tmp.tlc({templateid:infoObj.templateID,'verb':'template'});
 						$product = $tmp.children();
+						_app.renderFunctions.handleTemplateEvents($product,infoObj); //init event triggered.
 						$product.attr('id',infoObj.parentID).data('pid',pid);
 						$product.addClass('displayNone').appendTo($('#mainContentArea')); //hidden by default for page transitions
 						_app.u.handleCommonPlugins($product);
+//						dump($._data($product[0], "events")); //will write object of events attached to an element.
 						var nd = 0; //Number of Dispatches.
 
 //need to obtain the breadcrumb info pretty early in the process as well.
@@ -2079,11 +2080,13 @@ effects the display of the nav buttons only. should be run just after the handle
 						_app.model.dispatchThis();
 						}
 					else	{
+						_app.renderFunctions.handleTemplateEvents($product,infoObj); //init
 						dump(" -> product is already on the DOM. bring it into focus");
 						infoObj.datapointer = 'appProductGet|'+infoObj.pid; //here so datapoitner is available in renderFunctions.
 //typically, the onComplete get handled as part of the request callback, but the template has already been rendered so the callback won't get executed.
+
 						infoObj.state = 'complete'; //needed for handleTemplateEvents.
-						_app.renderFunctions.handleTemplateEvents($product,infoObj);
+						_app.renderFunctions.handleTemplateEvents($product,infoObj); //complete
 						}
 
 
@@ -2102,6 +2105,7 @@ effects the display of the nav buttons only. should be run just after the handle
 				infoObj.templateID = 'companyTemplate';
 				infoObj.state = 'init';
 				infoObj.parentID = 'mainContentArea_company';
+				_app.ext.quickstart.u.updateDOMTitle("Company - "+infoObj.show);
 				var $mcac = $('#mainContentArea_company');
 				
 				if($mcac.length)	{
@@ -2110,11 +2114,7 @@ effects the display of the nav buttons only. should be run just after the handle
 				else	{
 //					var $content = _app.renderFunctions.createTemplateInstance(infoObj.templateID,parentID);
 //no interpolation takes place on the company pages (except faq). the content should be hard coded.
-					var $tmp = $("<div>").tlc({
-						templateid : infoObj.templateID,
-						verb : 'template'
-						});
-					$mcac = $tmp.children();
+					$mcac = new tlc().getTemplateInstance(infoObj.templateID);
 					$mcac.attr('id',infoObj.parentID);
 
 					var $nav = $('#companyNav ul:first',$mcac);
@@ -2148,7 +2148,7 @@ effects the display of the nav buttons only. should be run just after the handle
 				var $page = $('#'+infoObj.parentID),
 				elasticsearch = {};
 
-				_app.renderFunctions.handleTemplateEvents($page,infoObj);
+				
 
 //only create instance once.
 				if($page.length)	{
@@ -2157,6 +2157,7 @@ effects the display of the nav buttons only. should be run just after the handle
 				else	{
 					$page = new tlc().runTLC({'templateid':infoObj.templateID,'verb':'template'}).attr('id','mainContentArea_search').appendTo('#mainContentArea');
 					}
+				_app.renderFunctions.handleTemplateEvents($page,infoObj);
 
 //add item to recently viewed list IF it is not already in the list.
 				if($.inArray(infoObj.KEYWORDS,_app.ext.quickstart.vars.session.recentSearches) < 0)	{
@@ -2165,9 +2166,11 @@ effects the display of the nav buttons only. should be run just after the handle
 					
 //If raw elastic has been provided, use that.  Otherwise build a query.
 				if(infoObj.elasticsearch){
+					_app.ext.quickstart.u.updateDOMTitle("Search - advanced");
 					elasticsearch = _app.ext.store_search.u.buildElasticRaw(infoObj.elasticsearch);
 					}
 				else if(infoObj.tag)	{
+					_app.ext.quickstart.u.updateDOMTitle("Search - tag: "+infoObj.tag);
 					elasticsearch = _app.ext.store_search.u.buildElasticRaw({
 					   "filter":{
 						  "and" : [
@@ -2177,6 +2180,7 @@ effects the display of the nav buttons only. should be run just after the handle
 						  }});
 					}
 				else if (infoObj.KEYWORDS) {
+					_app.ext.quickstart.u.updateDOMTitle("Search - keywords: "+infoObj.KEYWORDS);
 					elasticsearch = _app.ext.store_search.u.buildElasticRaw({
 					   "filter":{
 						  "and" : [
@@ -2186,9 +2190,9 @@ effects the display of the nav buttons only. should be run just after the handle
 						  }});
 					}
 				else	{
-					
+					_app.ext.quickstart.u.updateDOMTitle("Search - error!");
 					}
-				dump(elasticsearch);
+//				dump(elasticsearch);
 /*
 #####
 if you are going to override any of the defaults in the elasticsearch, such as size, do it here BEFORE the elasticsearch is added as data on teh $page.
@@ -2227,13 +2231,10 @@ elasticsearch.size = 50;
 				infoObj.trigger = '';
 				infoObj.state = 'init'; //needed for handleTemplateEvents.
 				
-				var $cart = $('#'+infoObj.parentID);
-				
-				_app.renderFunctions.handleTemplateEvents($cart,infoObj);
-
 //only create instance once.
-				$cart = $('#mainContentArea_cart');
+				var $cart = $('#mainContentArea_cart');
 				if($cart.length)	{
+					_app.renderFunctions.handleTemplateEvents($cart,infoObj);
 					//the cart has already been rendered.
 					infoObj.trigger = 'refresh';
 					$cart.hide();
@@ -2242,6 +2243,7 @@ elasticsearch.size = 50;
 					infoObj.trigger = 'fetch';
 					infoObj.cartid = _app.model.fetchCartID();
 					$cart = _app.ext.cco.a.getCartAsJqObj(infoObj);
+					_app.renderFunctions.handleTemplateEvents($cart,infoObj);
 					$cart.hide().on('complete',function(){
 						$("[data-app-role='shipMethodsUL']",$(this)).find(":radio").each(function(){
 							$(this).attr('data-app-change','quickstart|cartShipMethodSelect');
@@ -2268,11 +2270,13 @@ either templateID needs to be set OR showloading must be true. TemplateID will t
 			showCartInModal : function(P)	{
 
 				if(typeof P == 'object' && (P.templateID || P.showLoading === true)){
+					P.state = 'init';
 					var $modal = $('#modalCart');
 //the modal opens as quick as possible so users know something is happening.
 //open if it's been opened before so old data is not displayed. placeholder content (including a loading graphic, if set) will be populated pretty quick.
 //the cart messaging is OUTSIDE the template. That way if the template is re-rendered, existing messaging is not lost.
 					if($modal.length)	{
+						_app.renderFunctions.handleTemplateEvents($modal,P); //init
 						$('#modalCartContents',$modal).empty(); //empty to remove any previous content.
 						$('.appMessaging',$modal).empty(); //errors are cleared because if the modal is closed before the default error animation occurs, errors become persistent.
 						$modal.dialog('open');
@@ -2280,6 +2284,7 @@ either templateID needs to be set OR showloading must be true. TemplateID will t
 					else	{
 						P.cartid = _app.model.fetchCartID();
 						$modal = _app.ext.cco.a.getCartAsJqObj(P).attr({"id":"modalCart","title":"Your Shopping Cart"}).appendTo('body');
+						_app.renderFunctions.handleTemplateEvents($modal,P); //init
 						$modal.on('complete',function(){
 							$("[data-app-role='shipMethodsUL']",$(this)).find(":radio").each(function(){
 								$(this).attr('data-app-change','quickstart|cartShipMethodSelect');
@@ -2302,7 +2307,6 @@ either templateID needs to be set OR showloading must be true. TemplateID will t
 					}
 				}, //showCartInModal
 
-
 //Customer pages differ from company pages. In this case, special logic is needed to determine whether or not content can be displayed based on authentication.
 // plus, most of the articles require an API request for more data.
 //handleTemplateEvents gets executed in showContent, which should always be used to execute this function.
@@ -2310,27 +2314,27 @@ either templateID needs to be set OR showloading must be true. TemplateID will t
 //				dump("BEGIN showCustomer. infoObj: "); dump(infoObj);
 				infoObj = infoObj || {};
 				infoObj.show = infoObj.show || 'newsletter';
+				infoObj.state = 'init';
 				infoObj.parentID = 'mainContentArea_customer'; //used for templateFunctions
 				infoObj.templateID = 'customerTemplate';
+				_app.ext.quickstart.u.updateDOMTitle("Customer - "+infoObj.show);
 				var $customer = $('#'+infoObj.parentID);
 //only create instance once.
 				if($customer.length)	{
 					dump(" -> customer page already rendered. just show.");
+					_app.renderFunctions.handleTemplateEvents($customer,infoObj);
 					}
 				else	{
-//					$customer = _app.renderFunctions.createTemplateInstance('customerTemplate',infoObj.parentID);
-					var $tmp = $("<div>").tlc({templateid:infoObj.templateID,'verb':'template'});
-					$customer = $tmp.children();
+					$customer = new tlc().getTemplateInstance(infoObj.templateID);
 					$customer.attr({id:infoObj.parentID});
 					$('#mainContentArea').append($customer);
+					_app.renderFunctions.handleTemplateEvents($customer,infoObj);
 					_app.u.handleCommonPlugins($customer);
 					_app.u.handleButtons($customer);
 					}
 
 				$('.textContentArea',$customer).hide(); //hide all the articles by default and we'll show the one in focus later.
 
-				infoObj.state = 'init';
-				_app.renderFunctions.handleTemplateEvents($customer,infoObj);
 				
 				if(!_app.u.buyerIsAuthenticated() && this.thisArticleRequiresLogin(infoObj))	{
 					_app.ext.quickstart.u.showLoginModal();
@@ -2445,8 +2449,7 @@ either templateID needs to be set OR showloading must be true. TemplateID will t
 				infoObj.state = 'complete'; //needed for handleTemplateEvents.
 				_app.renderFunctions.handleTemplateEvents($customer,infoObj);
 				return $customer;
-				},  //showCustomer
-				
+				},  //showCustomer				
 				
 //here, we error on the side of NOT requiring login. if a page does require login, the API will return that.
 //this way, if a new customer page is introduced that doesn't require login, it isn't hidden.
