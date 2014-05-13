@@ -337,6 +337,7 @@ div.cartItemImgCont{
     height: auto;
     padding: 15px 15px 0 25px;
     width: 270px;
+	margin-top: 5px;
  }
  
  .blog2, .blog3 {
@@ -455,6 +456,13 @@ div.cartItemImgCont{
 	}
 	.bannerDuoContainer .stacked{
 		margin-right: 235px;
+	}
+	
+	.rssfeed{
+		width: 800px;
+	}
+	 .blog1, .blog2, .blog3 {
+		 width: 210px;
 	}
 	
 	
@@ -590,6 +598,13 @@ div.cartItemImgCont{
 	
 	.bannerDuoContainer .stacked{
 		margin-right: 160px;
+	}
+	
+	.rssfeed{
+		width: 640px;
+	}
+	 .blog1, .blog2, .blog3 {
+		 width: 155px;
 	}
 	
 	/*CATEGORY*/
@@ -782,6 +797,13 @@ div.cartItemImgCont{
 	.homeTextBannerBlock{
 		height: 140px;
 		width: 46%;
+	}
+	
+	.rssfeed{
+		width: 480px;
+	}
+	 .blog1, .blog2, .blog3 {
+		 width: 180px;
 	}
 	
 	
@@ -1049,6 +1071,16 @@ div.cartItemImgCont{
 	.homeTextBannerBlock p{
 		float: left;
 		clear: left;
+	}
+	
+	.rssfeed{
+		width: 320px;
+	}
+	 .blog1, .blog2, .blog3 {
+		 width: 280px;
+	}
+	.blog2, .blog3{
+		margin-left: 0;
 	}
 	
 	
