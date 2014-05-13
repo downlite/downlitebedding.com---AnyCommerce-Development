@@ -215,23 +215,23 @@ myApp.u.appInitComplete = function()	{
 		
 		var facebookCoupon = function(){
 			var referral = document.referrer;
-			app.u.dump("User is coming from " + referral);	
+			dump("User is coming from " + referral);	
 			
 			if(referral.indexOf("www.facebook.com") != -1){
-				app.u.dump("User is coming from facebook. Add coupon.");
-				app.ext.cco.calls.cartCouponAdd.init("FACEBOOK",{'callback':function(rd) {
-					if(app.model.responseHasErrors(rd)) {
+				dump("User is coming from facebook. Add coupon.");
+				myApp.ext.cco.calls.cartCouponAdd.init("FACEBOOK",{'callback':function(rd) {
+					if(myApp.model.responseHasErrors(rd)) {
 						$('#cartMessaging').anymessage({'message':rd})
 					}
 					else {
-						app.u.dump("Coupon added successfully")
+						dump("Coupon added successfully")
 						//Do nothing
 					}
 				}});
-				app.model.dispatchThis('immutable');
+				myApp.model.dispatchThis('immutable');
 			}
 			else{
-				app.u.dump("User is not coming from facebook. Do nothing.");
+				dump("User is not coming from facebook. Do nothing.");
 			}
 		};
 	
