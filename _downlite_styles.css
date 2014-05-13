@@ -334,7 +334,7 @@ div.cartItemImgCont{
     border-right: 10px solid #FFFFFF;
     display: table-cell;
     float: left;
-    height: 690px;
+    height: auto;
     padding: 15px 15px 0 25px;
     width: 270px;
  }

@@ -46,8 +46,8 @@ myApp.rq.push(['script',0,'jquery-cycle2/jquery.cycle2.min.js']);
 myApp.rq.push(['script',0,myApp.vars.baseURL+'carouFredSel-6.2.1/jquery.carouFredSel-6.2.1-packed.js']);
 
 myApp.rq.push(['script',0,myApp.vars.baseURL+'resources/jquery.showloading-v1.0.jt.js']); //used pretty early in process..
-myApp.rq.push(['script',0,myApp.vars.baseURL+'resources/jquery.ui.anyplugins.js']); //in zero pass in case product page is first page.
-myApp.rq.push(['script',0,myApp.vars.baseURL+'resources/tlc.js']); //in zero pass in case product page is first page.
+myApp.rq.push(['script',0,myApp.vars.baseURL+'resources/jquery.ui.anyplugins.js']); //in zero pass because it's essential to rendering and error handling.
+myApp.rq.push(['script',0,myApp.vars.baseURL+'resources/tlc.js']); //in zero pass cuz you can't render a page without it..
 myApp.rq.push(['css',1,myApp.vars.baseURL+'resources/anyplugins.css']);
 
 myApp.rq.push(['script',0,myApp.vars.baseURL+'resources/jsonpath.0.8.0.js']); //used pretty early in process..
@@ -58,7 +58,6 @@ myApp.u.loadScript(myApp.vars.baseURL+'resources/peg-0.8.0.js',function(){
 	}); // ### TODO -> callback on RQ.push wasn't getting executed. investigate.
 
 //Cart Messaging Responses.
-
 myApp.cmr.push(['chat.join',function(message){
 //	dump(" -> message: "); dump(message);
 	var $ui = myApp.ext.quickstart.a.showBuyerCMUI();
@@ -66,7 +65,7 @@ myApp.cmr.push(['chat.join',function(message){
 	$("[data-app-role='messageHistory']",$ui).append("<p class='chat_join'>"+message.FROM+" has joined the chat.<\/p>");
 	$('.show4ActiveChat',$ui).show();
 	$('.hide4ActiveChat',$ui).hide();
-}]);
+	}]);
 
 myApp.cmr.push(['goto',function(message,$context){
 	var $history = $("[data-app-role='messageHistory']",$context);
@@ -78,7 +77,7 @@ myApp.cmr.push(['goto',function(message,$context){
 			});
 	$history.append($P);
 	$history.parent().scrollTop($history.height());
-}]);
+	}]);
 
 
 //gets executed from app-admin.html as part of controller init process.
