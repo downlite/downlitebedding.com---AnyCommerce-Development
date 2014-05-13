@@ -117,7 +117,6 @@ not used in required
 	</div>
 -->
 	<input data-tlc="bind $var '.bill.email'; if(is $var --blank;) {{bind $var '.customer.login'; }}; if(is $var --notblank;) {{apply --select=$var;}}; " name="bill/email" required size="30" placeholder="email address" data-app-blur="order_create|execBuyerEmailUpdate" type="email"> 	<input placeholder="password" size="30" name="password" type="password"> <button class="applyButton" data-app-click="order_create|execBuyerLogin">login</button>
-	<h5 class="checkoutLoginMessage">If this is your first time making a purchase through Downlite, please <a href="#!customer/myaccount">click here</a> to create a new account to proceed with checkout. Otherwise, please enter your email and password to continue with checkout.</h5>
 <!--
 not used in required
 	<label class='accountCreateContainer'><input type='checkbox' name='want/create_customer' class='applyAnycb' data-app-change='order_create|tagAsAccountCreate' />Create account</label>
@@ -156,7 +155,7 @@ because the panel is shared, the events (which aren't desired in the editor) are
 	<!-- postal not required for international. don't add it. -->
 	<div><input data-tlc="bind $var '.bill.postal'; if(is $var --blank;){{bind $var '.bill/postal';}}; if(is $var --notblank;) {{apply --select=$var;}}; " name="bill/postal" placeholder="zip/postal code" required size="14" value="" maxlength="10" type="text"></div>
 
-	<div class="billCountry" data-app-role="billCountry"><select data-tlc="bind $var '.'; cco#countriesasoptions  --shiptype='bill' --legacy;" data-legacy-useparentdata="true" name="bill/countrycode" placeholder="country" required><option value=''>Please choose</option></select></div>
+	<div class="billCountry" data-app-role="billCountry"><select data-tlc="bind $var '.'; cco#countriesasoptions  --shiptype='bill' --legacy;" data-legacy-useparentdata="true" name="bill/countrycode" placeholder="country" required="required"><option value=''>Please choose</option></select></div>
 
 	<div><input data-tlc="bind $var '.bill.phone';  if(is $var --blank;){{bind $var '.bill/phone';}}; if(is $var --notblank;) {{apply --select=$var;}}; " name="bill/phone" placeholder="phone number" required value="" type="tel"> <span class="hint zhint">in case of billing/delivery problems</span></div>
 

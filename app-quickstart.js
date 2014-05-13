@@ -2084,7 +2084,6 @@ effects the display of the nav buttons only. should be run just after the handle
 						dump(" -> product is already on the DOM. bring it into focus");
 						infoObj.datapointer = 'appProductGet|'+infoObj.pid; //here so datapoitner is available in renderFunctions.
 //typically, the onComplete get handled as part of the request callback, but the template has already been rendered so the callback won't get executed.
-
 						infoObj.state = 'complete'; //needed for handleTemplateEvents.
 						_app.renderFunctions.handleTemplateEvents($product,infoObj); //complete
 						}
