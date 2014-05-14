@@ -294,6 +294,10 @@ div.cartItemImgCont{
 	display: none;
 }
 
+section.cartTemplateShippingContainer{
+	display:none;
+}
+
 
 
 
