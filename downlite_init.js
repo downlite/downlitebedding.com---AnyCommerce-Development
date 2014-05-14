@@ -181,30 +181,36 @@ myApp.u.appInitComplete = function()	{
 	
 		//CONTROLING FUNCTION FOR POSITIONING THE TOP NAV CAROUSEL CORRECTLY AT ANY RESOLUTION
 		$(window).resize(function(){
+			//dump("Window resolution = " + $(window).width());
 			if($(window).width() >= 990){
 				setTimeout(function(){
-					$("div.nav_menu div.caroufredsel_wrapper ul#tier1categories").css("left","20px");
+					//dump("setting tier1categories to 20px");
+					$("div.nav_menu div.caroufredsel_wrapper ul#tier1categories").css("left","20px !important");
 				}, 100);
 			}
 			else if(($(window).width() < 990) && ($(window).width() >= 800)){
 				setTimeout(function(){
-					$("div.nav_menu div.caroufredsel_wrapper ul#tier1categories").css("left","0");
+					//dump("setting tier1categories to 0");
+					$("div.nav_menu div.caroufredsel_wrapper ul#tier1categories").css("left","0 !important");
 				}, 100);
 				
 			}
 			else if(($(window).width() < 800) && ($(window).width() >= 640)){
 				setTimeout(function(){
-					$("div.nav_menu div.caroufredsel_wrapper ul#tier1categories").css("left","15px");
+					//dump("setting tier1categories to 0");
+					$("div.nav_menu div.caroufredsel_wrapper ul#tier1categories").css("left","0px !important");
 				}, 100);
 			}
 			else if(($(window).width() < 640) && ($(window).width() >= 480)){
 				setTimeout(function(){
-					$("div.nav_menu div.caroufredsel_wrapper ul#tier1categories").css("left","1px");
+					//dump("setting tier1categories to 1px");
+					$("div.nav_menu div.caroufredsel_wrapper ul#tier1categories").css("left","1px !important");
 				}, 100);
 			}
 			else if(($(window).width() < 480) && ($(window).width() >= 320)){
 				setTimeout(function(){
-					$("div.nav_menu div.caroufredsel_wrapper ul#tier1categories").css("left","8px");
+					//dump("setting tier1categories to 8px");
+					$("div.nav_menu div.caroufredsel_wrapper ul#tier1categories").css("left","8px !important");
 				}, 100);
 			}
 		})

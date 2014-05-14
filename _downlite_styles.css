@@ -401,7 +401,13 @@ div.cartItemImgCont{
 		margin: 0;
 	}
 	.nav_menu ul li a{
-		padding: 21px 6px;
+		padding: 25px 8px 21px;
+	}
+	.nav_menu ul li:hover a{
+		margin-top:4px;
+	}
+	.dropdownCategoryTextCont h6{
+		font-size: 14px;
 	}
 	#brandCategories{
 		display:block;
@@ -531,8 +537,13 @@ div.cartItemImgCont{
 		cursor:pointer;
 	}
 	.nav_menu ul li a{
-		padding: 21px 4px;
-		font-size: 12px;
+		padding: 27px 3px 21px;
+	}
+	.nav_menu ul li:hover a{
+		margin-top:5px;
+	}
+	.dropdownCategoryTextCont h6{
+		font-size: 13px;
 	}
 	
 	div.nav_menu div.caroufredsel_wrapper{
@@ -660,6 +671,8 @@ div.cartItemImgCont{
 
 /*639 - 480 X 360*/
 @media screen and (max-width: 639px) {
+	
+	/*HEADER*/
 	.wrapper{
 		width:480px;
 	}
@@ -730,6 +743,16 @@ div.cartItemImgCont{
 	}
 	div.nav_menu div.caroufredsel_wrapper ul#tier1categories{
     	width: 480px !important;
+	}
+	
+	.nav_menu ul li a{
+		padding: 27px 4px 21px;
+	}
+	.nav_menu ul li:hover a{
+		margin-top:0;
+	}
+	.dropdownCategoryTextCont h6{
+		font-size: 9px;
 	}
 	
 	
@@ -911,7 +934,23 @@ div.cartItemImgCont{
 	#appPreView table td:nth-of-type(2){
 		float: left;
 		height: 60px;
-		padding: 0 100px;
+		padding: 0 75px 0 80px;
+	}
+	
+	div#loader{
+		margin-top: -5px;
+	}
+	#loader h3{
+		height: 20px;
+    	width: 100%;
+	}
+	#loader div{
+	}
+	#loader div.alignCenter{
+		margin-top: 5px;
+	}
+	#loader div#appPreViewProgressText{
+		margin-top: -5px;
 	}
 	
 	/*HEADER*/
@@ -966,29 +1005,41 @@ div.cartItemImgCont{
 	.nav_menu ul{
 		margin: 14px 0 10px;
 	}
+	div.nav_menu div.caroufredsel_wrapper{
+		height: 70px !important;
+    margin-top: 15px !important;
+	}
+	div.nav_menu div.caroufredsel_wrapper ul#tier1categories{
+		margin-top: 5px !important;
+	}
 	.nav_menu ul li a{
 		font-size: 9px;
 		padding: 24px 1px;
 		text-align: center;
 		width: 74px;
 	}
+	.nav_menu ul li:hover a{
+		margin-top:0;
+	}
+	.dropdownCategoryTextCont h6{
+		font-size: 9px;
+	}
 	
 	.headerTopNavPrev{
 		display: block;
 		left: 0;
 		position: absolute;
-		top: 39px;
+		top: 45px;
 	}
 	.headerTopNavNext{
 		display: block;
 		position: absolute;
 		right: 0;
-		top: 39px;
+		top: 45px;
 	}
 	div.nav_menu div.caroufredsel_wrapper{
 		overflow:hidden !important;
 		position:absolute !important;
-		margin-top: 14px !important;
 	}
 	
 	.showHideBrandsMobile {
