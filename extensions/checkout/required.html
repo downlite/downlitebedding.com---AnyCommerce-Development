@@ -120,6 +120,7 @@ not used in required
 	</div>
 -->
 	<input data-tlc="bind $var '.bill.email'; if(is $var --blank;) {{bind $var '.customer.login'; }}; if(is $var --notblank;) {{apply --select=$var;}}; " name="bill/email" required size="30" placeholder="email address" data-app-blur="order_create|execBuyerEmailUpdate" type="email"> 	<input placeholder="password" size="30" name="password" type="password"> <button class="applyButton" data-app-click="order_create|execBuyerLogin">login</button>
+	<h5 class="checkoutLoginMessage">If you have an account, please enter your email and password in the boxes. If you do not have an account, <a href="#!customer/createaccount">click here</a> to create a new account.</h5>
 <!--
 not used in required
 	<label class='accountCreateContainer'><input type='checkbox' name='want/create_customer' class='applyAnycb' data-app-change='order_create|tagAsAccountCreate' />Create account</label>
