@@ -670,11 +670,23 @@ don't modify the 'data-templateid' unless you are changing template names and up
 		<div data-tlc="bind $var '.%page.picture1'; store_downlite#showhidearea  --legacy;" class="catMediaContainer displayNone">
 			<div data-tlc="bind $var '.%page.picture1'; if(is $var --notblank;) {{ apply --show; }}; " class="catBigImageContainer displayNone"><img data-tlc="bind $var '.%page.picture1'; if (is $var --notblank;) {{ apply --img --media=$var --width=480 --height=360 --bgcolor='#ffffff' --replace;}};" src="blank.gif" height="360" width="480"></div>
 			<div data-tlc="bind $var '.%page.youtube_videoid'; store_downlite#showhidearea  --legacy;" class="displayNone">
-				<div data-tlc="bind $var '.%page.youtube_videoid'; apply --attrib='data-videoid'; " class="catVideoContainer clearfix pointer" onclick="myApp.ext.store_downlite.a.showYoutubeInModal($(this).attr('data-videoid'));">
+				
+                <div data-tlc="bind $var '.%page.youtube_videoid'; store_downlite#showhidearea  --legacy;" class="displayNone youTubeVideoCont">
+                    <img class="prodYTPrev" src="images/prodYTPrev.png" />
+                    <img class="prodYTNext" src="images/prodYTNext.png" />
+                    <div data-tlc="bind $var '.%page.youtube_videoid'; store_downlite#renderyoutubevideos  --legacy;" class="ytVideoCont">
+                        <span data-tlc="bind $var '.%page.youtube_videoheader'; store_downlite#renderyoutubetitles  --legacy;" class="displayNone"></span>
+                        <span data-tlc="bind $var '.%page.youtube_videodescription'; store_downlite#renderyoutubedesc  --legacy;" class="displayNone"></span>
+                    </div>
+                
+				</div>		
+                <!--
+                <div data-tlc="bind $var '.%page.youtube_videoid'; apply --attrib='data-videoid'; " class="catVideoContainer clearfix pointer" onclick="myApp.ext.store_downlite.a.showYoutubeInModal($(this).attr('data-videoid'));">
 					<div class='vidThumb'><img data-tlc="bind $var '.%page.youtube_videoid'; quickstart#youtubethumbnail  --legacy;" src="blank.gif" height="90" width="120"></div>
 					<h2 data-tlc="bind $var '.%page.youtube_videoheader'; if (is $var --notblank;) {{apply --append;}};"></h2>
 					<p data-tlc="bind $var '.%page.youtube_videodescription'; if (is $var --notblank;) {{apply --append;}};"></p>
 				</div>
+                -->
 			</div>
 		</div>
 	<!--	</div>-->
