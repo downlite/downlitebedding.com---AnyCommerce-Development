@@ -428,14 +428,14 @@ var store_downlite = function(_app) {
 				},//renderYouTubeDesc
 				
 				showhidearea : function($tag,data)	{
-					//dump("showhidearea data object = ");
-					//dump(data);
+					dump("showhidearea data object = ");
+					dump(data);
 					if(data.value == null || data.value == ""){
-						//dump("data.value = " + data.value + ". Hiding the element.");
+						dump("data.value = " + data.value + ". Hiding the element.");
 						$tag.hide();
 					}
 					else{
-						//dump("data.value = " + data.value + ". Showing the element.");
+						dump("data.value = " + data.value + ". Showing the element.");
 						$tag.show();
 					}	
 				},//showhidearea
