@@ -958,6 +958,10 @@ section.cartTemplateShippingContainer{
 	}
 	
 	/*HEADER*/
+	
+	.header{
+		position: relative;
+	}
 	.header_top p{
 		font-size: 9px;
 	}
@@ -972,6 +976,7 @@ section.cartTemplateShippingContainer{
 	
 	.header_contact {
 		margin: 10px 0 0;
+		widows:auto;
 	}
 	
 	.header_cart_menu{
@@ -998,8 +1003,11 @@ section.cartTemplateShippingContainer{
 		width: 200px;
 	}
 	.vertical_slider{
+		bottom: 129px;
 		height: 20px;
-		margin-top: -25px;
+		left: 138px;
+		margin-top: 0;
+		position: absolute;
 		width: 60px;
 	}
 	
@@ -1086,7 +1094,7 @@ section.cartTemplateShippingContainer{
 	}
 	
 	.footer .footer_bottom{
-		height: 500px;
+		height: 520px;
 	}
 	.footer .footer_bottom_inner{
 		width: 320px;
