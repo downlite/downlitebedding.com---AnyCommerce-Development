@@ -6,14 +6,8 @@
 .project
 .metadata
 bin/
-/utilities/nodeproxy/node_modules/
-/utilities/nodeproxy/jt.key
-/utilities/nodeproxy/www-spork*
-/utilities/nodeproxy/www.spork*
+/utilities/proxy/node_modules/
 tmp/
-proxy/
-*extensions/_notes/
-extensions/_notes/dwsync.xml
 *_notes/
 *.tmp
 *.bak

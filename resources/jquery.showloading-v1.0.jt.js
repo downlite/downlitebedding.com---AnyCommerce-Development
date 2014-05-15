@@ -7,13 +7,9 @@
  * Dual licensed under the MIT and GPL licenses.
  *
  */
-// ### -> update this plugin using the new widget format.
-// when this is done, replace 'hideloading' with showLoading('destroy') OR have it execute that function after performing a check to make sure showloading is enabled.
-// add support for updating a message within a currently running 'showLoading'.
+
 	jQuery.fn.showLoading = function(options) {
 		var $this = jQuery(this);
-		if($this.hasClass('ui-showloading'))	{$this.hideLoading()} //if showloading is already running, hide the current and start afresh. this'll update the messaging as desired.
-		
 		var indicatorID;
 		var settings = {
 			'addClass': '',
@@ -47,8 +43,7 @@
 			else {
 				indicatorID = $this.attr('id');
 				}
-			$this.addClass('ui-showloading');
-			
+				
 			$loadingDiv.attr('id', 'loading-indicator-' + indicatorID );
 			$loadingDiv.addClass('loading-indicator');
 			
@@ -149,13 +144,16 @@
 			var indicatorLeft = overlay_left_pos;
 			
 			if ( settings.marginLeft ) {
-				indicatorLeft += parseInt(settings.marginLeft);
-				}
+				indicatorLeft += parseInt(settings.marginTop);
+			}
+			
+			
+			//
 			// set horizontal position
-
+			//
+	
 			if ( settings.hPos.toString().toLowerCase() == 'center' ) {
-//				$loadingDiv.css('left', (indicatorLeft + (($overlayDiv.outerWidth() - parseInt($loadingDiv.outerWidth())) / 2)).toString()  + 'px');
-				$loadingDiv.css('left', (parseInt(($overlayDiv.outerWidth() - $loadingDiv.outerWidth()) / 2)).toString()  + 'px');
+				$loadingDiv.css('left', (indicatorLeft + (($overlayDiv.outerWidth() - parseInt($loadingDiv.outerWidth())) / 2)).toString()  + 'px');
 				}
 			else if ( settings.hPos.toString().toLowerCase() == 'left' ) {
 				$loadingDiv.css('left',0);
@@ -238,21 +236,17 @@
 		var settings = {};
 		jQuery.extend(settings, options);
 
-		 function jqSelector(selector,str){
-			if (undefined == str) { str = new String(""); }	// fix undefined issue
-			return ((selector) ? selector : '')+str.replace(/([;&,\.\+\*\~':"\!\^#$%@\[\]\(\)=>\|])/g, '\\$1');
-			}
-
 		if ( settings.indicatorID ) {
 			indicatorID = settings.indicatorID;
 			}
 		else {
 			indicatorID = $(this).attr('id');
 			}
-//toggle an indicator class on/off 
-//indicator class on target element removed. used to detect cases of showloading and remove them globally.
-		$(this).removeClass('ui-showloading');
-		$(jqSelector('#','loading-indicator-'+indicatorID),$(this)).remove();
-		$(jqSelector('#','loading-indicator-'+indicatorID+'-overlay'),$(this)).remove();
+// ** 201318 -> better method for selector
+		$(app.u.jqSelector('#','loading-indicator-'+indicatorID),$(this)).remove();
+		$(app.u.jqSelector('#','loading-indicator-'+indicatorID+'-overlay'),$(this)).remove();
+//		$(this).find('#loading-indicator-' + indicatorID ).remove();
+//		$(this).find('#loading-indicator-' + indicatorID + '-overlay' ).remove();
+		
 		return this;
      	};

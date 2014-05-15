@@ -34,85 +34,14 @@ http://gdatatips.blogspot.com/2009/07/create-new-google-docs-spreadsheet-from.ht
 
 
 
-var admin_reports = function(_app) {
+var admin_reports = function() {
 	var theseTemplates = new Array('reportsPageTemplate','ebayListingsReportPageTemplate','KPIManagerPageTemplate','KPIGraphAddUpdateTemplate','KPICollectionListTemplate','KPICollectionOptionTemplate','KPICollectionEditorTemplate','KPICollectionEditorRowTemplate','reportsRowTemplate');
 	var r = {
 
 
 ////////////////////////////////////   CALLBACKS    \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
-	calls : {
 
-
-		adminKPIDBCollectionDetail : {
-			init : function(uuid,_tag,Q)	{
-				var r = 0;
-				if(uuid)	{
-					_tag = _tag || {}; 
-					_tag.datapointer = "adminKPIDBCollectionDetail|"+uuid
-					if(_app.model.fetchData('adminKPIDBCollectionDetail|'+uuid) == false)	{
-						r = 1;
-						this.dispatch(uuid,_tag,Q);
-						}
-					else	{
-						_app.u.handleCallback(_tag);
-						}
-					}
-				else	{
-					$('.appMessaging').anymessage({"message":"In admin.calls.adminKPIDBCollectionDetail, uuid not passed","gMessage":true})
-					}
-				return r;
-				},
-			dispatch : function(uuid,_tag,Q)	{
-				_app.model.addDispatchToQ({"_cmd":"adminKPIDBCollectionDetail","uuid":uuid,"_tag" : _tag},Q || 'mutable');	
-				}
-			}, //adminKPIDBCollectionDetail
-
-		adminKPIDBCollectionList : {
-			init : function(_tag,Q)	{
-				var r = 0;
-				_tag = _tag || {}; 
-				_tag.datapointer = "adminKPIDBCollectionList"
-				if(_app.model.fetchData('adminKPIDBCollectionList') == false)	{
-					r = 1;
-					this.dispatch(_tag,Q);
-					}
-				else	{
-					_app.u.handleCallback(_tag);
-					}
-				return r;
-				},
-			dispatch : function(_tag,Q)	{
-				_app.model.addDispatchToQ({"_cmd":"adminKPIDBCollectionList","_tag" : _tag},Q || 'mutable');	
-				}
-			}, //adminKPIDBCollectionList	
-	
-//obj requires uuid, title, priority and @GRAPHS are optional.
-		adminKPIDBCollectionUpdate : {
-			init : function(obj,_tag,Q)	{
-//				_app.u.dump("BEGIN admin.calls.adminKPIDBCollectionUpdate");
-				var r = 0;
-				_tag = _tag || {}; 
-				_tag.datapointer = "adminKPIDBCollectionUpdate"
-				obj = obj || {};
-				if(obj.uuid)	{
-//					_app.u.dump(" -> have UUID. proceed.");
-					r = 1;
-					this.dispatch(obj,_tag,Q);
-					}
-				else	{
-					$('.appMessaging').anymessage({"message":"In admin.calls.adminKPIDBCollectionUpdate, uuid not passed","gMessage":true})
-					}
-				return r;
-				},
-			dispatch : function(obj,_tag,Q)	{
-				obj._cmd = 'adminKPIDBCollectionUpdate'
-				obj._tag = _tag;
-				_app.model.addDispatchToQ(obj,Q || 'immutable');	
-				}
-			} //adminKPIDBCollectionUpdate		
-		
-		},
 
 	callbacks : {
 //executed when extension is loaded. should include any validation that needs to occur.
@@ -120,12 +49,12 @@ var admin_reports = function(_app) {
 			onSuccess : function()	{
 				var r = true; //return false if extension won't load for some reason (account config, dependencies, etc).
 
-				_app.model.fetchNLoadTemplates(_app.vars.baseURL+'extensions/admin/reports.html',theseTemplates);
-				_app.rq.push(['script',0,'https://www.google.com/jsapi']); //used in ebay reports. likely everywhere else too.
+				app.model.fetchNLoadTemplates(app.vars.baseURL+'extensions/admin/reports.html',theseTemplates);
+				app.rq.push(['script',0,'https://www.google.com/jsapi']); //used in ebay reports. likely everywhere else too.
 
 				window.googleIntervalAttempts = 0;
 				window.googleInterval = setInterval(function(){
-//					_app.u.dump(" -> google interval attempt: "+googleIntervalAttempts);
+//					app.u.dump(" -> google interval attempt: "+googleIntervalAttempts);
 					if(window.google && window.google.loader)	{
 						google.load('visualization', '1.0', {'packages':['table']});
 						clearInterval(window.googleInterval);
@@ -133,7 +62,7 @@ var admin_reports = function(_app) {
 						delete window.googleIntervalAttempts;
 						}
 					else if(window.googleIntervalAttempt > 50)	{
-						_app.u.dump("Unable to load google visualization. ",'error');
+						app.u.dump("Unable to load google visualization. ",'error');
 						$(".appMessaging").anymessage({'message':'The Google Visualization libraries did not successfully load. This means that some features in the reporting section may not be available. Refreshing the browser may help solve this error.','persistent':true});
 						delete window.googleInterval;
 						delete window.googleIntervalAttempts;
@@ -149,7 +78,7 @@ var admin_reports = function(_app) {
 			onError : function()	{
 //errors will get reported for this callback as part of the extensions loading.  This is here for extra error handling purposes.
 //you may or may not need it.
-				_app.u.dump('BEGIN admin_reports.callbacks.init.onError');
+				app.u.dump('BEGIN admin_reports.callbacks.init.onError');
 				}
 			}
 
@@ -161,100 +90,87 @@ var admin_reports = function(_app) {
 
 		a : {
 			
-		
 			showReportsPage : function($target)	{
-				$target.intervaledEmpty();
-				$target.anycontent({'templateID':'reportsPageTemplate',data:{}}).anyform();
-				_app.u.addEventDelegation($target);
-				_app.u.handleButtons($target);				
-				_app.u.handleCommonPlugins($target);
+				$target.empty();
+				$target.anycontent({'templateID':'reportsPageTemplate',data:{}});
+				app.u.handleAppEvents($target);
+				
+				$("[data-app-role='reportsTabsContainer']",$target).anytabs();
+				$('.toolTip',$target).tooltip();
 				$('.datepicker',$target).datepicker({
 					changeMonth: true,
 					changeYear: true,
-					dateFormat : "@"
+					dateFormat : "mmddyy"
 					});
-			
-				var $reportsList = $("[data-app-role='recentReportsList']",$target);
-				$reportsList.showLoading({'message':'Fetching Recently Run Reports'});
-				_app.model.addDispatchToQ({
-					'_cmd':'adminBatchJobList',
-					'_tag':	{
-						'datapointer' : 'adminBatchJobList',
-						'callback':function(rd){
-							$reportsList.hideLoading();
-							if(_app.model.responseHasErrors(rd)){
-								$reportsList.anymessage({'message':rd});
-								}
-							else	{
-								var reports = new Array(), //used to store a small portion of the batch list. 10 reports.
-								L = _app.data[rd.datapointer]['@JOBS'].length - 1;
-		//reports are in chronological order, oldest to newest. here, we want to show the ten newest.
-								for(var i = L; i >= 0; i -= 1)	{
-									if(_app.data[rd.datapointer]['@JOBS'][i].BATCH_EXEC == 'REPORT')	{
-										reports.push(_app.data[rd.datapointer]['@JOBS'][i]);
-										}
-									else	{}
-									if(reports.length >= 10)	{break} //only need ten.
-									}
-								
-								if(reports.length)	{
-									$reportsList.anycontent({data:{'@JOBS': reports}});
-									_app.u.handleCommonPlugins($reportsList);
-									}
-								else	{
-									$reportsList.hide(); //no 'reports' in the list of batches. most likely this means the last X batch jobs didn't contain any reports.
-									}
-								}
-							}
-						}
-					},'mutable');
-
-			
-				_app.model.dispatchThis('mutable');
 				
-				}, //showReportsPage
+				
+				var $reportsList = $("[data-app-role='recentReportsList']",$target);
+				$reportsList.showLoading({'message':'Fetching Recent Reports'});
+				app.ext.admin.calls.adminBatchJobList.init('',{'callback':function(rd){
+					$reportsList.hideLoading();
+					if(app.model.responseHasErrors(rd)){
+						$reportsList.anymessage({'message':rd});
+						}
+					else	{
+						var reports = new Array(), //used to store a small portion of the batch list. 10 reports.
+						L = app.data[rd.datapointer]['@JOBS'].length;
+						for(var i = 0; i < L; i += 1)	{
+							if(app.data[rd.datapointer]['@JOBS'][i].BATCH_EXEC == 'REPORT')	{
+								reports.push(app.data[rd.datapointer]['@JOBS'][i]);
+								}
+							else	{}
+							if(reports.length >= 10)	{break} //only need ten.
+							}
+						
+//						app.u.dump("$reportsList.length: "+$reportsList.length);
+						if(reports.length)	{
+							$reportsList.anycontent({data:{'@JOBS': reports}});
+							app.u.handleAppEvents($reportsList);
+							$('table',$reportsList).anytable();
+							}
+						
+						}
+					}},'mutable');
+				app.model.dispatchThis('mutable');
+				
+				},
 			
 			showeBayListingsReport : function()	{
 				var $content = $("#utilitiesContent");
-				$content.empty().append(_app.renderFunctions.createTemplateInstance('ebayListingsReportPageTemplate',{}));
-				_app.ext.admin.u.bringTabIntoFocus('utilities');
-				_app.ext.admin.u.bringTabContentIntoFocus($content);
+				$content.empty().append(app.renderFunctions.createTemplateInstance('ebayListingsReportPageTemplate',{}));
+				app.ext.admin.u.bringTabIntoFocus('utilities');
+				app.ext.admin.u.bringTabContentIntoFocus($content);
 
 				$('.datepicker',$content).datepicker({'dateFormat':'@'});
 				$('.datepicker',$content).change(function(){$(this).val(parseInt($(this).val()) / 1000);}); //strip milliseconds from epoch
 
-				_app.u.handleAppEvents($content);
-				}, //showeBayListingsReport
+				app.ext.admin.u.handleAppEvents($content);
+				},
 
 			showKPIInterface : function()	{
 				
 				var $KPI = $('#kpiContent').empty();
 				$KPI.anycontent({'templateID':'KPIManagerPageTemplate','showLoadingMessage':'Fetching list of collections'});
-				
-				if(_app.model.fetchData('adminKPIDBUserDataSetsList'))	{}
-				else	{
-					_app.model.addDispatchToQ({'_cmd':'adminKPIDBUserDataSetsList','_tag':	{'datapointer' : 'adminKPIDBUserDataSetsList'}},'mutable');
-					}
-				
-				_app.ext.admin_reports.calls.adminKPIDBCollectionList.init({'callback':function(rd){
+				app.ext.admin.calls.adminKPIDBUserDataSetsList.init({},'mutable');
+				app.ext.admin.calls.adminKPIDBCollectionList.init({'callback':function(rd){
 					$KPI.hideLoading();
-					if(_app.model.responseHasErrors(rd)){
+					if(app.model.responseHasErrors(rd)){
 							$('#globalMessaging').anymessage({'message':rd,'gMessage':true});
 							}
 					else	{
 						$("[data-app-role='slimLeftNav']",$KPI).anycontent({'datapointer':rd.datapointer});
-						_app.u.handleAppEvents($KPI);
+						app.u.handleAppEvents($KPI);
 						$("[data-app-role='slimLeftNav'] ul li:first",$KPI).trigger('click');
 						}
 					}},'mutable');
-				_app.model.dispatchThis();
-				}, //showKPIInterface
+				app.model.dispatchThis();
+				},
 				
 
 //currently supported modes are:  add or edit
 			showKPIAddUpdateInModal : function(mode,vars)	{
-//				_app.u.dump("BEGIN admin_reports.a.showKPIAddUpdateInModal");
-//				_app.u.dump(' -> vars: '); _app.u.dump(vars);
+//				app.u.dump("BEGIN admin_reports.a.showKPIAddUpdateInModal");
+//				app.u.dump(' -> vars: '); app.u.dump(vars);
 				vars = vars || {};
 //error checking...
 				if(mode)	{
@@ -272,7 +188,7 @@ var admin_reports = function(_app) {
 								}
 							});
 // the blank {} in the first object list is so that the rest of the data is copied into a new, blank object. otherwise, the data gets copied into the first object... which would be bad.  Dogs and cats living together bad. all the data would get copied into the collectionDetail datapointer.
-						$D.anycontent({'templateID':'KPIGraphAddUpdateTemplate','data':$.extend(true,{},vars,_app.data['adminKPIDBCollectionList'],_app.data['adminKPIDBUserDataSetsList']),'dataAttribs':{'app-mode':mode}});
+						$D.anycontent({'templateID':'KPIGraphAddUpdateTemplate','data':$.extend(true,{},vars,app.data['adminKPIDBCollectionList'],app.data['adminKPIDBUserDataSetsList']),'dataAttribs':{'app-mode':mode}});
 						$D.dialog('open');
 						
 
@@ -298,22 +214,22 @@ var admin_reports = function(_app) {
 							$("[name='collection']",$D).val(vars.collection).parent().hide(); //can't use data-bind because options are added after the select
 							}
 
-						_app.u.handleAppEvents($D);
+						app.ext.admin.u.handleAppEvents($D);
 						
 						if(mode == 'update')	{
-							_app.u.dump(" -> in graph update mode.");
+							app.u.dump(" -> in graph update mode.");
 							$("[name='period']",$D).trigger('change');
 							$(":radio[value='"+vars.dataColumns+"']",$D).trigger('click');
 							
 							if(vars.dataColumns == 'fixed')	{
-//								_app.u.dump(" -> Data columns are fixed.");
+//								app.u.dump(" -> Data columns are fixed.");
 								$("[name='datasetGrp']",$D).trigger('change');
 								var $selectedUL	 = $("[data-app-role='dataSetAxisListSelected']",$D);
 								
 								$("[data-app-role='dataSetAxisListAll'] li",$D).each(function(){
 									var $li = $(this);
 									if(vars['@datasets'].indexOf($li.data('dataset')) >= 0)	{
-										_app.u.dump("match!");
+										app.u.dump("match!");
 										$li.appendTo($selectedUL);
 										}
 									})
@@ -339,9 +255,9 @@ var admin_reports = function(_app) {
 					
 					$target.empty().showLoading({'message':'Fetching collection details'})
 					
-					_app.ext.admin_reports.calls.adminKPIDBCollectionDetail.init(collection,{'callback':function(rd){
+					app.ext.admin.calls.adminKPIDBCollectionDetail.init(collection,{'callback':function(rd){
 						$target.hideLoading();
-						if(_app.model.responseHasErrors(rd)){
+						if(app.model.responseHasErrors(rd)){
 							$('#globalMessaging').anymessage({'message':rd,'gMessage':true});
 							}
 						else	{
@@ -353,31 +269,30 @@ var admin_reports = function(_app) {
 								stop: function( event, ui ) {
 									var graphs = new Array();
 									var result = $(this).sortable('toArray', {attribute: 'data-uuid'});
-
 									for(var index in result)	{
 //toArray is returning a blank in the zero spot sometimes, so only push it on if index has a value.
-										if(result[index])	{graphs.push(_app.ext.admin_reports.u.getGraphByUUID(_app.data[rd.datapointer]['@GRAPHS'],result[index]));}
+										if(result[index])	{graphs.push(app.ext.admin_reports.u.getGraphByUUID(app.data[rd.datapointer]['@GRAPHS'],result[index]));}
 										}
-									_app.u.dump(result);
-									_app.u.dump(graphs);
-									_app.ext.admin_reports.calls.adminKPIDBCollectionUpdate.init({'uuid':collection,'@GRAPHS':graphs},{},'passive');
-									_app.model.destroy(rd.datapointer); //this is the collection detail.
-									_app.ext.admin_reports.calls.adminKPIDBCollectionDetail.init(collection,{},'passive');
-									_app.model.dispatchThis('passive');
+									app.u.dump(result);
+									app.u.dump(graphs);
+									app.ext.admin.calls.adminKPIDBCollectionUpdate.init({'uuid':collection,'@GRAPHS':graphs},{},'passive');
+									app.model.destroy(rd.datapointer); //this is the collection detail.
+									app.ext.admin.calls.adminKPIDBCollectionDetail.init(collection,{},'passive');
+									app.model.dispatchThis('passive');
 									}
 								});
-							_app.u.handleAppEvents($target);
+							app.u.handleAppEvents($target);
 							}
 						}
 					},'mutable');
-					_app.model.dispatchThis('mutable');
+					app.model.dispatchThis('mutable');
 					
 					
 					}
 				else	{
 					$('#globalMessaging').anymessage({'message':'In admin_reports.a.showKPICollectionEditor, either $target ['+typeof $target+'] or collection ['+collection+'] not passed','gMessage':true});
 					}
-				}, //showKPICollectionEditor
+				},
 
 			showKPICollectionTitleChange : function(collection,$context)	{
 				if(collection)	{
@@ -400,38 +315,38 @@ var admin_reports = function(_app) {
 					$D.dialog('open');
 					$D.parent().showLoading({'message':'Fetching collection details'}); //parent used to buttons are encompased.
 					
-					_app.ext.admin_reports.calls.adminKPIDBCollectionDetail.init(collection,{'callback':function(rd){
+					app.ext.admin.calls.adminKPIDBCollectionDetail.init(collection,{'callback':function(rd){
 						$D.parent().hideLoading();
-						if(_app.model.responseHasErrors(rd)){
+						if(app.model.responseHasErrors(rd)){
 							$('#globalMessaging').anymessage({'message':rd,'gMessage':true});
 							}
 						else	{
 							var buttons = $D.dialog( "option", "buttons" );
 							buttons.push({text: "Save Changes", click: function() {
 								var CD = {}; //Collection Detail
-								CD['@GRAPHS'] = _app.data[rd.datapointer]['@GRAPHS'] || [];
+								CD['@GRAPHS'] = app.data[rd.datapointer]['@GRAPHS'] || [];
 								CD.title = $('#collectionTitle',$D).val();
 								CD.uuid = collection;
 								$D.parent().showLoading({'message':'Updating collection'});
-								_app.ext.admin_reports.calls.adminKPIDBCollectionUpdate.init(CD,{},'immutable');
-								_app.model.destroy('adminKPIDBCollectionDetail|'+collection);
-								_app.model.destroy('adminKPIDBCollectionList');
-								_app.ext.admin_reports.calls.adminKPIDBCollectionList.init({callback : function(rd){
+								app.ext.admin.calls.adminKPIDBCollectionUpdate.init(CD,{},'immutable');
+								app.model.destroy('adminKPIDBCollectionDetail|'+collection);
+								app.model.destroy('adminKPIDBCollectionList');
+								app.ext.admin.calls.adminKPIDBCollectionList.init({callback : function(rd){
 									$D.parent().hideLoading();
-									if(_app.model.responseHasErrors(rd)){_app.u.throwMessage(rd);}
+									if(app.model.responseHasErrors(rd)){app.u.throwMessage(rd);}
 									else	{
-										_app.ext.admin_reports.u.updateKPICollections($context);
+										app.ext.admin_reports.u.updateKPICollections($context);
 										$D.dialog('close');
 										}
 									}},'immutable');
-								_app.model.dispatchThis('immutable');
+								app.model.dispatchThis('immutable');
 								}});
 							$D.dialog( "option", "buttons", buttons); //save not added till collection data obtained to avoid confusion.
 							$D.append($("<div \/>").addClass('appMessaging'));
-							$D.append($("<input \/>",{'type':'text','placeholder':'collection name','id':'collectionTitle'}).val(_app.data[rd.datapointer].TITLE || ""));
+							$D.append($("<input \/>",{'type':'text','placeholder':'collection name','id':'collectionTitle'}).val(app.data[rd.datapointer].TITLE || ""));
 							}
 					}},'immutable');
-					_app.model.dispatchThis('immutable');
+					app.model.dispatchThis('immutable');
 	
 					
 					
@@ -458,38 +373,38 @@ var admin_reports = function(_app) {
 							{text: "Delete Graph", click: function() {
 	$D.parent().showLoading({'message':'Removing graph...'});
 	
-	var graphs = _app.data['adminKPIDBCollectionDetail|'+collection]['@GRAPHS'], L = graphs.length
+	var graphs = app.data['adminKPIDBCollectionDetail|'+collection]['@GRAPHS'];
 
-//	_app.u.dump(" -> graphUUID: "+graphUUID);
+//	app.u.dump(" -> graphUUID: "+graphUUID);
 	//got to loop backwards otherwise if match is at 0, elements shift down and when L is reached, that index in graphs is empty.
-	for(var i = 0; i < L; i += 1)	{
-		_app.u.dump(i+" uuid: "+graphs[i].uuid);
-		if(graphs[i].uuid == graphUUID) {
-			_app.u.dump("MATCH");
-			graphs.splice(i, 1);
+	for(var index in graphs)	{
+		app.u.dump(index+" uuid: "+graphs[index].uuid);
+		if(graphs[index].uuid == graphUUID) {
+			app.u.dump("MATCH");
+			graphs.splice(index, 1);
 			}
 		}
 
-	_app.ext.admin_reports.calls.adminKPIDBCollectionUpdate.init({'uuid':collection,'@GRAPHS' : graphs},{},'immutable');
-	_app.model.destroy('adminKPIDBCollectionDetail|'+collection);
-	_app.ext.admin_reports.calls.adminKPIDBCollectionDetail.init(collection,{callback : function(rd){
+	app.ext.admin.calls.adminKPIDBCollectionUpdate.init({'uuid':collection,'@GRAPHS' : graphs},{},'immutable');
+	app.model.destroy('adminKPIDBCollectionDetail|'+collection);
+	app.ext.admin.calls.adminKPIDBCollectionDetail.init(collection,{callback : function(rd){
 		$D.parent().hideLoading();
-		if(_app.model.responseHasErrors(rd)){_app.u.throwMessage(rd);}
+		if(app.model.responseHasErrors(rd)){app.u.throwMessage(rd);}
 		else	{
-			_app.ext.admin_reports.a.showKPICollectionEditor($("[data-app-role='slimLeftContent']",$slimLeftContainer).first(), collection);
+			app.ext.admin_reports.a.showKPICollectionEditor($("[data-app-role='slimLeftContent']",$slimLeftContainer).first(), collection);
 			$D.dialog('close');
-			$('#globalMessaging').anymessage(_app.u.successMsgObject('Your chart has been removed.'));
+			$('#globalMessaging').anymessage(app.u.successMsgObject('Your chart has been removed.'));
 			}
 		}},'immutable');
-	_app.model.dispatchThis('immutable');
+	app.model.dispatchThis('immutable');
 								}}
 							]
 						});
 					
 					$D.dialog('open'); $D.showLoading({'message':'Fetching collection details'});
-					_app.ext.admin_reports.calls.adminKPIDBCollectionDetail.init(collection,{'callback':function(rd){
+					app.ext.admin.calls.adminKPIDBCollectionDetail.init(collection,{'callback':function(rd){
 						$D.hideLoading();
-						if(_app.model.responseHasErrors(rd)){
+						if(app.model.responseHasErrors(rd)){
 							$('#globalMessaging').anymessage({'message':rd,'gMessage':true});
 							}
 						else	{} //content is already present. hideLoading does the needful.
@@ -505,8 +420,8 @@ var admin_reports = function(_app) {
 			showKPICollectionRemove : function(collection,$context)	{
 				if(collection)	{
 					var title = ""
-					if(_app.data['adminKPIDBCollectionDetail|'+collection] && _app.data['adminKPIDBCollectionDetail|'+collection].TITLE)	{
-						title = _app.data['adminKPIDBCollectionDetail|'+collection].TITLE
+					if(app.data['adminKPIDBCollectionDetail|'+collection] && app.data['adminKPIDBCollectionDetail|'+collection].TITLE)	{
+						title = app.data['adminKPIDBCollectionDetail|'+collection].TITLE
 						}
 					else	{
 						title = collection
@@ -525,20 +440,18 @@ var admin_reports = function(_app) {
 							{text: 'Cancel', click: function(){$D.dialog('close')}},
 							{text: "Delete Collection", click: function() {
 	$D.parent().showLoading({'message':'Removing collection...'});
-
-	_app.model.addDispatchToQ({'uuid':collection,'_cmd':'adminKPIDBCollectionRemove','_tag':{'callback':'showMessaging','message':collection+' has been removed','jqObj':$context}},'mutable');
-
-	_app.model.destroy('adminKPIDBCollectionDetail|'+collection);
-	_app.model.destroy('adminKPIDBCollectionList');
-	_app.ext.admin_reports.calls.adminKPIDBCollectionList.init({callback : function(rd){
+	app.ext.admin.calls.adminKPIDBCollectionRemove.init(collection,{},'immutable');
+	app.model.destroy('adminKPIDBCollectionDetail|'+collection);
+	app.model.destroy('adminKPIDBCollectionList');
+	app.ext.admin.calls.adminKPIDBCollectionList.init({callback : function(rd){
 		$D.parent().hideLoading();
-		if(_app.model.responseHasErrors(rd)){_app.u.throwMessage(rd);}
+		if(app.model.responseHasErrors(rd)){app.u.throwMessage(rd);}
 		else	{
-			_app.ext.admin_reports.u.updateKPICollections($context);
+			app.ext.admin_reports.u.updateKPICollections($context);
 			$D.dialog('close');
 			}
 		}},'immutable');
-	_app.model.dispatchThis('immutable');
+	app.model.dispatchThis('immutable');
 	
 								}}
 							]
@@ -568,8 +481,6 @@ var admin_reports = function(_app) {
 		u : {
 
 
-//FOR GOOGLE VISUALIZATIONS (REPORTS)
-
 			drawToolbar : function (id)	{
 				if(id)	{
 					var components = [
@@ -580,7 +491,7 @@ var admin_reports = function(_app) {
 						];
 					
 					var container = document.getElementById(id);
-//					google.visualization.drawToolbar(container, components); //doens't work. need to use the google docs API !!!
+					google.visualization.drawToolbar(container, components);
 					}
 				else	{
 					$('#globalMessaging').anymessage({'message':'In admin_reports.u.drawToolbar, no ID passed.','gMessage':true});
@@ -592,11 +503,10 @@ var admin_reports = function(_app) {
 //when a table header is clicked to change sort, the entire contents of the container (id) are rewritten.
 //keep that in mind when and deciding what ID to pass in.
 			drawTable : function(id,header,rows) {
-				_app.u.dump(" -> BEGIN admin_reports.u.drawTable");
-//				_app.u.dump("header: "); _app.u.dump(header);
-//				_app.u.dump("rows: "); _app.u.dump(rows);
+//				app.u.dump("header: "); app.u.dump(header);
+//				app.u.dump("rows: "); app.u.dump(rows);
 				var data = new google.visualization.DataTable();
-//				_app.u.dump(" -> header:"); _app.u.dump(header);
+//				app.u.dump(" -> header:"); app.u.dump(header);
 				for(var index in header)	{
 					data.addColumn('string',header[index]);
 					}
@@ -609,10 +519,6 @@ var admin_reports = function(_app) {
 					showRowNumber: true
 					});
 				}, //drawTable
-
-
-
-//FOR HIGHCHARTS (KPI)
 
 //used not on a form validation, but when requesting data. This is a global check to make sure all the necessary variables are present.
 //returns false if valid. Returns error log if data is missing.
@@ -638,61 +544,54 @@ var admin_reports = function(_app) {
 					}
 				
 				return (r == "") ? false : r;
-				}, //graphVarsIsMissingData
+				},
 
 //all this does is empty and re-render the collections. you must destroy and re-aquire prior to running this.
 			updateKPICollections : function($context)	{
 				if($context)	{
 					var $UL = $("[data-app-role='collectionNavList']",$context);
 					$UL.empty().parent().anycontent({datapointer : 'adminKPIDBCollectionList'});
-					_app.u.handleAppEvents($UL);
+					app.u.handleAppEvents($UL);
 					}
 				else	{
 					$('#globalMessaging').anymessage({'message':'In admin_reports.u.updateKPICollections, either $context not passed.','gMessage':true});
 					}
-				}, //updateKPICollections
+				},
 
 //vars will contain a grpby and column.  It will also contain a period OR startyyyymmdd and stopyyyymmdd
 //vars can contain a dataset OR dataset can be passed in as the second param. This is to accomodate the KPI data storage pattern.
 //outside of KPI, there's a good chance dataset will be passed in w/ the vars.
 			getChartData : function($target,graphVars)	{
-//				_app.u.dump(" -> BEGIN reports.u.getChartData");
 				var $chartObj = false;
 				if(graphVars && !$.isEmptyObject(graphVars) && $target)	{
 //at this point, graphVars IS an object and is not empty.
-//_app.u.dump(" -> graphVars: "); _app.u.dump(graphVars);
-					if(!_app.ext.admin_reports.u.graphVarsIsMissingData(graphVars))	{
+//app.u.dump(" -> graphVars: "); app.u.dump(graphVars);
+					if(!app.ext.admin_reports.u.graphVarsIsMissingData(graphVars))	{
 						$target.showLoading({'message':'Fetching graph data'});
 //everything we need is accounted for. Move along... move along...
-						graphVars._cmd = graphVars._cmd || 'adminKPIDBDataQuery';
-						graphVars._tag = graphVars._tag || {};
-						graphVars._tag.datapointer = "adminKPIDBDataQuery|"+graphVars.uuid;
-//						_app.u.dump(" -> datapointer: "+graphVars._tag.datapointer);
-						graphVars._tag.callback = function(rd){
+						app.ext.admin.calls.adminKPIDBDataQuery.init(graphVars,{callback:function(rd){
 							$target.hideLoading();
-							if(_app.model.responseHasErrors(rd)){
+							if(app.model.responseHasErrors(rd)){
 								$('#globalMessaging').anymessage({'message':rd});
 								}
 							else	{
-								_app.ext.admin_reports.u.addGraph($target,graphVars,_app.data[rd.datapointer])
+								app.ext.admin_reports.u.addGraph($target,graphVars,app.data[rd.datapointer])
 								}
-							}
-						_app.model.addDispatchToQ(graphVars,'mutable');
-						_app.model.dispatchThis('mutable');
+							}},'mutable');
+						app.model.dispatchThis('mutable');
 						}
 					else	{
-						$('#globalMessaging').anymessage({'message':'In admin_reports.u.getKPIChart, graphVars is missing data: <br>'+_app.ext.admin_reports.u.graphVarsIsMissingData(graphVars),'gMessage':true});
+						$('.appMessaging').anymessage({'message':'In admin_reports.u.getKPIChart, graphVars is missing data: <br>'+app.ext.admin_reports.u.graphVarsIsMissingData(graphVars),'gMessage':true});
 						}
 
 					}
 				else	{
-					$('#globalMessaging').anymessage({'message':'In admin_reports.u.getKPIChart, graphVars [typeof '+typeof graphVars+'] and/or $target not passed or graphVars is empty object.','gMessage':true});
+					$('.appMessaging').anymessage({'message':'In admin_reports.u.getKPIChart, graphVars [typeof '+typeof graphVars+'] and/or $target not passed or graphVars is empty object.','gMessage':true});
 					}
 				return $chartObj;
-				}, //getChartData
-
+				},
+			
 			getTextGraph : function(graphVars,highChartObj)	{
-				_app.u.dump(" -> BEGIN reports.u.getTextGraph");
 				var
 					$C = $("<div \/>"),
 					L = highChartObj.series.length,
@@ -709,12 +608,11 @@ var admin_reports = function(_app) {
 					}
 				$T.appendTo($C);
 				return $C;
-				}, //getTextGraph
-
+				},
+			
 			getGraphByUUID : function(graphs,graphUUID)	{
 				var r = false;
 				if(graphs && graphs.length && graphUUID)	{
-					_app.u.dump(" -> in getGraphByUUID, just before index loop");
 					for(var index in graphs)	{
 						if(graphs[index].uuid == graphUUID)	{
 							r = graphs[index]
@@ -727,117 +625,127 @@ var admin_reports = function(_app) {
 					$('#globalMessaging').anymessage({'message':'In admin_reports.u.getGraphByUUID, graphs not set/has no children of graphUUID ['+graphUUID+'] not passed.','gMessage':true});
 					}
 				return r;
-				}, //getGraphByUUID
+				},
 
 //This will display the actual graph. requires that data be passed in. executed by getChartData.			
 			addGraph : function($target,graphVars,data)	{
-//				_app.u.dump(" -> BEGIN reports.u.addGraph");
+				
 				if($target && graphVars && data)	{
 
-					var
-						myDataSet = new Array(),//the data for the graph.
-						highChartObj = {
-							chart: {type: graphVars.graph},
-							title: {text: graphVars.title},
-							subtitle: {text: data.startyyyymmdd + " to " + data.stopyyyymmdd},
-							tooltip: {pointFormat: '{series.name} <b>{point.y:,.0f}</b> on {point.x}'}
-							}; //what is passed into highcharts(); varies based on graph type.
 
-						if(graphVars.graph == 'pie' && graphVars.dataColumns == 'dynamic')	{
-							var L = data['@YAxis'].length;
-							_app.u.dump(" -> L: "+L);
-							for(var i = 0; i < L; i += 1)	{
-						//		_app.u.dump(" -> "+data['@YAxis'][i][1]+" ("+key+") : "+data[key][0]);
-								myDataSet.push([data['@YAxis'][i][1],data[data['@YAxis'][i][0]][0]])
-								}
-							}
-						else if(graphVars.graph == 'pie' && graphVars.dataColumns == 'fixed')	{
-							var L = graphVars['@datasets'].length
-							_app.u.dump(" -> L: "+L);
-							for(var i = 0; i < L; i += 1)	{
-						//		_app.u.dump(" -> "+graphVars['@datasets'][i]+" : "+data[graphVars['@datasets'][i]][0]);
-								myDataSet.push([graphVars['@datasets'][i],data[graphVars['@datasets'][i]][0]])
-								}
-							}
-						else if(graphVars.dataColumns == 'fixed')	{
-							var L = graphVars['@datasets'].length
-							for(var i = 0; i < L; i += 1)	{
-								myDataSet.push({'name':graphVars['@datasets'][i],'data':data[graphVars['@datasets'][i]]})
-								}
-							}
-						else if(graphVars.dataColumns == 'dynamic')	{
-							var L = data['@YAxis'].length;
-							for(var i = 0; i < L; i += 1)	{
-								myDataSet.push({'name':data['@YAxis'][i][1],'data':data[data['@YAxis'][i][0]]})
-								}
-							}
-						else	{
-							_app.u.dump("In reports.u.addGraph, reached an unhandled case in the if/else that builds myDataSet.",'error');
-							} //catch. really, by now, we should never get here.
+var
+//the data for the graph.
+	myDataSet = new Array(),
+//what is passed into highcharts(); varies based on graph type.
+	highChartObj = {
+		chart: {type: graphVars.graph},
+		title: {text: graphVars.title},
+		subtitle: {text: data.startyyyymmdd + " to " + data.stopyyyymmdd},
+		tooltip: {pointFormat: '{series.name} <b>{point.y:,.0f}</b> on {point.x}'}
+		}; 
+
+if(graphVars.graph == 'pie' && graphVars.dataColumns == 'dynamic')	{
+	var L = data['@YAxis'].length;
+	app.u.dump(" -> L: "+L);
+	for(var i = 0; i < L; i += 1)	{
+//		app.u.dump(" -> "+data['@YAxis'][i][1]+" ("+key+") : "+data[key][0]);
+		myDataSet.push([data['@YAxis'][i][1],data[data['@YAxis'][i][0]][0]])
+		}
+	}
+else if(graphVars.graph == 'pie' && graphVars.dataColumns == 'fixed')	{
+	var L = graphVars['@datasets'].length
+	app.u.dump(" -> L: "+L);
+	for(var i = 0; i < L; i += 1)	{
+//		app.u.dump(" -> "+graphVars['@datasets'][i]+" : "+data[graphVars['@datasets'][i]][0]);
+		myDataSet.push([graphVars['@datasets'][i],data[graphVars['@datasets'][i]][0]])
+		}
+	}
+else if(graphVars.dataColumns == 'fixed')	{
+	var L = graphVars['@datasets'].length
+	for(var i = 0; i < L; i += 1)	{
+		myDataSet.push({'name':graphVars['@datasets'][i],'data':data[graphVars['@datasets'][i]]})
+		}
+	}
+else if(graphVars.dataColumns == 'dynamic')	{
+	var L = data['@YAxis'].length;
+	for(var i = 0; i < L; i += 1)	{
+		myDataSet.push({'name':data['@YAxis'][i][1],'data':data[data['@YAxis'][i][0]]})
+		}
+	}
+else	{
+	
+	} //catch. really, by now, we should never get here.
+
+if(graphVars.graph == 'pie')	{
+	highChartObj.plotOptions = {
+		pie: {
+			allowPointSelect: true,
+			cursor: 'pointer',
+			dataLabels: {
+				enabled: true,
+				color: '#000000',
+				connectorColor: '#000000',
+				formatter: function() {return (this.percentage == 0) ? null : '<b>'+ this.point.name +'</b>: '+ (Math.round(this.percentage*100)/100 ) +' %';}
+				}
+			}
+		}
+	
+	highChartObj.series = [{
+		type: 'pie',
+		name: '',
+		data: myDataSet
+		}]
+
+	}
+//the line charts all expect the data about the same.
+else	{
+	highChartObj.xAxis = {
+		categories : data['@xAxis'],
+		tickInterval : (data['@xAxis'].length > 35) ? 15 : 1 , //will skip ticks in graphs w/ lots of x-axis values.
+		labels: {
+			formatter: function() {return this.value;} // clean, unformatted value
+			}
+		}
+
+	highChartObj.yAxis = {
+			title: {
+				text: '' //runs up left side of chart.
+			},
+			labels: {
+				formatter: function() {
+					return this.value / 1000 +'k';
+				}
+			}
+		}
+	highChartObj.series = myDataSet
+
+	}
+
+if(myDataSet.length)	{
+	if(graphVars.graph == 'text')	{
+		$target.append(app.ext.admin_reports.u.getTextGraph(graphVars,highChartObj));
+		}
+	else	{
+		$target.highcharts(highChartObj);
+		}
+	}
+else	{
+	$target.anymessage({'message':'No data available'});
+	}
 
 
-//					_app.u.dump(" -> myDataSet.length: "+myDataSet.length);
-					if(myDataSet.length)	{
-						if(graphVars.graph == 'pie')	{
-							highChartObj.plotOptions = {
-								pie: {
-									allowPointSelect: true,
-									cursor: 'pointer',
-									dataLabels: {
-										enabled: true,
-										color: '#000000',
-										connectorColor: '#000000',
-										formatter: function() {return (this.percentage == 0) ? null : '<b>'+ this.point.name +'</b>: '+ (Math.round(this.percentage*100)/100 ) +' %';}
-										}
-									}
-								}
-							
-							highChartObj.series = [{
-								type: 'pie',
-								name: '',
-								data: myDataSet
-								}]
-						
-							}
-						//the line charts all expect the data about the same.
-						else	{
-							highChartObj.xAxis = {
-								categories : data['@xAxis'],
-								tickInterval : (data['@xAxis'].length > 35) ? 15 : 1 , //will skip ticks in graphs w/ lots of x-axis values.
-								labels: {
-									formatter: function() {return this.value;} // clean, unformatted value
-									}
-								}
-						
-							highChartObj.yAxis = {
-									title: {
-										text: '' //runs up left side of chart.
-									},
-									labels: {
-										formatter: function() {
-											return this.value / 1000 +'k';
-										}
-									}
-								}
-							highChartObj.series = myDataSet
-							}
-						if(graphVars.graph == 'text')	{
-							$target.append(_app.ext.admin_reports.u.getTextGraph(graphVars,highChartObj));
-							}
-						else	{
-							$target.highcharts(highChartObj);
-							}
-						}
-					else	{
-						$target.anymessage({'message':'No data available'});
-						}
+
+
+
 
 					}
 				else if($target)	{
 					$target.anymessage({'message':'In admin_reports.u.addGraph, graphsvars ['+typeof graphVars+'] and data['+typeof data+'] are both required.','gMessage':true});
 					}
 				else	{
+					
 					$("#globalMessaging").anymessage({'message':'In admin_reports.u.addGraph, $target ['+typeof $target+'] andgraphsvars ['+typeof graphVars+'] and data['+typeof data+'] are both required.','gMessage':true});
+					
 					}
 				
 				},
@@ -867,29 +775,30 @@ var admin_reports = function(_app) {
 
 //This is what displays a collection.  It'll show it in target.
 			addKPICollectionTo : function($target,collection)	{
-				_app.u.dump("BEGIN admin_reports.u.addKPICollectionTo");
+				app.u.dump("BEGIN admin_reports.u.addKPICollectionTo $target");
 				if($target && collection)	{
-//					_app.u.dump(" -> $target and collection are set.");
+//					app.u.dump(" -> $target and collection are set.");
 					$target.empty().showLoading({'message':'Fetching collection details'});
-					_app.ext.admin_reports.calls.adminKPIDBCollectionDetail.init(collection,{'callback':function(rd){
+					app.ext.admin.calls.adminKPIDBCollectionDetail.init(collection,{'callback':function(rd){
 						$target.hideLoading();
-						if(_app.model.responseHasErrors(rd)){
+						if(app.model.responseHasErrors(rd)){
 							$('#globalMessaging').anymessage({'message':rd,'gMessage':true});
 							}
 						else	{
 							//get detail for each graph
-//							_app.u.dump(" -> _app.data[rd.datapointer]"); _app.u.dump(_app.data[rd.datapointer]);
-							if(_app.data[rd.datapointer]['@GRAPHS'])	{
-								var graphs = _app.data[rd.datapointer]['@GRAPHS'], L = graphs.length//shortcut
-								for(var i = 0; i < L; i += 1)	{
-//									_app.u.dump(i+"). adding graph "+graphs[i].uuid); //_app.u.dump(graphs[index]);
-									var $div = $("<div\/>").attr('data-graph-uuid',graphs[i].uuid).addClass('graph').appendTo($target);
-									_app.ext.admin_reports.u.getChartData($div,graphs[i]); //getChartData handles dispatch so that each chart gets it's own ajax req. (faster loading for smaller charts)
-									}
-								}
-							else	{
-								$target.append("<P>There are no graphs in this collection.<\/P>");
-								}
+//							app.u.dump(" -> app.data[rd.datapointer]"); app.u.dump(app.data[rd.datapointer]);
+if(app.data[rd.datapointer]['@GRAPHS'])	{
+	var graphs = app.data[rd.datapointer]['@GRAPHS']; //shortcut
+	for(var index in graphs)	{
+//		app.u.dump(index+"). adding graph."); app.u.dump(graphs[index]);
+		var $div = $("<div\/>").attr('data-graph-uuid',graphs[index].uuid).addClass('graph').appendTo($target);
+		app.ext.admin_reports.u.getChartData($div,graphs[index]); //getChartData handles dispatch so that each chart gets it's own ajax req. (faster loading for smaller charts)
+		}
+	}
+else	{
+	$target.append("<P>There are no graphs in this collection.<\/P>");
+	}
+
 							}
 						}},'mutable');
 					}
@@ -899,9 +808,9 @@ var admin_reports = function(_app) {
 				},
 			
 			getDatasetAxisByTypeAsListItems : function(type)	{
-				if(type && _app.data.adminKPIDBUserDataSetsList && _app.data.adminKPIDBUserDataSetsList['@DATASETS'])	{
+				if(type && app.data.adminKPIDBUserDataSetsList && app.data.adminKPIDBUserDataSetsList['@DATASETS'])	{
 					var $ul = $("<ul \/>"),
-					DS = _app.data.adminKPIDBUserDataSetsList['@DATASETS'], //shortcut
+					DS = app.data.adminKPIDBUserDataSetsList['@DATASETS'], //shortcut
 					L = DS.length
 					
 					for(var i = 0; i < L; i += 1)	{
@@ -917,7 +826,7 @@ var admin_reports = function(_app) {
 					$('.appMessaging').anymessage({'message':'In admin_reports.u.getDatasetAxisByTypeAsListItems, type not passed.','gMessage':true});
 					}
 				else	{
-					$('.appMessaging').anymessage({'message':'In admin_reports.u.getDatasetAxisByTypeAsListItems, _app.data.adminKPIDBUserDataSetsList not set.','gMessage':true});
+					$('.appMessaging').anymessage({'message':'In admin_reports.u.getDatasetAxisByTypeAsListItems, app.data.adminKPIDBUserDataSetsList not set.','gMessage':true});
 					}
 				return ($ul.children().length) ? $ul.children() : false;
 				},
@@ -941,7 +850,7 @@ var admin_reports = function(_app) {
 					
 					
 					//handle the basic validation.
-					if(_app.u.validateForm($form))	{}
+					if(app.u.validateForm($form))	{}
 					else	{r = false;} //validateForm handles error display
 					
 					
@@ -988,7 +897,7 @@ var admin_reports = function(_app) {
 						$('.appMessaging').anymessage({'message':'Please choose a value for data columns.'});
 						}
 					
-//					_app.u.dump("sfo: "); _app.u.dump(sfo);
+//					app.u.dump("sfo: "); app.u.dump(sfo);
 
 					}
 				else	{
@@ -1005,17 +914,19 @@ var admin_reports = function(_app) {
 
 			addTriggerKPICollectionList : function($ele)	{
 				$ele.off('click.addTriggerKPICollectionList').on('click.addTriggerKPICollectionList',function(){
-					_app.ext.admin_reports.u.addKPICollectionTo($ele.closest("[data-app-role='slimLeftContainer']").find("[data-app-role='slimLeftContent']").first(),$ele.data('uuid'));
-					_app.model.dispatchThis('mutable');
+					app.ext.admin_reports.u.addKPICollectionTo($ele.closest("[data-app-role='slimLeftContainer']").find("[data-app-role='slimLeftContent']").first(),$ele.data('uuid'));
+					app.model.dispatchThis('mutable');
 					});
 				},
 			
 			showChartAdd : function($btn)	{
 				$btn.button({icons: {primary: "ui-icon-key"},text: true});
 				$btn.off('click.showChartAdd').on('click.showChartAdd',function(){
-					_app.ext.admin_reports.a.showKPIAddUpdateInModal('add',{});
+					app.ext.admin_reports.a.showKPIAddUpdateInModal('add',{});
 					});
 				}, //showChartAdd
+
+
 			
 			showKPIGraphPreview : function($btn)	{
 				$btn.button({icons: {primary: "ui-icon-image"},text: true});
@@ -1027,12 +938,12 @@ var admin_reports = function(_app) {
 						sfo = $form.serializeJSON(),
 						$preview = $("[data-app-role='KPIDataGraph']",$form);
 
-					if(_app.ext.admin_reports.u.validateAddUpdateCollectionForm($form,sfo,'preview'))	{
-						sfo['@datasets'] = _app.ext.admin_reports.u.getDatasetsArray($form,sfo);
+					if(app.ext.admin_reports.u.validateAddUpdateCollectionForm($form,sfo,'preview'))	{
+						sfo['@datasets'] = app.ext.admin_reports.u.getDatasetsArray($form,sfo);
 						sfo.title = sfo.period + " " + sfo.column;
 						$preview.show().addClass("graphType_"+sfo.graph)
-						_app.ext.admin_reports.u.getChartData($preview,sfo);
-						_app.model.dispatchThis('mutable');
+						app.ext.admin_reports.u.getChartData($preview,sfo);
+						app.model.dispatchThis('mutable');
 						}
 					else	{
 						//validation handles error display.
@@ -1040,6 +951,7 @@ var admin_reports = function(_app) {
 
 					});
 				}, //showChartAdd
+
 
 			showChartUpdate : function($btn)	{
 				$btn.button({icons: {primary: "ui-icon-pencil"},text: true});
@@ -1050,22 +962,21 @@ var admin_reports = function(_app) {
 						collection = $btn.closest("[data-app-role='collectionEditor']").data('collection'),
 						graph 
 						
-						if(collection && graphUUID && _app.data['adminKPIDBCollectionDetail|'+collection])	{
-							graph = _app.ext.admin_reports.u.getGraphByUUID(_app.data['adminKPIDBCollectionDetail|'+collection]['@GRAPHS'],graphUUID);
+						if(collection && graphUUID && app.data['adminKPIDBCollectionDetail|'+collection])	{
+							graph = app.ext.admin_reports.u.getGraphByUUID(app.data['adminKPIDBCollectionDetail|'+collection]['@GRAPHS'],graphUUID);
 							graph.collection = collection;  //collection is not stored IN the graph. a graph is part of a collection. but this is needed for the UI.
-							_app.ext.admin_reports.a.showKPIAddUpdateInModal('update',graph);
+							app.ext.admin_reports.a.showKPIAddUpdateInModal('update',graph);
 							}
 						else	{
-							$('#globalMessaging').anymessage({'message':'In admin_reports.e.showChartUpdate click event, unable to ascertain collection ['+collection+'] or graphUUID ['+graphUUID+'] OR collection detail ['+typeof _app.data['adminKPIDBCollectionDetail|'+collection]+'] not in memory.','gMessage':true});
+							$('#globalMessaging').anymessage({'message':'In admin_reports.e.showChartUpdate click event, unable to ascertain collection ['+collection+'] or graphUUID ['+graphUUID+'] OR collection detail ['+typeof app.data['adminKPIDBCollectionDetail|'+collection]+'] not in memory.','gMessage':true});
 							}
 					
 					});
 				}, //showChartUpdate
-
 			showChartRemove : function($btn)	{
 				$btn.button({icons: {primary: "ui-icon-circle-close"},text: true});
 				$btn.off('click.showChartRemove').on('click.showChartRemove',function(){
-					_app.ext.admin_reports.a.showKPIGraphRemove($btn.closest("[data-app-role='collectionEditor']").data('collection'),$btn.closest("tr").data('uuid'),$btn.closest("[data-app-role='slimLeftContainer']"));
+					app.ext.admin_reports.a.showKPIGraphRemove($btn.closest("[data-app-role='collectionEditor']").data('collection'),$btn.closest("tr").data('uuid'),$btn.closest("[data-app-role='slimLeftContainer']"));
 					});
 				}, //showChartRemove
 
@@ -1088,26 +999,20 @@ var admin_reports = function(_app) {
 								var val = $('#newCollectionName').val();
 								if(val)	{
 									$D.parent().showLoading({'message':'Adding collection...'});
-									_app.model.destroy('adminKPIDBCollectionList');
-									_app.model.addDispatchToQ({
-										'_cmd':'adminKPIDBCollectionCreate',
-										'_tag':	{
-											'datapointer' : 'adminKPIDBCollectionCreate',
-											'callback':function(rd){
-												$D.parent().hideLoading();
-												if(_app.model.responseHasErrors(rd)){
-													$('.appMessaging').anymessage({'message':rd,'gMessage':true});
-													}
-												else	{
-													$D.anymessage(_app.u.successMsgObject('Your collection has been created.'));
-													$('#newCollectionName').val('');
-													_app.ext.admin_reports.u.updateKPICollections($btn.closest("[data-app-role='slimLeftContainer']"));
-													}
-												}
+									app.model.destroy('adminKPIDBCollectionList');
+									app.ext.admin.calls.adminKPIDBCollectionCreate.init({'uuid':app.u.guidGenerator(),'title':val},{callback : function(rd){
+										$D.parent().hideLoading();
+										if(app.model.responseHasErrors(rd)){
+											$('.appMessaging').anymessage({'message':rd,'gMessage':true});
 											}
-										},'immutable');
-									_app.ext.admin_reports.calls.adminKPIDBCollectionList.init({},'immutable')
-									_app.model.dispatchThis('immutable');
+										else	{
+											$D.anymessage(app.u.successMsgObject('Your collection has been created.'));
+											$('#newCollectionName').val('');
+											app.ext.admin_reports.u.updateKPICollections($btn.closest("[data-app-role='slimLeftContainer']"));
+											}
+										}},'immutable');
+									app.ext.admin.calls.adminKPIDBCollectionList.init({},'immutable')
+									app.model.dispatchThis('immutable');
 									}
 								else	{
 									$('.appMessaging').anymessage({'message':"Please enter a collection name."});
@@ -1127,7 +1032,7 @@ var admin_reports = function(_app) {
 				$select.off('change.addTriggerKPIDatasetChange').on('change.addTriggerKPIDatasetChange',function(){
 					if($select.val())	{
 						$("[data-app-role='axisChooser']",$form).show();
-						$("[data-app-role='dataSetAxisListAll']",$form).empty().append(_app.ext.admin_reports.u.getDatasetAxisByTypeAsListItems($select.val()));
+						$("[data-app-role='dataSetAxisListAll']",$form).empty().append(app.ext.admin_reports.u.getDatasetAxisByTypeAsListItems($select.val()));
 						}
 					else	{
 						$("[data-app-role='axisChooser']",$form).hide();
@@ -1161,7 +1066,7 @@ var admin_reports = function(_app) {
 				var $form = $select.closest('form');
 				$select.off('change.addTriggerKPIGraphTypeChange').on('change.addTriggerKPIGraphTypeChange',function()	{
 					$("[data-app-role='graphTypePreview']",$form).show();
-					$("[data-app-role='graphTypePreview'] img",$form).attr('src',($('option:selected',$select).data('image')));
+					$("[data-app-role='graphTypePreview'] img",$form).attr('src','images/kpi/'+$select.val()+'-300x104.png');
 					$("[data-app-role='graphTypePreview'] .graphType",$form).text($select.val().replace('.',' '));
 					
 /*
@@ -1250,12 +1155,12 @@ $btn.off('click.execAdminKPIDBCollectionUpdate').on('click.execAdminKPIDBCollect
 				}
 			else	{
 				
-				if(_app.ext.admin_reports.u.validateAddUpdateCollectionForm($form,sfo,'save'))	{
+				if(app.ext.admin_reports.u.validateAddUpdateCollectionForm($form,sfo,'save'))	{
 	
 	//By this point, all the data required to add or update a chart is present.
 	
 	//now get all the data formatted properly. Once that's done, mode will determine the next course of action.
-					sfo['@datasets'] = _app.ext.admin_reports.u.getDatasetsArray($form,sfo);
+					sfo['@datasets'] = app.ext.admin_reports.u.getDatasetsArray($form,sfo);
 
 	
 					var collection = sfo.collection;
@@ -1266,31 +1171,31 @@ $btn.off('click.execAdminKPIDBCollectionUpdate').on('click.execAdminKPIDBCollect
 	// need to fetch the collection list detail to make sure it's present. The callback for that will include appending this new chart to the collection.
 	// Then, update the collection and fetch a clean copy. If the KPI page is visible AND the collection in question is open, update the view.
 					
-					_app.u.dump(" -> All data for creating a new graph is present.  proceed....");
+					app.u.dump(" -> All data for creating a new graph is present.  proceed....");
 					$context.showLoading({'message':'Creating new graph.'})
 	//make sure we have a copy of the collection. most likely, what's in memory (if already here) is up to date, so no need to destroy.
-					_app.ext.admin_reports.calls.adminKPIDBCollectionDetail.init(collection,{
+					app.ext.admin.calls.adminKPIDBCollectionDetail.init(collection,{
 						callback : function(rd)	{
 
-							_app.u.dump("BEGIN inline callback on adminKPIDBCollectionDetail _cmd for adding a new chart.");
-
-								if(_app.model.responseHasErrors(rd)){
+							app.u.dump("BEGIN inline callback on adminKPIDBCollectionDetail _cmd for adding a new chart.");
+/*
+								if(app.model.responseHasErrors(rd)){
 								$context.hideLoading();
 								$('.appMessaging').anymessage({'message':rd,'gMessage':true});
 								}
 							else	{
 								var graphs = new Array();
-								_app.u.dump(rd.datapointer);
+								app.u.dump(rd.datapointer);
 //if there are already graphs in this collection, add then to graphs array as the update is destructive and ALL graphs need to be present.
-								if(_app.data[rd.datapointer]['@GRAPHS'])	{
-									graphs = _app.data[rd.datapointer]['@GRAPHS'];
+								if(app.data[rd.datapointer]['@GRAPHS'])	{
+									graphs = app.data[rd.datapointer]['@GRAPHS'];
 									}
 								
 								
-								_app.u.dump(graphs);
-
+								app.u.dump(graphs);
+								die();
 								if(mode == 'add')	{
-									sfo.uuid = _app.u.guidGenerator();
+									sfo.uuid = app.u.guidGenerator();
 									graphs.push(sfo);
 									}
 								else if(mode == 'update')	{
@@ -1302,25 +1207,25 @@ $btn.off('click.execAdminKPIDBCollectionUpdate').on('click.execAdminKPIDBCollect
 											}
 										}
 									}
-								_app.u.dump(graphs);
-								_app.model.destroy(rd.datapointer);
-								_app.ext.admin_reports.calls.adminKPIDBCollectionUpdate.init({'uuid':collection,'@GRAPHS':graphs},{'callback':function(rd){
+								app.u.dump(graphs);
+								die();
+								app.model.destroy(rd.datapointer);
+								app.ext.admin.calls.adminKPIDBCollectionUpdate.init({'uuid':collection,'@GRAPHS':graphs},{'callback':function(rd){
 									$context.hideLoading();
-									if(_app.model.responseHasErrors(rd)){
+									if(app.model.responseHasErrors(rd)){
 										$('.appMessaging').anymessage({'message':rd,'gMessage':true});
 										}
 									else	{
-										//added to section, not messaging, because the screen could be quite long and messaging could be out of view.
-										$btn.closest('section').anymessage(_app.u.successMsgObject('Your chart has been added.'));
+										$('.appMessaging').anymessage(app.u.successMsgObject('Your chart has been added.'));
 										}
 									}},'immutable');
-								_app.ext.admin_reports.calls.adminKPIDBCollectionDetail.init(collection,{},'immutable');//make sure collection is udpated in localstorage and memory
-								_app.model.dispatchThis('immutable');
+								app.ext.admin.calls.adminKPIDBCollectionDetail.init(collection,{},'immutable');//make sure collection is udpated in localstorage and memory
+								app.model.dispatchThis('immutable');
 								
 								}
-							}
+						*/	}
 						},'immutable');
-					_app.model.dispatchThis('immutable');
+					app.model.dispatchThis('immutable');
 					}
 				else	{} //validateAddUpdateCollectionForm handles error display.
 				}
@@ -1339,24 +1244,22 @@ $btn.off('click.execAdminKPIDBCollectionUpdate').on('click.execAdminKPIDBCollect
 
 				}, //execAdminKPIDBCollectionUpdate
 			
-			ebayReportViewSubmit : function($ele,p)	{
-				p.preventDefault();
-				var frmObj = $ele.serializeJSON(), $content = $(_app.u.jqSelector('#',_app.ext.admin.vars.tab+"Content"));
-				
-				if(frmObj.batchid)	{}
-				else	{delete frmObj.batchid}
-				
-				$content.showLoading();
-				frmObj._cmd = "adminDataQuery";
-				frmObj._tag = {
-					"datapointer" : "adminDataQuery",
-					callback : function(rd){
+			ebayReportView : function($btn)	{
+				$btn.button();
+				$btn.off('ebayReportCreate').on('click.ebayReportCreate',function(event){
+					event.preventDefault();
+					frmObj = $btn.parents('form').serializeJSON(),
+					$content = $('#utilitiesContent')
+					if(frmObj.batchid)	{}
+					else	{delete frmObj.batchid}
+					$content.showLoading();
+					app.ext.admin.calls.adminDataQuery.init(frmObj,{callback: function(rd){
 						$content.hideLoading();
-						if(_app.model.responseHasErrors(rd)){
-							_app.u.throwMessage(rd);
+						if(app.model.responseHasErrors(rd)){
+							app.u.throwMessage(rd);
 							}
 						else	{
-							if(_app.data[rd.datapointer]['@ROWS'].length)	{
+							if(app.data[rd.datapointer]['@ROWS'].length)	{
 								$content.empty();
 								$content.prepend($("<div \/>").addClass('ui-widget ui-widget-content ui-corner-all marginBottom alignRight buttonbar').append($("<button \/>")
 									.text('Export to CSV')
@@ -1364,16 +1267,15 @@ $btn.off('click.execAdminKPIDBCollectionUpdate').on('click.execAdminKPIDBCollect
 										$('table',$content).toCSV();
 									}).button()));
 								$content.append($("<div \/>",{'id':'ebayListingsReportContainer'}));
-								_app.ext.admin_reports.u.drawTable('ebayListingsReportContainer',_app.data[rd.datapointer]['@HEADER'],_app.data[rd.datapointer]['@ROWS']);
+								app.ext.admin_reports.u.drawTable('ebayListingsReportContainer',app.data[rd.datapointer]['@HEADER'],app.data[rd.datapointer]['@ROWS']);
 								}
 							else	{
-								_app.u.throwMessage("There were no results for your query.");
+								app.u.throwMessage("There were no results for your query.");
 								}
 							}
-						}
-					};
-				_app.model.addDispatchToQ(frmObj,"mutable");
-				_app.model.dispatchThis("mutable");
+						}},'mutable');
+					app.model.dispatchThis('mutable');
+					});
 				}, //ebayReportView
 			
 			handleCollectionMenu : function($btn)	{
@@ -1390,7 +1292,7 @@ $btn.off('click.execAdminKPIDBCollectionUpdate').on('click.execAdminKPIDBCollect
 				$("<li \/>").append($("<a \/>",{'href':'#'}).text('Add new graph').on('click',function(event){
 					event.preventDefault();
 					event.stopPropagation(); //keeps this click from firing the click event on the li
-					_app.ext.admin_reports.a.showKPIAddUpdateInModal('add',{'collection' : $parentLI.data('uuid')});
+					app.ext.admin_reports.a.showKPIAddUpdateInModal('add',{'collection' : $parentLI.data('uuid')});
 					$ul.hide()
 					return false;
 					})).appendTo($ul);
@@ -1398,7 +1300,7 @@ $btn.off('click.execAdminKPIDBCollectionUpdate').on('click.execAdminKPIDBCollect
 				$("<li \/>").append($("<a \/>",{'href':'#'}).text('Edit Collection').on('click',function(event){
 					event.preventDefault();
 					event.stopPropagation();
-					_app.ext.admin_reports.a.showKPICollectionEditor($btn.closest("[data-app-role='slimLeftContainer']").find("[data-app-role='slimLeftContent']").first(), collection);
+					app.ext.admin_reports.a.showKPICollectionEditor($btn.closest("[data-app-role='slimLeftContainer']").find("[data-app-role='slimLeftContent']").first(), collection);
 					$ul.hide()
 					return false;
 					})).appendTo($ul);
@@ -1406,7 +1308,7 @@ $btn.off('click.execAdminKPIDBCollectionUpdate').on('click.execAdminKPIDBCollect
 				$("<li \/>").append($("<a \/>",{'href':'#'}).text('Rename collection').on('click',function(event){
 					event.preventDefault();
 					event.stopPropagation();
-					_app.ext.admin_reports.a.showKPICollectionTitleChange(collection,$slimLeftContainer);
+					app.ext.admin_reports.a.showKPICollectionTitleChange(collection,$slimLeftContainer);
 					$ul.hide()
 					return false;
 					})).appendTo($ul);
@@ -1414,7 +1316,7 @@ $btn.off('click.execAdminKPIDBCollectionUpdate').on('click.execAdminKPIDBCollect
 				$("<li \/>").append($("<a \/>",{'href':'#'}).text('Delete collection').on('click',function(event){
 					event.preventDefault();
 					event.stopPropagation();
-					_app.ext.admin_reports.a.showKPICollectionRemove(collection,$slimLeftContainer);
+					app.ext.admin_reports.a.showKPICollectionRemove(collection,$slimLeftContainer);
 					$ul.hide()
 					return false;
 					})).appendTo($ul);
@@ -1434,119 +1336,14 @@ $btn.off('click.execAdminKPIDBCollectionUpdate').on('click.execAdminKPIDBCollect
 				
 				}, //handleCollectionMenu
 			
-
-			execAdminReportCreate : function($ele,p)	{
-				var $form = $ele.closest('form');
-				if(_app.u.validateForm($form))	{
-					var sfo = {'%vars':$form.serializeJSON()}
-					sfo.type = 'REPORT/'+sfo['%vars'].REPORT;
-					sfo.guid = _app.u.guidGenerator();
-					if(sfo['%vars'].PERIOD == 'BYTIMESTAMP')	{
-						sfo['%vars'].begints = (sfo['%vars'].begints / 1000)
-						sfo['%vars'].endts = (sfo['%vars'].endts / 1000) 
-						}
-					_app.ext.admin_batchjob.a.adminBatchJobCreate(sfo);
-					}
-				},
-
-
-
-			adminInventoryReportSaveExec : function($btn)	{
-				$btn.button();
-				$btn.off('click.adminInventoryReportSaveExec').on('click.adminInventoryReportSaveExec',function(event){
-					event.preventDefault();
-					var $form = $btn.closest('form');
-					if(_app.u.validateForm($form))	{
-						
-						var
-							sfo = $form.serializeJSON({cb:true}),
-							cmdObj = {
-								'_cmd':'adminBatchJobParametersCreate',
-								'UUID' : _app.u.guidGenerator(),
-								'_tag' : {
-									'callback' : 'showMessaging',
-									'jqObj' : $form,
-									'message' : 'Report has been saved. You can create another report or close the dialog to exit.'
-									},
-								'TITLE' : sfo.TITLE,
-								'BATCH_EXEC' : sfo.BATCH_EXEC,
-								'PRIVATE' : sfo.PRIVATE,
-								'%vars' : {}
-								}
-//selectors are NOT required, so no validation is done.
-						cmdObj['%vars'].product_selectors = _app.ext.admin_tools.u.pickerSelection2KVP($("[data-app-role='pickerContainer']",$form));
-						
-						if(sfo.summary == 'AVAILABLE' || sfo.summary == 'ONSHELF')	{
-							cmdObj['%vars'].where = sfo.summary+","+sfo.operand+","+sfo.operand_match;
-							}
-						else if(sfo.summary == 'SUPPLIER' || sfo.summary == 'PID' || sfo.summary == 'ORDERID' || sfo.summary == 'PICK_ROUTE')	{
-							cmdObj['%vars'].where =sfo.summary+",eq,"+sfo[sfo.summary];
-							}
-						else if(sfo.summary == 'MODIFIED_TS' || sfo.summary == 'TS')	{
-							cmdObj['%vars'].where = sfo.summary+",gt,"+sfo.TS;
-							}
-						else	{} //either an unrecognized summary or a summary that requires no additional data.
-
-						if(sfo.TYPE == 'SKU')	{
-							cmdObj['%vars'].headers = "sku:title,sku:upc,sku:mfgid,sku:amz_asin,sku:condition,sku:price,sku:cost,sku:weight,inv:available,inv:markets,inv:onshelf,inv:saleable"
-							}
-						else	{
-							cmdObj['%vars'].headers = sfo.headers;
-							//use whatever is set in the report generator.
-							}
-
-						
-//						_app.u.dump(" -> cmdObj: "); _app.u.dump(cmdObj);
-
-_app.model.addDispatchToQ(cmdObj,'immutable');
-_app.model.dispatchThis('immutable');
-
-						}
-					else	{} //validateForm handles error display.
+			showSalesReportPeriodInputs : function($ele)	{
+				$ele.off('change.showSalesReportPeriodInputs').on('change.showSalesReportPeriodInputs',function(){
+//hide any visible 'period' input containers. make sure no period-specific inputs are required (so validation can pass)
+					$ele.closest('fieldset').find('.formPeriodRange').hide().find('input, select').each(function(){$(this).attr('required','').removeAttr('required')}); 
+//show the input container desired. make all inputs within required.
+					$ele.closest('fieldset').find('.formPeriodRange-'+$(this).val()).show().effect('highlight',{},1500).find('input,select').each(function(){$(this).attr('required','required')});
 					});
-				},
-
-			showReportBuilderDialog : function($ele,p)	{
-
-				if($ele.data('batchexec') == 'SKU' || $ele.data('batchexec') == 'INVENTORY')	{
-					var $D = _app.ext.admin.i.dialogCreate({
-						'title' : $ele.data('batchexec')+' Report Builder',
-						'templateID' : 'reportBuilderTemplate',
-						'data' : {
-							'BATCH_EXEC':"REPORT/"+$ele.data('batchexec'),
-							SKU : $ele.data('batchexec') == 'SKU' ? 1 : 0, //used to toggle on/off fields that are related just to the sku report type.
-							DETAIL : $ele.data('batchexec') == 'INVENTORY' ? 1 : 0, //used to toggle on/off fields that are related just to the detail report type.
-							}
-						});
-
-					_app.u.handleButtons($D);
-					_app.u.handleCommonPlugins($D);
-					$D.anyform();
-//					_app.ext.admin.u.handleFormConditionalDelegation($('form',$D));
-
-					$('.datepicker',$D).datepicker({
-						changeMonth: true,
-						changeYear: true,
-						dateFormat : "@"
-						});
-
-					$D.dialog('open');
-	
-					var $picker = $("[data-app-role='pickerContainer']:first",$D);
-					$picker.append(_app.ext.admin.a.getPicker({'templateID':'pickerTemplate','mode':'product'}));
-					$('.applyDatepicker',$picker).datepicker({
-						changeMonth: true,
-						changeYear: true,
-						maxDate : 0,
-						dateFormat : 'yymmdd'
-						});
-
-					}
-				else	{
-					// )
-					$('#globalMessaging').anymessage({"message":"In admin_reports.e.showReportBuilderDialog, data-batchexec not set or invalid ["+$ele.data('batchexec')+"] on trigger element.","gMessage":true});
-					}
-				},
+				}
 			
 			
 			} //E / Events

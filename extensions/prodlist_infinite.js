@@ -35,7 +35,7 @@ Currently, this is specific to product Lists and will not work on a prodsearch a
 */
 
 
-var prodlist_infinite = function(_app) {
+var prodlist_infinite = function() {
 	var r = {
 	vars : {
 		forgetmeContainer : {} //used to store an object of pids (key) for items that don't show in the prodlist. value can be app specific. TS makes sense.
@@ -56,13 +56,18 @@ var prodlist_infinite = function(_app) {
 //callbacks.init need to return either a true or a false, depending on whether or not the file will execute properly based on store account configuration.
 		init : {
 			onSuccess : function()	{
-//				_app.u.dump('BEGIN _app.ext.prodlist_infinite.init.onSuccess ');
+				app.u.dump('BEGIN app.ext.prodlist_infinite.init.onSuccess ');
 				return true;  //currently, there are no config or extension dependencies, so just return true. may change later.
-		
-//				_app.u.dump('END _app.ext.store_prodlist.init.onSuccess');
+//unbind this from window anytime a category page is left.
+//NOTE! if infinite prodlist is used on other pages, remove run this on that template as well.
+				app.rq.push(['templateFunction','categoryTemplate','onCompletes',function(P) {
+					$(window).off('scroll.infiniteScroll'); 
+					}]);
+				
+//				app.u.dump('END app.ext.store_prodlist.init.onSuccess');
 				},
 			onError : function()	{
-				_app.u.dump('BEGIN _app.ext.store_prodlist.callbacks.init.onError');
+				app.u.dump('BEGIN app.ext.store_prodlist.callbacks.init.onError');
 				}
 			}
 
@@ -86,14 +91,13 @@ var prodlist_infinite = function(_app) {
 //that parent ID is prepended to the sku and used in the list item id to decrease likelyhood of duplicate id's
 //data.bindData will get passed into getProdlistVar and used for defaults on the list itself. That means any var supported in prodlistVars can be set in bindData.
 
-			infiniteproductlist : function($tag,data)	{
-//				_app.u.dump("BEGIN prodlist_infinite.renderFormats.infiniteProductList"); dump(data);
-//				_app.u.dump(" -> data.bindData: "); _app.u.dump(data.bindData);
-				data.bindData.loadsTemplate = data.bindData.templateid;
-				if(_app.u.isSet(data.value))	{
+			infiniteProductList : function($tag,data)	{
+//				app.u.dump("BEGIN prodlist_infinite.renderFormats.infiniteProductList");
+//				app.u.dump(" -> data.bindData: "); app.u.dump(data.bindData);
+				if(app.u.isSet(data.value))	{
 					data.bindData.csv = data.value;
 					$tag.data('bindData',data.bindData);
-					_app.ext.prodlist_infinite.u.buildInfiniteProductList($tag);
+					app.ext.prodlist_infinite.u.buildInfiniteProductList($tag);
 					}
 				}//prodlist		
 
@@ -119,8 +123,8 @@ This is the function that gets executed to build a product list.
 It is run once, executed by the renderFormat.
 */
 			buildInfiniteProductList : function($tag)	{
-//				_app.u.dump("BEGIN store_prodlist.u.buildInfiniteProductList()");
-//				_app.u.dump(" -> obj: "); _app.u.dump(obj);
+//				app.u.dump("BEGIN store_prodlist.u.buildInfiniteProductList()");
+//				app.u.dump(" -> obj: "); app.u.dump(obj);
 
 				var bindData = $tag.data('bindData');
 //tag is likely an li or a table.  add a loading graphic after it.
@@ -130,50 +134,55 @@ It is run once, executed by the renderFormat.
 //Need either the tag itself ($tag) or the parent id to build a list. recommend $tag to ensure unique parent id is created
 //also need a list of product (csv)
 				if($tag && bindData.csv)	{
-//					_app.u.dump(" -> required parameters exist. Proceed...");
-					
-					bindData.csv = _app.ext.store_prodlist.u.cleanUpProductList(bindData.csv); //strip blanks and make sure this is an array. prod attributes are not, by default.
-//					_app.u.dump(" -> bindData.csv after cleanup: "); _app.u.dump(bindData.csv);
+//					app.u.dump(" -> required parameters exist. Proceed...");
+					bindData.csv = app.ext.store_prodlist.u.cleanUpProductList(bindData.csv); //strip blanks and make sure this is an array. prod attributes are not, by default.
 					this.addProductToPage($tag);
 					}
 				else	{
-					_app.u.throwGMessage("WARNING: store_prodlist.u.buildInfiniteProductList is missing some required fields. bindData follows: ");
-					_app.u.dump(bindData);
+					app.u.throwGMessage("WARNING: store_prodlist.u.buildInfiniteProductList is missing some required fields. bindData follows: ");
+					app.u.dump(bindData);
 					}
-//				_app.u.dump(" -> r = "+r);
+//				app.u.dump(" -> r = "+r);
 				}, //buildInfiniteProductList
 
 			addProductToPage : function($tag)	{
-				_app.u.dump("BEGIN prodlist_infinite.u.addProductToPage");
+				app.u.dump("BEGIN prodlist_infinite.u.addProductToPage");
 				$tag.data('isDispatching',true);
 				
-				var plObj = _app.ext.store_prodlist.u.setProdlistVars($tag.data('bindData')),
+				var plObj = app.ext.store_prodlist.u.setProdlistVars($tag.data('bindData')),
 				numRequests = 0,
-				pageCSV = _app.ext.store_prodlist.u.getSkusForThisPage(plObj), //gets a truncated list based on items per page.
+				pageCSV = app.ext.store_prodlist.u.getSkusForThisPage(plObj), //gets a truncated list based on items per page.
 				L = pageCSV.length;
 				$tag.data('prodlist',plObj); //sets data object on parent
-				var $template = new tlc().getTemplateInstance(plObj.loadsTemplate);
 
-				function handleProd(pid,$templateCopy)	{
-					$templateCopy.attr('data-pid',pid);
-					return _app.calls.appProductGet.init({"pid":pid,"withVariations":plObj.withVariations,"withInventory":plObj.withInventory},{'callback':'tlc',jqObj:$templateCopy,'verb':'translate'},'mutable');
-					}
 //Go get ALL the data and render it at the end. Less optimal from a 'we have it in memory already' point of view, but solves a plethora of other problems.
 				for(var i = 0; i < L; i += 1)	{
-					numRequests += handleProd(pageCSV[i],$template.clone(true).appendTo($tag))
+					numRequests += app.calls.appProductGet.init({
+						"pid":pageCSV[i],
+						"withVariations":plObj.withVariations,
+						"withInventory":plObj.withInventory
+						},{},'mutable');
 					if(plObj.withReviews)	{
-						numRequests += _app.ext.store_prodlist.calls.appReviewsList.init(pageCSV[i],{},'mutable');
+						numRequests += app.ext.store_prodlist.calls.appReviewsList.init(pageCSV[i],{},'mutable');
 						}
 					}
-
+				
 				var infiniteCallback = function(rd)	{
-					$('.loadingBG',$tag).removeClass('loadingBG');
 					$tag.data('isDispatching',false); //toggle T/F as a dispatch occurs so that only 1 infinite scroll dispatch occurs at a time.
-					if(_app.model.responseHasErrors(rd)){
+					if(app.model.responseHasErrors(rd)){
 						$tag.parent().anymessage({'message':rd});
 						}
 					else	{
-						_app.ext.prodlist_infinite.u.handleScroll($tag);
+						for(var i = 0; i < L; i += 1)	{
+var tmp = app.data['appProductGet|'+pageCSV[i]];
+if(typeof app.data['appReviewsList|'+pageCSV[i]] == 'object'  && app.data['appReviewsList|'+pageCSV[i]]['@reviews'].length)	{
+	tmp['reviews'] = app.ext.store_prodlist.u.summarizeReviews(pageCSV[i]); //generates a summary object (total, average)
+	tmp['reviews']['@reviews'] = app.data['appReviewsList|'+pageCSV[i]]['@reviews']
+	}
+							//if you want this list inventory aware, do you check here and skip the append below.
+$tag.append(app.renderFunctions.transmogrify({'pid':pageCSV[i]},plObj.loadsTemplate,tmp));
+							}
+						app.ext.prodlist_infinite.u.handleScroll($tag);
 						}				
 					}
 
@@ -181,36 +190,12 @@ It is run once, executed by the renderFormat.
 					infiniteCallback({})
 					}
 				else	{
-					_app.calls.ping.init({'callback':infiniteCallback},'mutable');
-					_app.model.dispatchThis();
+					app.calls.ping.init({'callback':infiniteCallback},'mutable');
+					app.model.dispatchThis();
 					}
 
 				},
-// *** 201330  The new insertProduct function re-attempts the append a reasonable number of times
-// before failing with a warning to the console.
-			insertProduct : function(pid, plObj, $placeholder, attempts){
-				var data = _app.data['appProductGet|'+pid];
-				attempts = attempts || 0;
-				if(data){
-					if(typeof _app.data['appReviewsList|'+pid] == 'object'  && _app.data['appReviewsList|'+pid]['@reviews'].length)	{
-						data['reviews'] = _app.ext.store_prodlist.u.summarizeReviews(pid); //generates a summary object (total, average)
-						data['reviews']['@reviews'] = _app.data['appReviewsList|'+pid]['@reviews']
-						}
-//if you want this list inventory aware, do you check here and skip the append below.
-//					$placeholder.before(_app.renderFunctions.transmogrify({'pid':pid},plObj.loadsTemplate,data));
-					$placeholder.before(new tlc().getTemplateInstance(plObj.loadsTemplate).attr('data-pid',pid))
-					$placeholder.remove();
-					}
-				else if(attempts < 50){
-					setTimeout(function(){
-						_app.ext.prodlist_infinite.u.insertProduct(pid, plObj, $placeholder, attempts+1);
-						}, 250);
-					}
-				else {
-					_app.u.dump("-> prodlist_infinite FAILED TO INSERT PRODUCT: "+pid)
-					$placeholder.remove();
-					}
-				},
+
 			handleScroll : function($tag)	{
 var plObj = $tag.data();
 if(plObj.prodlist.csv.length <= plObj.prodlist.items_per_page)	{$tag.parent().find("[data-app-role='infiniteProdlistLoadIndicator']").hide();} //do nothing. fewer than 1 page worth of items.
@@ -227,7 +212,7 @@ else	{
 			else	{
 				plObj.prodlist.page_in_focus += 1;
 				$tag.data('prodlist',plObj.prodlist);
-				_app.ext.prodlist_infinite.u.addProductToPage($tag);
+				app.ext.prodlist_infinite.u.addProductToPage($tag);
 				}
 			}
 		});
