@@ -504,18 +504,20 @@ need to be customized on a per-ria basis.
 				}
 			}, //wiki
 
-// * 201403 -> infoObj now passed into pageTransition.
-		pageTransition : function($o,$n, infoObj)	{
-//if $o doesn't exist, the animation doesn't run and the new element doesn't show up, so that needs to be accounted for.
-//$o MAY be a jquery instance but have no length, so check both.
-			if($o instanceof jQuery && $o.length)	{
-/* *** 201403 -> move the scroll to top into the page transition for 2 reasons:
-1. allows the animations to be performed sequentially, which will be less jittery than running two at the same time
-2. Puts control of this into custom page transitions.
-*/
-				if(infoObj.performJumpToTop && $('html, body').scrollTop() > 0)	{
+			// * 201403 -> infoObj now passed into pageTransition.
+					pageTransition : function($o,$n, infoObj)	{
+			//if $o doesn't exist, the animation doesn't run and the new element doesn't show up, so that needs to be accounted for.
+			//$o MAY be a jquery instance but have no length, so check both.
+						if($o instanceof jQuery && $o.length)	{
+			/*
+			*** 201403 -> move the scroll to top into the page transition for 2 reasons:
+			1. allows the animations to be performed sequentially, which will be less jittery than running two at the same time
+			2. Puts control of this into custom page transitions.
+			*/
+
+				if(infoObj.performJumpToTop && $(window).scrollTop() > 0)	{ // >0 scrolltop check should be on window, it'll work in ff AND chrome (body or html won't).
 					//new page content loading. scroll to top.
-					$('html, body').animate({scrollTop : ($('header','#appView').length ? $('header','#appView').first().height() : 0)},500,function(){
+					$('html, body').animate({scrollTop : 0},'fast',function(){
 						$o.fadeOut(1000, function(){$n.fadeIn(1000)}); //fade out old, fade in new.
 						})
 					} 
@@ -524,13 +526,17 @@ need to be customized on a per-ria basis.
 					}
 				}
 			else if($n instanceof jQuery)	{
-				$n.fadeIn(1000);
+				dump(" -> $o is not properly defined.  jquery: "+($o instanceof jQuery)+" and length: "+$o.length);
+				$('html, body').animate({scrollTop : 0},'fast',function(){
+					$n.fadeIn(1000);
+					});
 				}
 			else	{
 				//hhmm  not sure how or why we got here.
 				dump("WARNING! in pageTransition, neither $o nor $n were instances of jQuery.  how odd.",'warn');
 				}
 			}, //pageTransition
+
 
 
 
