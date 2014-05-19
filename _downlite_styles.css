@@ -295,6 +295,7 @@ div.cartItemImgCont{
 }
 
 section.cartTemplateShippingContainer{
+	display:none;
 }
 
 
