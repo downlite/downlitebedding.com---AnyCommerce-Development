@@ -682,6 +682,14 @@ var store_downlite = function(_app) {
 					_app.model.dispatchThis('immutable');
 				}
 				else	{} //do nothing, the validation handles displaying the errors.
+				},
+				
+				cartZipInputFix : function(e, $ele)	{
+					var enterKey = 13;
+					if (e.which == enterKey){
+						e.preventDefault();
+						$ele.onBlur();
+					}
 				}
 				
 				
