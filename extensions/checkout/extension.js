@@ -1308,6 +1308,7 @@ _app.u.handleButtons($chkContainer); //will handle buttons outside any of the fi
 					_app.model.dispatchThis('immutable');
 					}});
 				_app.model.dispatchThis('immutable');
+				$('body').removeClass('buyerLoggedIn'); //allows for css changes to occur based on authentication
 				return false;
 				},
 
@@ -1623,6 +1624,7 @@ _app.u.handleButtons($chkContainer); //will handle buttons outside any of the fi
 						if(_app.model.responseHasErrors(rd)){$fieldset.anymessage({'message':rd})}
 						else	{
 							_app.u.dump(" -> no errors. user is logged in.");
+							$('body').addClass('buyerLoggedIn'); //allows for css changes based on auth.
 							var $form = $fieldset.closest('form'),
 							$fieldsets = $('fieldset',$form);
 //set all panels to loading.
