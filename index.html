@@ -100,7 +100,7 @@ css files should be included before any .js file to ensure they are downloaded i
 <script type="text/javascript">
 $(document).ready(function(){
 	window.myApp = new initApp({
-		"release":"201404.aetest5",  //increment this with each change. should solve caching issues. format: YYYYMMDDHHMMSS
+		"release":"201404.aetest6",  //increment this with each change. should solve caching issues. format: YYYYMMDDHHMMSS
 		"_clientid":"zmvc", //zmvc for store app, 1pc for one page checkout.
 		"baseURL":baseURL, //used in non-local mode.
 		"checkoutAuthMode" : "required",//can be passive, active or required
@@ -2224,7 +2224,8 @@ The 'data-action' attribute is used to assign an onclick.
 		<button data-app-click="order_create|execInvoicePrint" class="applyButton" data-text="false" data-icon-primary="ui-icon-print">Print Invoice</button>
 		</div>
 	
-		<h3 data-tlc="bind $var '.order.flow.pool'; format --prepend='Order Status: '; if (is $var --notblank;) {{apply --append;}};"></h3>
+		<h2 data-tlc="bind $var '.order.our.orderid'; if (is $var --notblank;) {{apply --append;}};"></h2>
+        <h3 data-tlc="bind $var '.order.flow.pool'; format --prepend='Order Status: '; if (is $var --notblank;) {{apply --append;}};"></h3>
 		<h5 data-tlc="bind $var '.order.sum.order_total'; format --prepend='Order Total: '; format --currency='USD'; if (is $var --notblank;) {{apply --append;}};" class="orderTotal"></h5>
 		<h5 data-tlc="bind $var '.order.sum.balance_due_total'; format --prepend='Balance Due: '; format --currency='USD'; if (is $var --notblank;) {{apply --append;}};" class="balanceDue"></h5>
 
