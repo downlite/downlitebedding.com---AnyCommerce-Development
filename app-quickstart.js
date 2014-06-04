@@ -504,16 +504,16 @@ need to be customized on a per-ria basis.
 				}
 			}, //wiki
 
-			// * 201403 -> infoObj now passed into pageTransition.
-					pageTransition : function($o,$n, infoObj)	{
-			//if $o doesn't exist, the animation doesn't run and the new element doesn't show up, so that needs to be accounted for.
-			//$o MAY be a jquery instance but have no length, so check both.
-						if($o instanceof jQuery && $o.length)	{
-			/*
-			*** 201403 -> move the scroll to top into the page transition for 2 reasons:
-			1. allows the animations to be performed sequentially, which will be less jittery than running two at the same time
-			2. Puts control of this into custom page transitions.
-			*/
+// * 201403 -> infoObj now passed into pageTransition.
+		pageTransition : function($o,$n, infoObj)	{
+//if $o doesn't exist, the animation doesn't run and the new element doesn't show up, so that needs to be accounted for.
+//$o MAY be a jquery instance but have no length, so check both.
+			if($o instanceof jQuery && $o.length)	{
+/*
+*** 201403 -> move the scroll to top into the page transition for 2 reasons:
+1. allows the animations to be performed sequentially, which will be less jittery than running two at the same time
+2. Puts control of this into custom page transitions.
+*/
 
 				if(infoObj.performJumpToTop && $(window).scrollTop() > 0)	{ // >0 scrolltop check should be on window, it'll work in ff AND chrome (body or html won't).
 					//new page content loading. scroll to top.
@@ -536,7 +536,6 @@ need to be customized on a per-ria basis.
 				dump("WARNING! in pageTransition, neither $o nor $n were instances of jQuery.  how odd.",'warn');
 				}
 			}, //pageTransition
-
 
 
 
@@ -796,7 +795,7 @@ fallback is to just output the value.
 				
 				var className, price, buttonState, buttonText = 'Add to Cart',
 				pid = data.value.pid, //...pid set in both elastic and appProductGet
-				inv = _app.ext.store_product.u.getProductInventory(pid),
+				inv = _app.ext.store_product.u.getProductInventory(_app.data['appProductGet|'+pid]),
 				$form = $tag.closest('form');
 				
 //				dump(" -> $form.length: "+$form.length);
@@ -990,7 +989,9 @@ for legacy browsers. That means old browsers will use the anchor to retain 'back
 						break;
 	
 					case 'customer':
-						if('file:' == document.location.protocol || !_app.ext.quickstart.u.thisArticleRequiresLogin(infoObj) || 'https:' == document.location.protocol)	{
+//						if('file:' == document.location.protocol || !_app.ext.quickstart.u.thisArticleRequiresLogin(infoObj) || 'https:' == document.location.protocol)	{
+//201404 -> change in logic so that secure or file always hit before checking if authentication is required. reduces overhead.
+						if('https:' == document.location.protocol || 'file:' == document.location.protocol || !_app.ext.quickstart.u.thisArticleRequiresLogin(infoObj))	{
 							 //perform jump can be forced on. authenticate/require login indicate a login dialog is going to show and a jump should NOT occur so that the dialog is not off screen after the jump.
 							if(!infoObj.performJumpToTop && !_app.u.buyerIsAuthenticated() && _app.ext.quickstart.u.thisArticleRequiresLogin(infoObj))	{
 								infoObj.performJumpToTop = false;
@@ -1117,7 +1118,7 @@ the ui also helps the buyer show the merchant what they're looking at and, optio
 */
 			showBuyerCMUI : function()	{
 				//the cart id needs to be a data- attrib because cartSetAttrib 'looks' for it.
- 				var $ui = $('#cartMessenger').attr('data-cartid',_app.model.fetchCartID());
+				var $ui = $('#cartMessenger').attr('data-cartid',_app.model.fetchCartID());
 				if($ui.hasClass('ui-dialog-content'))	{
 					//the help interface has been opened once already.
 					}
@@ -2315,6 +2316,7 @@ either templateID needs to be set OR showloading must be true. TemplateID will t
 //Customer pages differ from company pages. In this case, special logic is needed to determine whether or not content can be displayed based on authentication.
 // plus, most of the articles require an API request for more data.
 //handleTemplateEvents gets executed in showContent, which should always be used to execute this function.
+//by the time showCustomer is run, we are already on https if it is required.
 			showCustomer : function(infoObj)	{
 //				dump("BEGIN showCustomer. infoObj: "); dump(infoObj);
 				infoObj = infoObj || {};
@@ -3118,6 +3120,16 @@ else	{
 					$('#globalMessaging').anymessage({"message":"In quickstart.e.quickviewShow, unable to ascertain PID ["+PID+"] or no data-loadstemplate set on trigger element.","gMessage":true});
 					}
 				return false;
+				},
+// use this on inputs where 'enter' should NOT submit the form but can/should trigger an onblur.
+			triggerBlurOnEnter : function($ele,p)	{
+				var r = true;
+				if (p.keyCode == 13)	{
+					p.preventDefault();
+					$ele.trigger('blur')
+					r = false;
+					}
+				return r;
 				}
 
 			}, // e/events
