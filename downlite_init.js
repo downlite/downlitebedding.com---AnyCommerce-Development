@@ -1,320 +1,327 @@
-var app = app || {vars:{},u:{}}; //make sure app exists.
-app.rq = app.rq || []; //ensure array is defined. rq = resource queue.
 
-
-
-app.rq.push(['extension',0,'orderCreate','extensions/checkout/extension.js']);
-app.rq.push(['extension',0,'cco','extensions/cart_checkout_order.js']);
-
-
-app.rq.push(['extension',0,'store_prodlist','extensions/store_prodlist.js']);
-app.rq.push(['extension',0,'store_navcats','extensions/store_navcats.js']);
-app.rq.push(['extension',0,'store_search','extensions/store_search.js']);
-app.rq.push(['extension',0,'store_product','extensions/store_product.js']);
-app.rq.push(['extension',0,'store_cart','extensions/store_cart.js']);
-app.rq.push(['extension',0,'store_crm','extensions/store_crm.js']);
-app.rq.push(['extension',0,'myRIA','app-quickstart.js','startMyProgram']);
-
-app.rq.push(['extension',0,'tracking_hubspot','extensions/tracking_hubspot.js','startExtension']);
-
-app.rq.push(['extension',1,'google_analytics','extensions/partner_google_analytics.js','startExtension']); //old default callback.
-app.rq.push(['extension',1,'partner_addthis','extensions/partner_addthis.js','startExtension']); //old default callback.
-app.rq.push(['extension',0,'google_dynamicremarketing','extensions/partner_google_dynamicremarketing.js']); 
-//app.rq.push(['extension',1,'google_ts','extensions/partner_google_trusted_store.js','startExtension']); //new default callback.
-app.rq.push(['extension',1,'google_adwords','extensions/partner_google_adwords.js','startExtension']);
-
-app.rq.push(['script',0,(document.location.protocol == 'file:') ? app.vars.testURL+'jquery/config.js' : app.vars.baseURL+'jquery/config.js']); //The config.js is dynamically generated.
-app.rq.push(['script',0,app.vars.baseURL+'model.js']); //'validator':function(){return (typeof zoovyModel == 'function') ? true : false;}}
-app.rq.push(['script',0,app.vars.baseURL+'includes.js']); //','validator':function(){return (typeof handlePogs == 'function') ? true : false;}})
-
-app.rq.push(['script',0,app.vars.baseURL+'controller.js']);
-
-app.rq.push(['script',0,app.vars.baseURL+'resources/jquery.showloading-v1.0.jt.js']); //used pretty early in process..
-app.rq.push(['script',0,app.vars.baseURL+'resources/jquery.ui.anyplugins.js']); //in zero pass in case product page is first page.
-//app.rq.push(['script',0,'http://www.zazar.net/developers/jquery/zrssfeed/jquery.zrssfeed.min.js']); 
-
-
-
-
-
-//add tabs to product data.
-//tabs are handled this way because jquery UI tabs REALLY wants an id and this ensures unique id's between product
-app.rq.push(['templateFunction','productTemplate','onCompletes',function(P) {
-	var $context = $(app.u.jqSelector('#',P.parentID));
-	var $tabContainer = $( ".tabbedProductContent",$context);
-		if($tabContainer.length)	{
-			if($tabContainer.data("widget") == 'anytabs'){} //tabs have already been instantiated. no need to be redundant.
-			else	{
-				$tabContainer.anytabs();
-				}
-			}
-		else	{} //couldn't find the tab to tabificate.
-	}]);
+myApp.rq.push(['script',0,(document.location.protocol == 'file:') ? myApp.vars.testURL+'jsonapi/config.js' : myApp.vars.baseURL+'jsonapi/config.js',function(){
+//in some cases, such as the zoovy UI, zglobals may not be defined. If that's the case, certain vars, such as jqurl, must be passed in via P in initialize:
+//	myApp.u.dump(" ->>>>>>>>>>>>>>>>>>>>>>>>>>>>> zGlobals is an object");
+	myApp.vars.username = zGlobals.appSettings.username.toLowerCase(); //used w/ image URL's.
+//need to make sure the secureURL ends in a / always. doesn't seem to always come in that way via zGlobals
+	myApp.vars.secureURL = zGlobals.appSettings.https_app_url;
+	myApp.vars.domain = zGlobals.appSettings.sdomain; //passed in ajax requests.
+	myApp.vars.jqurl = (document.location.protocol === 'file:') ? myApp.vars.testURL+'jsonapi/' : '/jsonapi/';
+	}]); //The config.js is dynamically generated.
 	
-app.rq.push(['templateFunction','homepageTemplate','onCompletes',function(P) {
-	 		// Load blog content
-		var fileref=document.createElement('script');
-		fileref.setAttribute("type","text/javascript");
-		fileref.setAttribute("src", "http://www.zazar.net/developers/jquery/zrssfeed/jquery.zrssfeed.min.js");
-		if (typeof fileref!="undefined"){
-		  document.getElementsByTagName("head")[0].appendChild(fileref);
-		}
-			
- 		var blogs = function(){
-		$('.blog1').rssfeed('http://blog.downlitebedding.com/rss.xml', {
- 			limit: 1,
- 			header: false,
- 			snippet: false,
- 			date: false,
- 			showerror: true,
- 			errormsg: 'Sorry, the blog couldn\'t be loaded right now due to a technical problem. Please try again later.'
- 		});
- 		$('.blog2').rssfeed('http://blog.downlitebedding.com/rss.xml', {
- 			limit: 1,
- 			offset: 2,
- 			header: false,
- 			snippet: false,
- 			date: false
- 		});
- 		$('.blog3').rssfeed('http://blog.downlitebedding.com/rss.xml', {
- 			limit: 1,
- 			offset: 3,
- 			header: false,
- 			snippet: false,
- 			date: false
- 		});
-		}
-		setTimeout(blogs, 2000);
+myApp.rq.push(['extension',0,'order_create','extensions/checkout/extension.js']);
+myApp.rq.push(['extension',0,'cco','extensions/cart_checkout_order.js']);
 
-}]);
+myApp.rq.push(['extension',0,'store_routing','extensions/store_routing.js']);
 
-//sample of an onDeparts. executed any time a user leaves this page/template type.
-//app.rq.push(['templateFunction','homepageTemplate','onDeparts',function(P) {app.u.dump("just left the homepage")}]);
-/*
-app.rq.push(['templateFunction','productTemplate','onCompletes',function(P) {
-	if(app.data.cartDetail && app.data.cartDetail.ship && app.data.cartDetail.ship.postal)	{
-		app.ext.myRIA.u.fetchTimeInTransit($(app.u.jqSelector('#',P.parentID)),new Array(P.pid));
-		}
-	}]);
-*/
+myApp.rq.push(['extension',0,'store_downlite','extensions/_store_downlite.js','startExtension']);
 
-//group any third party files together (regardless of pass) to make troubleshooting easier.
-//app.rq.push(['script',0,(document.location.protocol == 'https:' ? 'https:' : 'http:')+'//ajax.googleapis.com/ajax/libs/jqueryui/1.10.1/jquery-ui.min.js']);
-app.rq.push(['script',0,app.vars.baseURL+'cycle-2.9998.js']);//','validator':function(){return (jQuery().cycle) ? true : false;}});
+myApp.rq.push(['extension',0,'store_prodlist','extensions/store_prodlist.js']);
+myApp.rq.push(['extension',0,'store_navcats','extensions/store_navcats.js']);
+myApp.rq.push(['extension',0,'store_search','extensions/store_search.js']);
+myApp.rq.push(['extension',0,'store_product','extensions/store_product.js']);
+myApp.rq.push(['extension',0,'cart_message','extensions/cart_message/extension.js']);
+myApp.rq.push(['extension',0,'store_crm','extensions/store_crm.js']);
+myApp.rq.push(['extension',0,'quickstart','app-quickstart.js','startMyProgram']);
 
+myApp.rq.push(['extension',0,'tracking_hubspot','extensions/tracking_hubspot.js','startExtension']);
 
-/*
-This function is overwritten once the controller is instantiated. 
-Having a placeholder allows us to always reference the same messaging function, but not impede load time with a bulky error function.
-*/
-app.u.throwMessage = function(m)	{
-	alert(m); 
-	}
+//myApp.rq.push(['extension',0,'entomologist','extensions/entomologist/extension.js']);
+//myApp.rq.push(['extension',0,'tools_animation','extensions/tools_animation.js']);
 
-app.u.howManyPassZeroResourcesAreLoaded = function(debug)	{
-	var L = app.vars.rq.length;
-	var r = 0; //what is returned. total # of scripts that have finished loading.
-	for(var i = 0; i < L; i++)	{
-		if(app.vars.rq[i][app.vars.rq[i].length - 1] === true)	{
-			r++;
-			}
-		if(debug)	{app.u.dump(" -> "+i+": "+app.vars.rq[i][2]+": "+app.vars.rq[i][app.vars.rq[i].length -1]);}
-		}
-	return r;
-	}
+//myApp.rq.push(['extension',1,'google_analytics','extensions/partner_google_analytics.js','startExtension']);
+//myApp.rq.push(['extension',1,'tools_ab_testing','extensions/tools_ab_testing.js']);
+myApp.rq.push(['extension',0,'partner_addthis','extensions/partner_addthis.js','startExtension']);
+//myApp.rq.push(['extension',1,'resellerratings_survey','extensions/partner_buysafe_guarantee.js','startExtension']); /// !!! needs testing.
+//myApp.rq.push(['extension',1,'buysafe_guarantee','extensions/partner_buysafe_guarantee.js','startExtension']);
+//myApp.rq.push(['extension',1,'powerReviews_reviews','extensions/partner_powerreviews_reviews.js','startExtension']);
+//myApp.rq.push(['extension',0,'magicToolBox_mzp','extensions/partner_magictoolbox_mzp.js','startExtension']); // (not working yet - ticket in to MTB)
 
+myApp.rq.push(['extension',0,'google_dynamicremarketing','extensions/partner_google_dynamicremarketing.js']); 
+myApp.rq.push(['extension',0,'prodlist_infinite','extensions/prodlist_infinite.js']);
+myApp.rq.push(['extension',0,'_store_filter','extensions/_store_filter.js','startExtension']);
+myApp.rq.push(['extension',0,'store_account_creation','extensions/store_account_creation.js']);
 
-//gets executed once controller.js is loaded.
-//check dependencies and make sure all other .js files are done, then init controller.
-//function will get re-executed if not all the scripts in app.vars.scripts pass 1 are done loading.
-//the 'attempts' var is incremented each time the function is executed.
+myApp.rq.push(['script',0,'jquery-cycle2/jquery.cycle2.min.js']);
+myApp.rq.push(['script',0,myApp.vars.baseURL+'carouFredSel-6.2.1/jquery.carouFredSel-6.2.1-packed.js']);
 
-app.u.initMVC = function(attempts){
-//	app.u.dump("app.u.initMVC activated ["+attempts+"]");
-	var includesAreDone = true,
-	percentPerInclude = (100 / app.vars.rq.length),   //what percentage of completion a single include represents (if 10 includes, each is 10%).
-	resourcesLoaded = app.u.howManyPassZeroResourcesAreLoaded(),
-	percentComplete = Math.round(resourcesLoaded * percentPerInclude); //used to sum how many includes have successfully loaded.
+myApp.rq.push(['script',0,myApp.vars.baseURL+'resources/jquery.showloading-v1.0.jt.js']); //used pretty early in process..
+myApp.rq.push(['script',0,myApp.vars.baseURL+'resources/jquery.ui.anyplugins.js']); //in zero pass because it's essential to rendering and error handling.
+myApp.rq.push(['script',0,myApp.vars.baseURL+'resources/tlc.js']); //in zero pass cuz you can't render a page without it..
+myApp.rq.push(['css',1,myApp.vars.baseURL+'resources/anyplugins.css']);
 
-//make sure precentage is never over 100
-	if(percentComplete > 100 )	{
-		percentComplete = 100;
-		}
+myApp.rq.push(['script',0,myApp.vars.baseURL+'resources/jsonpath.0.8.0.js']); //used pretty early in process..
 
-	$('#appPreViewProgressBar','#appPreView').val(percentComplete);
-	$('#appPreViewProgressText','#appPreView').empty().append(percentComplete+"% Complete");
+//once peg is loaded, need to retrieve the grammar file. Order is important there. This will validate the file too.
+myApp.u.loadScript(myApp.vars.baseURL+'resources/peg-0.8.0.js',function(){
+	myApp.model.getGrammar(myApp.vars.baseURL+"resources/pegjs-grammar-20140203.pegjs");
+	}); // ### TODO -> callback on RQ.push wasn't getting executed. investigate.
 
-	if(resourcesLoaded == app.vars.rq.length)	{
-		var clickToLoad = false;
-		if(clickToLoad){
-			$('#loader').fadeOut(1000);
-			$('#clickToLoad').delay(1000).fadeIn(1000).click(function() {
-				app.u.loadApp();
+//Cart Messaging Responses.
+myApp.cmr.push(['chat.join',function(message){
+	if(message.FROM == 'ADMIN')	{
+ 		var $ui = myApp.ext.quickstart.a.showBuyerCMUI();
+ 		$("[data-app-role='messageInput']",$ui).show();
+ 		$("[data-app-role='messageHistory']",$ui).append("<p class='chat_join'>"+message.FROM+" has joined the chat.<\/p>");
+ 		$('.show4ActiveChat',$ui).show();
+ 		$('.hide4ActiveChat',$ui).hide();
+ 		}
+ 	}]);
+ 
+	 //the default behavior for an itemAppend is to show the chat portion of the dialog. that's an undesired behavior from the buyer perspective (chat only works if admin is actively listening).
+	 myApp.cmr.push(['cart.itemAppend',function(message,$context)	{
+		$("[data-app-role='messageHistory']",$context).append("<p class='cart_item_append'>"+message.FROM+" has added item "+message.sku+" to the cart.<\/p>");
+	 }]);
+
+myApp.cmr.push(['goto',function(message,$context){
+	var $history = $("[data-app-role='messageHistory']",$context);
+	$P = $("<P>")
+		.addClass('chat_post')
+		.append("<span class='from'>"+message.FROM+"<\/span> has sent over a "+(message.vars.pageType || "")+" link for you within this store. <span class='lookLikeLink'>Click here<\/span> to view.")
+		.on('click',function(){
+			showContent(myApp.ext.quickstart.u.whatAmIFor(message.vars),message.vars);
 			});
-		} else {
-			app.u.loadApp();
-			}
-		}
-	else if(attempts > 50)	{
-		app.u.dump("WARNING! something went wrong in init.js");
-		//this is 10 seconds of trying. something isn't going well.
-		$('#appPreView').empty().append("<h2>Uh Oh. Something seems to have gone wrong. </h2><p>Several attempts were made to load the store but some necessary files were not found or could not load. We apologize for the inconvenience. Please try 'refresh' and see if that helps.<br><b>If the error persists, please contact the site administrator</b><br> - dev: see console.</p>");
-		app.u.howManyPassZeroResourcesAreLoaded(true);
-		}
-	else	{
-		setTimeout("app.u.initMVC("+(attempts+1)+")",250);
-		}
+	$history.append($P);
+	$history.parent().scrollTop($history.height());
+	}]);
 
-	}
-app.u.loadApp = function() {
-//instantiate controller. handles all logic and communication between model and view.
-//passing in app will extend app so all previously declared functions will exist in addition to all the built in functions.
-//tmp is a throw away variable. app is what should be used as is referenced within the mvc.
-	app.vars.rq = null; //to get here, all these resources have been loaded. nuke record to keep DOM clean and avoid any duplication.
-	var tmp = new zController(app);
-//instantiate wiki parser.
-	myCreole = new Parse.Simple.Creole();
-	}
-app.rq.push(['templateFunction','homepageTemplate','onCompletes',function(P) {
-		var $target=$('#wideSlideshow');
-		if(!$target.hasClass('slideshow')){		
-			$target.addClass('slideshow');
-	//		$target.cycle({fx:'fade',speed:'slow',timeout:5000,pager:'#slideshowNav',pagerAnchorBuilder:function(index,el){return'<a href="#"> </a>';},slideExpr:'li'});	
-			$target.cycle({fx:'fade',speed:'slow',timeout:5000,pager:'#slideshowNav',pagerAnchorBuilder:function(index,el){return'<a href="#">'+(index+1)+'</a>';}});
+
+//gets executed from app-admin.html as part of controller init process.
+//progress is an object that will get updated as the resources load.
+/*
+'passZeroResourcesLength' : [INT],
+'passZeroResourcesLoaded' : [INT],
+'passZeroTimeout' : null //the timeout instance running within loadResources that updates this object. it will run indef unless clearTimeout run here OR all resources are loaded.
+
+*/
+myApp.u.showProgress = function(progress)	{
+	function showProgress(attempt)	{
+		if(progress.passZeroResourcesLength == progress.passZeroResourcesLoaded)	{
+			//All pass zero resources have loaded.
+			//the app will handle hiding the loading screen.
+			myApp.u.appInitComplete();
 			}
-		}]);
+		else if(attempt > 150)	{
+			//hhhhmmm.... something must have gone wrong.
+			clearTimeout(progress.passZeroTimeout); //end the resource loading timeout.
+			$('.appMessaging','#appPreView').anymessage({'message':'Init failed to load all the resources within a reasonable number of attempts. Please refresh the page in order to access this site.','gMessage':true,'persistent':true});
+			}
+		else	{
+			var percentPerInclude = (100 / progress.passZeroResourcesLength);
+			var percentComplete = Math.round(progress.passZeroResourcesLength * percentPerInclude); //used to sum how many includes have successfully loaded.
+//			dump(" -> percentPerInclude: "+percentPerInclude+" and percentComplete: "+percentComplete);
+			$('#appPreViewProgressBar').val(percentComplete);
+			$('#appPreViewProgressText').empty().append(percentComplete+"% Complete");
+			attempt++;
+			setTimeout(function(){showProgress(attempt);},250);
+			}
+		}
+	showProgress(0)
+	}
+
 
 //Any code that needs to be executed after the app init has occured can go here.
 //will pass in the page info object. (pageType, templateID, pid/navcat/show and more)
-app.u.appInitComplete = function(P)	{
-	app.u.dump("Executing myAppIsLoaded code...");
-//Go get the brands and display them.	
-	app.ext.store_navcats.calls.appCategoryDetailMax.init('.brands',{'callback':'getChildData','extension':'store_navcats','parentID':'brandCategories','templateID':'categoryListTemplateThumb'},'passive');
-	app.model.dispatchThis('passive'); //use passive or going into checkout could cause request to get muted.		
-//Adding category nav tabs
-	app.ext.myRIA.renderFormats.simpleSubcats = function($tag,data)	{
-	//app.u.dump("BEGIN control.renderFormats.subcats");
-	var L = data.value.length;
-	var thisCatSafeID; //used in the loop below to store the cat id during each iteration
-	//app.u.dump(data);
-	for(var i = 0; i < L; i += 1)	{
-		thisCatSafeID = data.value[i].id;
-		if(data.value[i].pretty.charAt(0) == '!')	{
-			//categories that start with ! are 'hidden' and should not be displayed.
+myApp.u.appInitComplete = function()	{
+	myApp.u.dump("Executing myAppIsLoaded code...");
+	
+	myApp.ext.order_create.checkoutCompletes.push(function(vars,$checkout){
+		dump(" -> begin checkoutCOmpletes code: "); dump(vars);
+		
+		var cartContentsAsLinks = myApp.ext.cco.u.cartContentsAsLinks(myApp.data[vars.datapointer].order);
+		dump(" -> cartContentsAsLinks: "+cartContentsAsLinks);
+		
+//append this to 
+		$("[data-app-role='thirdPartyContainer']",$checkout).append("<h2>What next?</h2><div class='ocm ocmFacebookComment pointer zlink marginBottom checkoutSprite  '></div><div class='ocm ocmTwitterComment pointer zlink marginBottom checkoutSprit ' ></div><div class='ocm ocmContinue pointer zlink marginBottom checkoutSprite'></div>");
+		$('.ocmTwitterComment',$checkout).click(function(){
+			window.open('http://twitter.com/home?status='+cartContentsAsLinks,'twitter');
+			_gaq.push(['_trackEvent','Checkout','User Event','Tweeted about order']);
+			});
+		//the fb code only works if an appID is set, so don't show banner if not present.				
+		if(myApp.u.thisNestedExists("zGlobals.thirdParty.facebook.appId") && typeof FB == 'object')	{
+			$('.ocmFacebookComment',$checkout).click(function(){
+				myApp.ext.quickstart.thirdParty.fb.postToWall(cartContentsAsLinks);
+				_gaq.push(['_trackEvent','Checkout','User Event','FB message about order']);
+				});
+			}
+		else	{$('.ocmFacebookComment').hide()}
+		});
+		
+		//Go get the brands and display them.	
+			var addBrands = function(){	
+				myApp.ext.store_navcats.calls.appCategoryList.init('.brands',{'callback':'getChildData','extension':'store_navcats','parentID':'brandCategories','templateID':'categoryListTemplateThumb'},'passive');
+				myApp.model.dispatchThis('passive'); //use passive or going into checkout could cause request to get muted.		
+			};
+			setTimeout(addBrands, 1000);
+		
+		//EB+ND 
+	//Adding category nav tabs
+		myApp.ext.quickstart.renderFormats.simpleSubcats = function($tag,data)	{
+			//app.u.dump("BEGIN control.renderFormats.subcats");
+			var L = data.value.length;
+			var thisCatSafeID; //used in the loop below to store the cat id during each iteration
+			//app.u.dump(data);
+			for(var i = 0; i < L; i += 1)	{
+				thisCatSafeID = data.value[i].id;
+				if(data.value[i].pretty.charAt(0) == '!')	{
+					//categories that start with ! are 'hidden' and should not be displayed.
+				}
+				else{
+					$tag.append(myApp.renderFunctions.transmogrify({'id':thisCatSafeID,'catsafeid':thisCatSafeID},data.bindData.loadsTemplate,data.value[i]));
+				}
+			}
+		} //simpleSubcats
+	
+		//TOP NAV CAROUSEL.
+			
+		setTimeout(function(){
+		$('#tier1categories').carouFredSel({
+			width   : "100%",
+			//height	: 500,
+			//items   : hpTopNavItems,
+			scroll: 1,
+			auto : false,
+			prev : ".headerTopNavPrev",
+			next : ".headerTopNavNext"
+		});
+		}, 2000);
+	
+		//CONTROLING FUNCTION FOR POSITIONING THE TOP NAV CAROUSEL CORRECTLY AT ANY RESOLUTION
+		$(window).resize(function(){
+			//dump("Window resolution = " + $(window).width());
+			if($(window).width() >= 990){
+				setTimeout(function(){
+					//dump("setting tier1categories to 20px");
+					$("div.nav_menu div.caroufredsel_wrapper ul#tier1categories").css("left","20px !important");
+				}, 100);
+			}
+			else if(($(window).width() < 990) && ($(window).width() >= 800)){
+				setTimeout(function(){
+					//dump("setting tier1categories to 0");
+					$("div.nav_menu div.caroufredsel_wrapper ul#tier1categories").css("left","0 !important");
+				}, 100);
+				
+			}
+			else if(($(window).width() < 800) && ($(window).width() >= 640)){
+				setTimeout(function(){
+					//dump("setting tier1categories to 0");
+					$("div.nav_menu div.caroufredsel_wrapper ul#tier1categories").css("left","0px !important");
+				}, 100);
+			}
+			else if(($(window).width() < 640) && ($(window).width() >= 480)){
+				setTimeout(function(){
+					//dump("setting tier1categories to 1px");
+					$("div.nav_menu div.caroufredsel_wrapper ul#tier1categories").css("left","1px !important");
+				}, 100);
+			}
+			else if(($(window).width() < 480) && ($(window).width() >= 320)){
+				setTimeout(function(){
+					//dump("setting tier1categories to 8px");
+					$("div.nav_menu div.caroufredsel_wrapper ul#tier1categories").css("left","8px !important");
+				}, 100);
+			}
+		})
+	
+		//BEGIN FACEBOOK COUPON CODE
+		//var showCart = function(){showContent('cart',{'show':'cart'})};
+		//setTimeout(showCart, 5000);
+		
+		var facebookCoupon = function(){
+			var referral = document.referrer;
+			dump("User is coming from " + referral);	
+			
+			if(referral.indexOf("www.facebook.com") != -1){
+				dump("User is coming from facebook. Add coupon.");
+				myApp.ext.cco.calls.cartCouponAdd.init("FACEBOOK",{'callback':function(rd) {
+					if(myApp.model.responseHasErrors(rd)) {
+						$('#cartMessaging').anymessage({'message':rd})
+					}
+					else {
+						dump("Coupon added successfully")
+						//Do nothing
+					}
+				}});
+				myApp.model.dispatchThis('immutable');
+			}
+			else{
+				dump("User is not coming from facebook. Do nothing.");
+			}
+		};
+	
+		setTimeout(facebookCoupon, 5000);
+		//END FACEBOOK COUPON CODE
+	
+	}//END myApp.u.appInitComplete
+
+/*$(document).ready(function(){
+		myApp.u.handleRQ(0);
+		//instantiate wiki parser.
+	myCreole = new Parse.Simple.Creole(); //needs to happen before controller is instantiated.
+		
+		//Offer a mobile redirect
+		var uagent = navigator.userAgent.toLowerCase();
+		var promptmobile = false;
+		if (promptmobile ||
+			uagent.search("ipad") > -1 ||
+			uagent.search("iphone") > -1 ||
+			uagent.search("ipod") > -1 ||
+			uagent.search("android") > -1 ||
+			(uagent.search("webkit") > -1 && (uagent.search("series60") > -1 || uagent.search("symbian") > -1)) ||
+			uagent.search("windows ce") > -1 ||
+			uagent.search("palm") > -1 ){
+			
+			var $popup = $("<div><h3>It appears you are using a mobile device, would you like to use our mobile site?</h3><button class='yesbtn floatLeft'>Yes</button><button class='nobtn floatRight'>No</button></div>");
+			$('.yesbtn', $popup).on('click', function(){
+				window.location = "http://m.downlitebedding.com";
+				});
+			$('.nobtn', $popup).on('click', function(){
+				$popup.dialog('close');
+				});
+			$popup.dialog({
+				'title':'',
+				'dialogClass' : 'hideTitleBarAndClose',
+				'noCloseModal' : true,
+				'modal' : true
+			});
+		}
+	//if you wish to add init, complete or depart events to your templates w/ JS, this is a good place to do it.
+	// ex:  $("#productTemplate").on('complete.someIndicator',function($ele,infoObj){doSomethingWonderful();})
+
+	});
+	*/
+//this will trigger the content to load on app init. so if you push refresh, you don't get a blank page.
+//it'll also handle the old 'meta' uri params.
+//this will trigger the content to load on app init. so if you push refresh, you don't get a blank page.
+//it'll also handle the old 'meta' uri params.
+myApp.router.appendInit({
+	'type':'function',
+	'route': function(v){
+		return {'init':true} //returning anything but false triggers a match.
+		},
+	'callback':function(f,g){
+		dump(" -> triggered callback for appendInit");
+		g = g || {};
+		if(g.uriParams.seoRequest){
+			showContent(g.uriParams.pageType, g.uriParams);
+			}
+		else if(document.location.hash)	{	
+			myApp.u.dump('triggering handleHash');
+			myApp.router.handleHashChange();
 			}
 		else	{
-			$tag.append(app.renderFunctions.transmogrify({'id':thisCatSafeID,'catsafeid':thisCatSafeID},data.bindData.loadsTemplate,data.value[i]));
+			//IE8 didn't like the shortcut to showContent here.
+			myApp.ext.quickstart.a.showContent('homepage');
+			}
+		if(g.uriParams && g.uriParams.meta)	{
+			myApp.ext.cco.calls.cartSet.init({'want/refer':infoObj.uriParams.meta,'cartID':_app.model.fetchCartID()},{},'passive');
+			}
+		if(g.uriParams && g.uriParams.meta_src)	{
+			myApp.ext.cco.calls.cartSet.init({'want/refer_src':infoObj.uriParams.meta_src,'cartID':_app.model.fetchCartID()},{},'passive');
 			}
 		}
-			} //simpleSubcats
-// Homepage Slideshow
-//	app.ext.myRIA.template.homepageTemplate.onCompletes.push(function(){
-//		$('#wideSlideshow').cycle({
-//			fx:     'fade',
-//			speed:  'slow',
-//			timeout: 5000,
-//			pager:  '#slideshowNav',
-//			slideExpr: 'li'
-//			});
-//		}) //homepageTemplate.onCompletes
-			
-	
-		
-		
-// add link, css, etc to hotel finder.
-// FOR 201248 UPGRADE CLIENT ASKED THAT LINK GO TO HOTELS CAT PAGE NOT MODAL
-//	$('.hotelFinder').removeClass('disabled').addClass('pointer').click(function () {
-//		$('#hotelListContainer').dialog({
-//			'autoOpen':false,
-//			'width':'60%',
-//			'modal':'true',
-//			'height':'500'
-//			});
-//		$('#hotelListContainer').dialog('open');
-	//only render the menu the first time the modal is opened. saves cycles and eliminates duplicates appearing
-//		if($('#hotelListContainerUL > li').length < 1)	{
-//			app.renderFunctions.translateSelector('#hotelListContainer',app.data['appCategoryDetail|.hotels']);
-//			}
-//		});
-	//addthis code for productTemplate - replaced by partner_addthis extension
-//	app.rq.push(['templateFunction','productTemplate','onCompletes',function(P) {
-//	var url = zGlobals.appSettings.http_app_url+"product/"+P.pid+"/";
-	//update the openGraph and meta content. mostly for social/addThis.
-//	$('#ogTitle').attr('content',app.data[P.datapointer]['%attribs']['zoovy:prod_name']);
-//	$('#ogImage').attr('content',app.u.makeImage({"name":app.data[P.datapointer]['%attribs']['zoovy:prod_image1'],"w":150,"h":150,"b":"FFFFFF","tag":0}));
-//	$('#ogDescription, #metaDescription').attr('content',app.data[P.datapointer]['%attribs']['zoovy:prod_desc']);
-//			addthis.toolbox('#socialLinks');
-//	if(typeof addthis == 'object' && addthis.update)	{
-//		addthis.update('share','url',url);
-//		$("#socialLinks .addthis_button_facebook_like").attr("fb:like:href",url);
-//		$("#socialLinks .addthis_button_pinterest_pinit").attr({"pi:pinit:media":app.u.makeImage({"h":"300","w":"300","b":"ffffff","name":app.data['appProductGet|'+P.pid]['%attribs']['zoovy:prod_image1'],"tag":0}),"pi:pinit:url":url});	
-//		}
-
-//		}]); //addThis productTemplate code		
-}
+	});
 
 
-//app.rq.push(['templateFunction','homepageTemplate','onCompletes',function(P) {
-//	var $target=$('#wideSlideshow');
-//	$target.cycle({fx:'fade',speed:'slow',timeout:5000,pager:'#slideshowNav',pagerAnchorBuilder:function(index,el){return'<a href="#"> </a>';},slideExpr:'li'});	
-//	}]);
 
-//don't execute script till both jquery AND the dom are ready.
-$(document).ready(function(){
-	app.u.handleRQ(0);
-	
-	//Offer a mobile redirect
-	var uagent = navigator.userAgent.toLowerCase();
-	var promptmobile = false;
-	if (promptmobile ||
-		uagent.search("ipad") > -1 ||
-		uagent.search("iphone") > -1 ||
-		uagent.search("ipod") > -1 ||
-		uagent.search("android") > -1 ||
-		(uagent.search("webkit") > -1 && (uagent.search("series60") > -1 || uagent.search("symbian") > -1)) ||
-		uagent.search("windows ce") > -1 ||
-		uagent.search("palm") > -1 ){
-		
-		var $popup = $("<div><h3>It appears you are using a mobile device, would you like to use our mobile site?</h3><button class='yesbtn floatLeft'>Yes</button><button class='nobtn floatRight'>No</button></div>");
-		$('.yesbtn', $popup).on('click', function(){
-			window.location = "http://m.downlitebedding.com";
-			});
-		$('.nobtn', $popup).on('click', function(){
-			$popup.dialog('close');
-			});
-		$popup.dialog({
-			'title':'',
-			'dialogClass' : 'hideTitleBarAndClose',
-			'noCloseModal' : true,
-			'modal' : true
-			});
-		}
-		
-	//FACEBOOK COUPON HANDLING
-	//var showCart = function(){showContent('cart',{'show':'cart'})};
-	//setTimeout(showCart, 5000);
-	
-	var facebookCoupon = function(){
-		var referral = document.referrer;
-		app.u.dump("User is coming from " + referral);	
-		
-		if(referral.indexOf("www.facebook.com") != -1){
-			app.u.dump("User is coming from facebook. Add coupon.");
-			app.ext.cco.calls.cartCouponAdd.init("FACEBOOK",{'callback':function(rd) {
-				if(app.model.responseHasErrors(rd)) {
-					$('#cartMessaging').anymessage({'message':rd})
-				}
-				else {
-					app.u.dump("Coupon added successfully")
-					//Do nothing
-				}
-			}});
-			app.model.dispatchThis('immutable');
-		}
-		else{
-			app.u.dump("User is not coming from facebook. Do nothing.");
-		}
-	};
-	
-	setTimeout(facebookCoupon, 5000);
-});
+
+
