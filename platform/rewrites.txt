@@ -9,8 +9,8 @@
 ~path	/s=*/(.*?)				/$1			set=path
 
 # redirect all product and category urls
-~path	/category/([^/]*)	/#!category/([^/]*)
-~path	/product/([^/]*)	/#!product/([^/]*)
+~path	/category/([^/]*)	/#!category/$1
+~path	/product/([^/]*)	/#!product/$1
 
 #redirect company pages
 =path	/about_us.cgis	/#!company/about
