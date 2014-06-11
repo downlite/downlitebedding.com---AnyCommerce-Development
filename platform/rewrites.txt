@@ -13,10 +13,13 @@
 ~path	/product/([^/]*)	/#!product/$1
 
 #redirect company pages
-=path	/about_us.cgis	/#!company/about
-=path	/contact_us.cgis	/#!company/contact
-=path	/returns.cgis#faq	/#!company/faq
-=path	/returns.cgis	/#!company/return
-=path	/privacy.cgis	/#!company/privacy
+=path	/#company?show=about	/#!company/about
+=path	/#company?show=contact	/#!company/contact
+=path	/#company?show=faq	/#!company/faq
+=path	/#company?show=payment	/#!company/payment
+=path	/#company?show=privacy	/#!company/privacy
+=path	/#company?show=return	/#!company/return
+=path	/#company?show=shipping	/#!company/shipping
+
 #redirect homepage
 =uri	http://test.downlitebedding.com/	http://test.downlitebedding.com/#!home
