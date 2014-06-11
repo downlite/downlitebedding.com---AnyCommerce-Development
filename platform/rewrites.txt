@@ -9,10 +9,13 @@
 ~path	/s=*/(.*?)				/$1			set=path
 
 # redirect all product and category urls
-~path	^.downlitebedding.com/product/(.*?)/	^.downlitebedding.com/#!product/(.*?)
-~path	^.downlitebedding.com/category/(.*?)/.	^.downlitebedding.com/#!category/(.*?)
+#path	^.downlitebedding.com/product/(*?)	^.downlitebedding.com/#!product/(*?)
+#path	^.downlitebedding.com/category/(.*?)	^.downlitebedding.com/#!category/(.*?)
 
 #redirect company pages
+=path	/category/	/#!category/
+=path	/product/	/#!category/
+
 =path	/about_us.cgis	/#!company/about
 =path	/contact_us.cgis	/#!company/contact
 =path	/returns.cgis#faq	/#!company/faq
