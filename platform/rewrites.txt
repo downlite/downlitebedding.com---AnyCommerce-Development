@@ -19,4 +19,4 @@
 =path	/returns.cgis	/#!company/return
 =path	/privacy.cgis	/#!company/privacy
 #redirect homepage
-=uri	http://test.downlitebedding.com/	http://test.downlitebedding.com/#!home
+=uri	http://www.downlitebedding.com/	http://www.downlitebedding.com/#!home
