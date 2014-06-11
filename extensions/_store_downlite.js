@@ -464,7 +464,7 @@ var store_downlite = function(_app) {
 					//dump(data);
 					//dump($tag);
 					
-					var r = "<span class='pricePrefix'>Our price:</span> $"+data.value;
+					var r = "<span class='pricePrefix'>From:</span> $"+data.value;
 					//dump(r);
 					var cents = r.split(".")
 					//dump(cents[1]);
