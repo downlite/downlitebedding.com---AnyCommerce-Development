@@ -9,8 +9,8 @@
 ~path	/s=*/(.*?)				/$1			set=path
 
 # redirect all product and category urls
-~path	^.*?/product/(.*?)/.*$	^.*?/#!product/(.*?)/.*$
-~path	^.*?/category/(.*?)/.*$	^.*?/#!category/(.*?)/.*$
+~path	^.downlitebedding.com/product/(.*?)/	^.downlitebedding.com/#!product/(.*?)
+~path	^.downlitebedding.com/category/(.*?)/.	^.downlitebedding.com/#!category/(.*?)
 
 #redirect company pages
 =path	/about_us.cgis	/#!company/about
@@ -19,4 +19,4 @@
 =path	/returns.cgis	/#!company/return
 =path	/privacy.cgis	/#!company/privacy
 #redirect homepage
-=uri	http://www.downlitebedding.com/	http://www.downlitebedding.com/#!home
+=uri	http://test.downlitebedding.com/	http://test.downlitebedding.com/#!home
