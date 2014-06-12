@@ -1,0 +1,25 @@
+#sample platform/rewrites.txt
+#col1:    [~=]uri|url|path|query
+#col2:     if match
+#col3:  goto
+#col4:  goto modifier
+
+# remove legacy cart and session variables from uri
+~path	/c=*/(.*?)				 /$1			set=path
+~path	/s=*/(.*?)				/$1			set=path
+
+# redirect all product and category urls
+~path	/category/([^/]*)	/#!category/$1
+~path	/product/([^/]*)	/#!product/$1
+
+#redirect company pages
+=path	/#company\?show=about	/#!company/about
+=path	/#company\?show=contact	/#!company/contact
+=path	/#company\?show=faq	/#!company/faq
+=path	/#company\?show=payment	/#!company/payment
+=path	/#company\?show=privacy	/#!company/privacy
+=path	/#company\?show=return	/#!company/return
+=path	/#company\?show=shipping	/#!company/shipping
+
+#redirect homepage
+=uri	http://test.downlitebedding.com/	http://test.downlitebedding.com/#!home

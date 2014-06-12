@@ -565,7 +565,7 @@ var store_downlite = function(_app) {
 					
 					var r = [r.slice(0, position), b, r.slice(position)].join('');
 					
-					r = "<span class='pricePrefix'>Our price:</span> $" + r;
+					r = "<span class='pricePrefix'>From:</span> $" + r;
 					
 					
 					//dump(r);
