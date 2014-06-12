@@ -292,8 +292,6 @@ myApp.u.appInitComplete = function()	{
 	*/
 //this will trigger the content to load on app init. so if you push refresh, you don't get a blank page.
 //it'll also handle the old 'meta' uri params.
-//this will trigger the content to load on app init. so if you push refresh, you don't get a blank page.
-//it'll also handle the old 'meta' uri params.
 myApp.router.appendInit({
 	'type':'function',
 	'route': function(v){
@@ -319,6 +317,33 @@ myApp.router.appendInit({
 		if(g.uriParams && g.uriParams.meta_src)	{
 			myApp.ext.cco.calls.cartSet.init({'want/refer_src':infoObj.uriParams.meta_src,'cartID':_app.model.fetchCartID()},{},'passive');
 			}
+		
+		if(document.location.hash)	{	
+			//dump("document.location.hash = ");
+			//dump(document.location.hash);
+			if(document.location.hash == "#company?show=about"){
+				myApp.ext.quickstart.a.showContent('company', {"show":"about"});
+			}
+			else if(document.location.hash == "#company?show=contact"){
+				myApp.ext.quickstart.a.showContent('company', {"show":"contact"});
+			}
+			else if(document.location.hash == "#company?show=faq"){
+				myApp.ext.quickstart.a.showContent('company', {"show":"faq"});
+			}
+			else if(document.location.hash == "#company?show=payment"){
+				myApp.ext.quickstart.a.showContent('company', {"show":"payment"});
+			}
+			else if(document.location.hash == "#company?show=privacy"){
+				myApp.ext.quickstart.a.showContent('company', {"show":"privacy"});
+			}
+			else if(document.location.hash == "#company?show=return"){
+				myApp.ext.quickstart.a.showContent('company', {"show":"return"});
+			}
+			else if(document.location.hash == "#company?show=shipping"){
+				myApp.ext.quickstart.a.showContent('company', {"show":"shipping"});
+			}
+		}
+
 		}
 	});
 
