@@ -13,6 +13,10 @@
 ~path	/product/([^/]*)	/#!product/$1
 
 #redirect company pages
+
+~path	/#company?show=about	/#!company/about
+
+
 =path	test.downlitebedding.com/#company?show=about	test.downlitebedding.com/#!company/about
 =path	test.downlitebedding.com/#company?show=contact	test.downlitebedding.com/#!company/contact
 =path	test.downlitebedding.com/#company?show=faq	test.downlitebedding.com/#!company/faq
