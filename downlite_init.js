@@ -44,6 +44,7 @@ myApp.rq.push(['extension',0,'store_account_creation','extensions/store_account_
 
 myApp.rq.push(['script',0,'jquery-cycle2/jquery.cycle2.min.js']);
 myApp.rq.push(['script',0,myApp.vars.baseURL+'carouFredSel-6.2.1/jquery.carouFredSel-6.2.1-packed.js']);
+myApp.rq.push(['script',1,'//18888.tctm.co/t.js']);
 
 myApp.rq.push(['script',0,myApp.vars.baseURL+'resources/jquery.showloading-v1.0.jt.js']); //used pretty early in process..
 myApp.rq.push(['script',0,myApp.vars.baseURL+'resources/jquery.ui.anyplugins.js']); //in zero pass because it's essential to rendering and error handling.
