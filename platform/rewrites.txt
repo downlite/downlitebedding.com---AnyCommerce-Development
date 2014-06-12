@@ -13,13 +13,13 @@
 ~path	/product/([^/]*)	/#!product/$1
 
 #redirect company pages
-=path	http://test.downlitebedding.com/#company?show=about	http://test.downlitebedding.com/#!company/about
-=path	http://test.downlitebedding.com/#company?show=contact	http://test.downlitebedding.com/#!company/contact
-=path	http://test.downlitebedding.com/#company?show=faq	http://test.downlitebedding.com/#!company/faq
-=path	http://test.downlitebedding.com/#company?show=payment	http://test.downlitebedding.com/#!company/payment
-=path	http://test.downlitebedding.com/#company?show=privacy	http://test.downlitebedding.com/#!company/privacy
-=path	http://test.downlitebedding.com/#company?show=return	http://test.downlitebedding.com/#!company/return
-=path	http://test.downlitebedding.com/#company?show=shipping	http://test.downlitebedding.com/#!company/shipping
+=path	test.downlitebedding.com/#company?show=about	test.downlitebedding.com/#!company/about
+=path	test.downlitebedding.com/#company?show=contact	test.downlitebedding.com/#!company/contact
+=path	test.downlitebedding.com/#company?show=faq	test.downlitebedding.com/#!company/faq
+=path	test.downlitebedding.com/#company?show=payment	test.downlitebedding.com/#!company/payment
+=path	test.downlitebedding.com/#company?show=privacy	test.downlitebedding.com/#!company/privacy
+=path	test.downlitebedding.com/#company?show=return	test.downlitebedding.com/#!company/return
+=path	test.downlitebedding.com/#company?show=shipping	test.downlitebedding.com/#!company/shipping
 
 #redirect homepage
 =uri	http://test.downlitebedding.com/	http://test.downlitebedding.com/#!home
