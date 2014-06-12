@@ -13,13 +13,13 @@
 ~path	/product/([^/]*)	/#!product/$1
 
 #redirect company pages
-=uri	http://test.downlitebedding.com/#company?show=about	http://test.downlitebedding.com/#!company/about
-=uri	http://test.downlitebedding.com/#company?show=contact	http://test.downlitebedding.com/#!company/contact
-=uri	http://test.downlitebedding.com/#company?show=faq	http://test.downlitebedding.com/#!company/faq
-=uri	http://test.downlitebedding.com/#company?show=payment	http://test.downlitebedding.com/#!company/payment
-=uri	http://test.downlitebedding.com/#company?show=privacy	http://test.downlitebedding.com/#!company/privacy
-=uri	http://test.downlitebedding.com/#company?show=return	http://test.downlitebedding.com/#!company/return
-=uri	http://test.downlitebedding.com/#company?show=shipping	http://test.downlitebedding.com/#!company/shipping
+~path	/#company\?show=about	/#!company/about
+~path	/#company\?show=contact	/#!company/contact
+~path	/#company\?show=faq	/#!company/faq
+~path	/#company\?show=payment	/#!company/payment
+~path	/#company\?show=privacy	/#!company/privacy
+~path	/#company\?show=return	/#!company/return
+~path	/#company\?show=shipping	/#!company/shipping
 
 #redirect homepage
 =uri	http://test.downlitebedding.com/	http://test.downlitebedding.com/#!home
