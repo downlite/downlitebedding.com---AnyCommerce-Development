@@ -40,8 +40,9 @@ if(document.location.protocol != 'file:' && document.domain.indexOf('www') == -1
 //var _gaq = _gaq || {'push':function(){}} //here for testing. REPLACE BEFORE DEPLOYMENT!
 
 //ROI Revolution custom tracking code
-/*
+
 var _roiq = []; var _gaq = { push: function () { var a; for (a = 0; a < arguments.length; a++) { _roiq.push(arguments[a]) } } };
+/*
 (function () {
 	var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
 	ga.src = ('https:' == document.location.protocol ? 'https://c14323198.ssl.cf2.rackcdn.com/gascript.js' : 'http://c14323198.r98.cf2.rackcdn.com/gascript.js');
@@ -49,6 +50,7 @@ var _roiq = []; var _gaq = { push: function () { var a; for (a = 0; a < argument
 	s.parentNode.insertBefore(ga, s);
 })();
 */
+
 _gaq.push(['_setAccount', 'UA-30870435-1']); //downlitebedding.com = UA-30870435-1    -2 is for .zoovy.com
 _gaq.push(['_trackPageview']);
 
@@ -130,6 +132,7 @@ $(document).ready(function(){
 })(document);
 </script>
 -->
+
 
 <script async src="//18888.tctm.co/t.js"></script>
 
@@ -1977,6 +1980,9 @@ This is the template used both within a dialog and inline, unless implicitly ove
 		<div class="ui-state-default cartButtons stdPadding clearfix">
 			<!-- spans are set around the buttons so each element has one consitent tag type around it -->
 			<span class="continueShoppingSpan thisButton"><button class="applyButton continueShoppingButton" data-app-click="quickstart|dialogCloseExec">Continue Shopping</button></span>
+			<span class="continueShoppingSpanAlt thisButton"><button class="applyButton continueShoppingButtonAlt" onClick="parent.history.back(); return false;">Continue Shopping</button></span>
+			
+			
 	
 			<span id="inStoreCheckoutButton" class='thisButton' title="proceed to secure checkout">
 				<a class="applyButton ui-state-highlight checkoutButton" href='#!checkout'>Store Checkout</a>
