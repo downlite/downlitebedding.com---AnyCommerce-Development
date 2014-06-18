@@ -52,7 +52,8 @@ var store_routing = function(_app) {
 				_app.router.addAlias('company', 	function(routeObj){showContent('company',	routeObj.params);});
 				_app.router.addAlias('customer', 	function(routeObj){showContent('customer',	routeObj.params);});
 				_app.router.addAlias('checkout', 	function(routeObj){showContent('checkout',	routeObj.params);});
-				_app.router.addAlias('search', 		function(routeObj){showContent('search',	routeObj.params);});				
+
+				_app.router.addAlias('search', 		function(routeObj){showContent('search',	routeObj.params);});
 
 
 				_app.router.appendHash({'type':'exact','route':'cart','callback':function(routeObj){showContent('cart',routeObj.params);}});
@@ -68,7 +69,6 @@ var store_routing = function(_app) {
 				_app.router.appendHash({'type':'match','route':'checkout*','callback':'checkout'});
 				_app.router.appendHash({'type':'match','route':'search/tag/{{tag}}*','callback':'search'});
 				_app.router.appendHash({'type':'match','route':'search/keywords/{{KEYWORDS}}*','callback':'search'});
-				
 
 
 /*

@@ -40,13 +40,17 @@ if(document.location.protocol != 'file:' && document.domain.indexOf('www') == -1
 //var _gaq = _gaq || {'push':function(){}} //here for testing. REPLACE BEFORE DEPLOYMENT!
 
 //ROI Revolution custom tracking code
+
 var _roiq = []; var _gaq = { push: function () { var a; for (a = 0; a < arguments.length; a++) { _roiq.push(arguments[a]) } } };
+/*
 (function () {
 	var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
 	ga.src = ('https:' == document.location.protocol ? 'https://c14323198.ssl.cf2.rackcdn.com/gascript.js' : 'http://c14323198.r98.cf2.rackcdn.com/gascript.js');
 	var s = document.getElementsByTagName('script')[0];
 	s.parentNode.insertBefore(ga, s);
 })();
+*/
+
 _gaq.push(['_setAccount', 'UA-30870435-1']); //downlitebedding.com = UA-30870435-1    -2 is for .zoovy.com
 _gaq.push(['_trackPageview']);
 
@@ -85,6 +89,7 @@ css files should be included before any .js file to ensure they are downloaded i
 <link rel="stylesheet" type="text/css" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.10.2/themes/ui-lightness/jquery-ui.css" />
 <link rel="stylesheet" type="text/css" href="_dl12_style-20120725.css" />
 <link rel="stylesheet" type="text/css" href="_downlite_styles.css" />
+<link rel="shortcut icon" href="http://www.downlitebedding.com/favicon.ico" type="image/icon"> <link rel="icon" href="http://www.downlitebedding.com/favicon.ico" type="image/icon">
 
 <!-- jquery and jquery ui are pivotal to the functionality of the app. load them early -->
 <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
@@ -100,7 +105,7 @@ css files should be included before any .js file to ensure they are downloaded i
 <script type="text/javascript">
 $(document).ready(function(){
 	window.myApp = new initApp({
-		"release":"201404.aitest19",  //increment this with each change. should solve caching issues. format: YYYYMMDDHHMMSS
+		"release":"201404.as",  //increment this with each change. should solve caching issues. format: YYYYMMDDHHMMSS
 		"_clientid":"zmvc", //zmvc for store app, 1pc for one page checkout.
 		"baseURL":baseURL, //used in non-local mode.
 		"checkoutAuthMode" : "required",//can be passive, active or required
@@ -118,12 +123,19 @@ $(document).ready(function(){
 	myCreole = new Parse.Simple.Creole();
 	});
 </script>
+
+
 <script type="text/javascript">
 (function(d) {
  var h = ('https:' == d.location.protocol ? 'https://c14323198.ssl' : 'http://c14323198.r98') + '.cf2.rackcdn.com/gascript.js';
        d.write(unescape("%3Cscript src='" + h + "' type='text/javascript'%3E%3C/script%3E"));
 })(document);
 </script>
+
+
+
+
+
 <script async src="//18888.tctm.co/t.js"></script>
 
 
@@ -180,10 +192,9 @@ ANIMATION TESTING
 				<div class="header_ads alignRight">
 					<a href='#!company/shipping'><img src='images/free_shipping-180x49.jpg' width='180' height='49' alt='' /></a>
 				</div>
-				<a href="#!company?show=about">testlink</a>
 
 				<div class="header_contact">
-					<p class="headerQuestionsText">Questions? </p><h6>(866) 931-3696</h6>
+					<p class="headerQuestionsText">Questions? 1-866-931-3696</p>
 					<span class="contact_ads">
 						<!-- START SCANALERT CODE  --><!-- REMOVE HTTP FROM SRC -->
 						<a target="_blank" href="https://www.mcafeesecure.com/RatingVerify?ref=www.downlitebedding.com"><img width="65" height="37" border="0" src="https://images.scanalert.com/meter/www.mcafee.com/55.gif" alt="McAfee Secure sites help keep you safe from identity theft, credit card fraud, spyware, spam, viruses and online scams" oncontextmenu="alert('Copying Prohibited by Law - McAfee Secure is a Trademark of McAfee, Inc.'); return false;"></a>
@@ -341,7 +352,7 @@ ANIMATION TESTING
 					</ul>
 				</div>
 				<div class="call_us">
-					<p>Call us <a>(866) 931-3696</a> M-F 10:00 AM - 4:00 PM EST</p>
+					<p>Call us (866) 931-3696 M-F 10:00 AM - 4:00 PM EST</p>
 				</div>
 				<div class="copywrite">
 					<p>Copyright &copy; 2014. All rights reserved e-commerce by <font>Zoovy</font></p>
@@ -910,14 +921,15 @@ SANITY -> if you change the height and width of this image, change the .minimalM
 <li id="productListTemplateResultsNoPreview" class="loadingBG searchResultsProduct ">
 	<a data-tlc="bind $var '.'; store_routing#seoanchor --type='product' --seo; apply --attrib='href';" class="pointer">
 		<div class="prodThumbContainer">
-			<img data-tlc="bind $var '.images.0'; if (is $var --notblank;) {{apply --img --media=$var --width=120 --height=120 --bgcolor='#ffffff' --replace;}};" src="blank.gif" class="prodThumb" alt="" height="120" width="120" />
+			<img data-tlc="bind $var '.images.0'; apply --img --media=$var --width=120 --height=120 --bgcolor='#ffffff' --replace;" src="blank.gif" class="prodThumb" alt="" height="120" width="120" />
 		</div>
 
 		<h5 data-tlc="bind $var '.prod_name'; if (is $var --notblank;) {{apply --append;}};" class="hideInMinimalMode"></h5>
 
-		<h6 data-tlc="bind $var '.base_price';  if (is $var --notblank;) {{format --currency='USD'; format --prepend='Our Price: ';  apply --append;}};" class="hideInMinimalMode"></h6>
+		<h6 data-tlc="bind $var '.base_price';  if (is $var --notblank;) {{math --div='100'; format --currency='USD'; format --prepend='Price from: ';  apply --append;}};" class="hideInMinimalMode"></h6>
+		
 	</a>
-	<a class="hideInMinimalMode pointer moreDetails" data-tlc="bind $seoname '.prod_name'; bind $var '.'; store_routing#seoanchor --type='product' --seo --seoname=$seoname; apply --attrib='href';">more details</a>
+	<!--<a class="hideInMinimalMode pointer moreDetails" data-tlc="bind $seoname '.prod_name'; bind $var '.'; store_routing#seoanchor --type='product' --seo --seoname=$seoname; apply --attrib='href';">more details</a>-->
 </li>
 
 <li id='productListHotelFilteredSearch' class='loadingBG searchResultsProduct ' >
@@ -1206,6 +1218,7 @@ It's done this way because ID's hard coded into template are bad mojo (templates
 		<li> Most comforters can be machine washed and dried in a commercial laundry mat</li>
 		<li> Try using a duvet to add color and protection to a comforter (duvet size should be within plus or minus two inches of the comforter dimensions).</li>
 		<li> Fills can shift in baffle box constructions - so look for PermaBaffle design comforters or sewn thru constructions.</li>
+		<li>Comforter sizing - please note the size shown for the bedding is measured by the fabric being pulled tightly in each direction. Once filled, the finished size goes down appx 2 inches in either direction based on the filling. If you are concerned about sizing, we suggest going up a size where possible. Compared to most retail stores and catalogs the same practice is applied but we have had a few customers who were not aware of how the measurements are made.
 		</ul>
 		<h2>Feather Bed Tips</h2><ul><li> 90% of all our feather beds are made in the USA.</li>
 		<li> Feather beds are too large to wash - so spot care paired with a protector works best.</li>
@@ -1233,7 +1246,7 @@ It's done this way because ID's hard coded into template are bad mojo (templates
 		</div>
 		<h2>Shipping:</h2>
 		<ul>
-		<li> Most orders received are processed within 1-2 business days except for special holiday time periods.</li>
+		<li> Most orders received are processed within 2-3 business days except for special holiday time periods.</li>
 		<li> If your order has not shipped in those time frames please contact us.</li>
 		</ul>
 		<h2>Returns:</h2>
@@ -1443,7 +1456,7 @@ if you change these, you should move them above this comment so that when you (o
 					Mason, OH 45040 <br />
 				</p>
 				<p>
-					Phone: <a>(866) 931-3696</a>. Please note our phones are staffed between 10 AM EST and 4 PM EST. If you are not getting the help you 
+					Phone: 1-866-931-3696. Please note our phones are staffed between 10 AM EST and 4 PM EST. If you are not getting the help you 
 					need or not satisfied with the support - please contact Stefan Hunter, Director of eCommerce (shunter@downlite.com).
 				</p>
 			</div>
@@ -1969,6 +1982,9 @@ This is the template used both within a dialog and inline, unless implicitly ove
 		<div class="ui-state-default cartButtons stdPadding clearfix">
 			<!-- spans are set around the buttons so each element has one consitent tag type around it -->
 			<span class="continueShoppingSpan thisButton"><button class="applyButton continueShoppingButton" data-app-click="quickstart|dialogCloseExec">Continue Shopping</button></span>
+			<span class="continueShoppingSpanAlt thisButton"><button class="applyButton continueShoppingButtonAlt" onClick="parent.history.back(); return false;">Continue Shopping</button></span>
+			
+			
 	
 			<span id="inStoreCheckoutButton" class='thisButton' title="proceed to secure checkout">
 				<a class="applyButton ui-state-highlight checkoutButton" href='#!checkout'>Store Checkout</a>

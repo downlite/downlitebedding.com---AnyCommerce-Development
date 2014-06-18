@@ -29,7 +29,7 @@ myApp.rq.push(['extension',0,'tracking_hubspot','extensions/tracking_hubspot.js'
 //myApp.rq.push(['extension',0,'entomologist','extensions/entomologist/extension.js']);
 //myApp.rq.push(['extension',0,'tools_animation','extensions/tools_animation.js']);
 
-//myApp.rq.push(['extension',1,'google_analytics','extensions/partner_google_analytics.js','startExtension']);
+myApp.rq.push(['extension',1,'google_analytics','extensions/partner_google_analytics.js','startExtension']);
 //myApp.rq.push(['extension',1,'tools_ab_testing','extensions/tools_ab_testing.js']);
 myApp.rq.push(['extension',0,'partner_addthis','extensions/partner_addthis.js','startExtension']);
 //myApp.rq.push(['extension',1,'resellerratings_survey','extensions/partner_buysafe_guarantee.js','startExtension']); /// !!! needs testing.
@@ -44,7 +44,6 @@ myApp.rq.push(['extension',0,'store_account_creation','extensions/store_account_
 
 myApp.rq.push(['script',0,'jquery-cycle2/jquery.cycle2.min.js']);
 myApp.rq.push(['script',0,myApp.vars.baseURL+'carouFredSel-6.2.1/jquery.carouFredSel-6.2.1-packed.js']);
-myApp.rq.push(['script',1,'//18888.tctm.co/t.js']);
 
 myApp.rq.push(['script',0,myApp.vars.baseURL+'resources/jquery.showloading-v1.0.jt.js']); //used pretty early in process..
 myApp.rq.push(['script',0,myApp.vars.baseURL+'resources/jquery.ui.anyplugins.js']); //in zero pass because it's essential to rendering and error handling.
@@ -85,6 +84,24 @@ myApp.cmr.push(['goto',function(message,$context){
 	$history.append($P);
 	$history.parent().scrollTop($history.height());
 	}]);
+	
+	//MINI CART FIX
+ 	$('#cartTemplate').on('complete.updateMinicart',function(state,$ele,infoObj)	{
+		var cartid = infoObj.cartid || myApp.model.fetchCartID();
+		var $appView = $('#appView'), cart = myApp.data['cartDetail|'+cartid], itemCount = 0, subtotal = 0, total = 0;
+		dump(" -> cart "+cartid+": "); dump(cart);
+		if(!$.isEmptyObject(cart['@ITEMS']))	{
+			itemCount = cart.sum.items_count || 0;
+			subtotal = cart.sum.items_total;
+			total = cart.sum.order_total;
+			}
+		else	{
+			//cart not in memory yet. use defaults.
+			}
+		$('.cartItemCount',$appView).text(itemCount);
+		$('.cartSubtotal',$appView).text(myApp.u.formatMoney(subtotal,'$',2,false));
+		$('.cartTotal',$appView).text(myApp.u.formatMoney(total,'$',2,false));
+	});
 
 
 //gets executed from app-admin.html as part of controller init process.
@@ -292,6 +309,8 @@ myApp.u.appInitComplete = function()	{
 	*/
 //this will trigger the content to load on app init. so if you push refresh, you don't get a blank page.
 //it'll also handle the old 'meta' uri params.
+//this will trigger the content to load on app init. so if you push refresh, you don't get a blank page.
+//it'll also handle the old 'meta' uri params.
 myApp.router.appendInit({
 	'type':'function',
 	'route': function(v){
@@ -317,7 +336,7 @@ myApp.router.appendInit({
 		if(g.uriParams && g.uriParams.meta_src)	{
 			myApp.ext.cco.calls.cartSet.init({'want/refer_src':infoObj.uriParams.meta_src,'cartID':_app.model.fetchCartID()},{},'passive');
 			}
-		
+			
 		if(document.location.hash)	{	
 			//dump("document.location.hash = ");
 			//dump(document.location.hash);
@@ -343,7 +362,7 @@ myApp.router.appendInit({
 				myApp.ext.quickstart.a.showContent('company', {"show":"shipping"});
 			}
 		}
-
+		
 		}
 	});
 
