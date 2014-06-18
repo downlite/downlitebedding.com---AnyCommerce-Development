@@ -3,3 +3,6 @@
 
 2. add_this.js:
 - Copy the init callback into its own startExtension callback. The app should pop an error for you if you forget to do this.
+
+3. Checkout Template:
+- Add some text that explains that if they don't have an account to click to link to go create one. Provide link to account creation. 
