@@ -26,7 +26,7 @@ var store_seo = function(_app) {
 ////////////////////////////////////   CALLBACKS    \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
 	vars : {
-		defaultTitle : "Downlite Bedding", //Should not include any Prefix or Postfix
+		defaultTitle : "", //Should not include any Prefix or Postfix
 		titlePrefix : "",
 		titlePostfix : ""
 		},
@@ -72,7 +72,7 @@ var store_seo = function(_app) {
 ////////////////////////////////////   UTIL [u]   \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
 		u : {
-			generateMeta : function($context, infoObj){
+			generateMeta : function(infoObj){
 				var baseTitle = '';
 				var desc = '';
 				switch(infoObj.pageType){
@@ -81,21 +81,9 @@ var store_seo = function(_app) {
 						break;
 					case "category" :
 						break;
-					case "product" :dump('------generateMeta:product');
-						//Grab from the titles and descriptions on the page
-						var baseTitle = $('[data-seo-title]', $context).attr('data-seo-title');
-						desc = $('[data-seo-desc]', $context).attr('data-seo-desc');
+					case "product" :
 						break;
 					case "company" :
-						if(infoObj.show == "about") { 
-							dump('ABOUT case worked.'); 
-							var baseTitle = $('[data-seo-title-about]', $context).attr('data-seo-title-about');
-							desc = $('[data-seo-desc-about]', $context).attr('data-seo-desc-about');
-						}
-						else if(infoObj.show == "contact") {
-							var baseTitle = $('[data-seo-title-contact]', $context).attr('data-seo-title-contact');
-							desc = $('[data-seo-desc-contact]', $context).attr('data-seo-desc-contact');
-						}
 						break;
 					case "customer" :
 						break;
@@ -112,7 +100,7 @@ var store_seo = function(_app) {
 					baseTitle = _app.ext.store_seo.vars.defaultTitle;
 					}
 				
-				document.title = _app.ext.store_seo.vars.titlePrefix + baseTitle + _app.ext.store_seo.vars.titlePostfix;
+				document.title = _app.ext.store_seo.vars.titlePrefix + title + _app.ext.store_seo.vars.titlePostfix;
 				$('meta[name=description]').attr('content', desc);
 				}
 			}, //u [utilities]
