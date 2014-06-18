@@ -294,6 +294,22 @@ div.cartItemImgCont{
 	display: none;
 }
 
+.checkoutSigninTooltipMess{
+	background-color: #FFFFFF;
+    box-shadow: 0 0 4px 5px #CCCCCC;
+    left: 110px;
+    position: absolute;
+    top: 85px;
+    width: 700px;
+}
+.checkoutSigninTooltipMess p{
+	text-align:center;
+	margin: 5px;
+}
+.checkoutSigninTooltip{
+	display: inline-block;
+}
+
 
 
 

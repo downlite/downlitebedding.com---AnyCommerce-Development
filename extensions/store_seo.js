@@ -82,20 +82,20 @@ var store_seo = function(_app) {
 					case "category" :
 						break;
 					case "product" :dump('------generateMeta:product');
-						//Grab from the titles and descriptions on the page
-						var baseTitle = $('[data-seo-title]', $context).attr('data-seo-title');
-						desc = $('[data-seo-desc]', $context).attr('data-seo-desc');
+ 						//Grab from the titles and descriptions on the page
+ 						var baseTitle = $('[data-seo-title]', $context).attr('data-seo-title');
+ 						desc = $('[data-seo-desc]', $context).attr('data-seo-desc');
 						break;
 					case "company" :
-						if(infoObj.show == "about") { 
-							dump('ABOUT case worked.'); 
-							var baseTitle = $('[data-seo-title-about]', $context).attr('data-seo-title-about');
-							desc = $('[data-seo-desc-about]', $context).attr('data-seo-desc-about');
-						}
-						else if(infoObj.show == "contact") {
-							var baseTitle = $('[data-seo-title-contact]', $context).attr('data-seo-title-contact');
-							desc = $('[data-seo-desc-contact]', $context).attr('data-seo-desc-contact');
-						}
+					if(infoObj.show == "about") { 
+ 							dump('ABOUT case worked.'); 
+ 							var baseTitle = $('[data-seo-title-about]', $context).attr('data-seo-title-about');
+ 							desc = $('[data-seo-desc-about]', $context).attr('data-seo-desc-about');
+ 						}
+ 						else if(infoObj.show == "contact") {
+ 							var baseTitle = $('[data-seo-title-contact]', $context).attr('data-seo-title-contact');
+ 							desc = $('[data-seo-desc-contact]', $context).attr('data-seo-desc-contact');
+ 						}
 						break;
 					case "customer" :
 						break;
