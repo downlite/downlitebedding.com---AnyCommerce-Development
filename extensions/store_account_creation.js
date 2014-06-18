@@ -99,8 +99,18 @@ var store_account_creation = function(_app) {
 												$form.anymessage({'message':rd});
 										}
 										else {
-												showContent('customer',{'show':'myaccount'});
-												_app.u.throwMessage(_app.u.successMsgObject("Your account has been created!"));
+												if($('.checkoutAccountCreateLink').data('checkoutAccountCreate')){
+													if($('.checkoutAccountCreateLink').data('checkoutAccountCreate') == true){
+														$('.checkoutAccountCreateLink').data('checkoutAccountCreate',false).append();
+														showContent('checkout',{});
+														window.location.href = window.location.href.split("#")[0]+"#!checkout";
+														_app.u.throwMessage(_app.u.successMsgObject("Your account has been created!"));
+													}
+												}
+												else{
+													showContent('customer',{'show':'myaccount'});
+													_app.u.throwMessage(_app.u.successMsgObject("Your account has been created!"));
+												}
 										}
 								}
 						}

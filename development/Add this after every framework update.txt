@@ -5,4 +5,7 @@
 - Copy the init callback into its own startExtension callback. The app should pop an error for you if you forget to do this.
 
 3. Checkout Template:
-- Add some text that explains that if they don't have an account to click to link to go create one. Provide link to account creation. 
+- Add this below the sign in section:
+<p>If you have not created an account with us before, please click this link to go to the <a class="checkoutAccountCreateLink" onClick="$('.checkoutAccountCreateLink').data('checkoutAccountCreate',true).append();" href="#!customer/createaccount">account creation</a> page.</p>
+
+4. Add
