@@ -7,7 +7,7 @@
 3. Checkout Template:
 - Add this below the sign in section:
 <h5 onMouseOver="$('.checkoutSigninTooltipMess').show(500);" onMouseOut="$('.checkoutSigninTooltipMess').hide(500);">Why do I have to sign-in again?</h5><div class="checkoutSigninTooltipMess displayNone"><p>We require that you re-enter your account credentials before checkout to confirm that your account belongs to you. This is designed to improve your account security and prevent any unauthorized purchases made on your account.</p></div>
-<p>If you have not created an account with us before, please click this link to go to the <a class="checkoutAccountCreateLink" onClick="$('.checkoutAccountCreateLink').data('checkoutAccountCreate',true).append();" href="#!customer/createaccount">account creation</a> page.</p>
+<p>If you have not created an account with us before, please click this link to go to the <a class="checkoutAccountCreateLink" onClick="sessionStorage.accountCreateFromCheckout = true; dump(sessionStorage.accountCreateFromCheckout);" href="#!customer/createaccount">account creation</a> page.</p>
 
 4. SEO Optimization changes:
 - Re-add this commit for app-seo, store-seo: https://github.com/downlite/downlitebedding.com---AnyCommerce-Development/commit/6edc31f1a96ee3540f3a44b04c2f820045debe1d

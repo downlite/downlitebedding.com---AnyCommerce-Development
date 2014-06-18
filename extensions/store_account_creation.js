@@ -99,12 +99,17 @@ var store_account_creation = function(_app) {
 												$form.anymessage({'message':rd});
 										}
 										else {
-												if($('.checkoutAccountCreateLink').data('checkoutAccountCreate')){
-													if($('.checkoutAccountCreateLink').data('checkoutAccountCreate') == true){
-														$('.checkoutAccountCreateLink').data('checkoutAccountCreate',false).append();
-														showContent('checkout',{});
+												if(sessionStorage.accountCreateFromCheckout){
+													dump(sessionStorage.accountCreateFromCheckout);
+													var fromCheckout = sessionStorage.accountCreateFromCheckout;
+													if(fromCheckout == "true"){
+														dump("sessionStorage.accountCreateFromCheckout check for true passed. Returning to checkout.");
+														sessionStorage.accountCreateFromCheckout = false;
 														window.location.href = window.location.href.split("#")[0]+"#!checkout";
 														_app.u.throwMessage(_app.u.successMsgObject("Your account has been created!"));
+													}
+													else{
+														dump("sessionStorage.accountCreateFromCheckout check for true failed. Do nothing");
 													}
 												}
 												else{
