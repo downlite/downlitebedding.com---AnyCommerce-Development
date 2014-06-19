@@ -149,14 +149,6 @@ myApp.u.appInitComplete = function()	{
 			$('.hide4ActiveChat',$ui).hide();
 			}
 		}]);
-		
-		//ROI CODE FOR CHECKOUT
-		(function () {
-			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-			ga.src = ('https:' == document.location.protocol ? 'https://c14323198.ssl.cf2.rackcdn.com/gascript.js' : 'http://c14323198.r98.cf2.rackcdn.com/gascript.js');
-			var s = document.getElementsByTagName('script')[0];
-			s.parentNode.insertBefore(ga, s);
-		})();
 	
 	//the default behavior for an itemAppend is to show the chat portion of the dialog. that's an undesired behavior from the buyer perspective (chat only works if admin is actively listening).
 	myApp.cmr.push(['cart.itemAppend',function(message,$context)	{
