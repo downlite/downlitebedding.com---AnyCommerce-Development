@@ -42,14 +42,14 @@ if(document.location.protocol != 'file:' && document.domain.indexOf('www') == -1
 //ROI Revolution custom tracking code
 
 var _roiq = []; var _gaq = { push: function () { var a; for (a = 0; a < arguments.length; a++) { _roiq.push(arguments[a]) } } };
-/*
+
 (function () {
 	var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
 	ga.src = ('https:' == document.location.protocol ? 'https://c14323198.ssl.cf2.rackcdn.com/gascript.js' : 'http://c14323198.r98.cf2.rackcdn.com/gascript.js');
 	var s = document.getElementsByTagName('script')[0];
 	s.parentNode.insertBefore(ga, s);
 })();
-*/
+
 
 _gaq.push(['_setAccount', 'UA-30870435-1']); //downlitebedding.com = UA-30870435-1    -2 is for .zoovy.com
 _gaq.push(['_trackPageview']);
@@ -125,12 +125,14 @@ $(document).ready(function(){
 </script>
 
 
+<!--
 <script type="text/javascript">
 (function(d) {
  var h = ('https:' == d.location.protocol ? 'https://c14323198.ssl' : 'http://c14323198.r98') + '.cf2.rackcdn.com/gascript.js';
        d.write(unescape("%3Cscript src='" + h + "' type='text/javascript'%3E%3C/script%3E"));
 })(document);
 </script>
+-->
 
 
 
