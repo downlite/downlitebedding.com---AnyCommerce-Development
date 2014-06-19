@@ -11,3 +11,8 @@
 
 4. SEO Optimization changes:
 - Re-add this commit for app-seo, store-seo: https://github.com/downlite/downlitebedding.com---AnyCommerce-Development/commit/6edc31f1a96ee3540f3a44b04c2f820045debe1d
+
+5. app-quickstart.js:
+- _app.ext.store_search.calls.appPublicSearch.init(elasticsearch,$.extend(true,{},infoObj,{'callback':'handleElasticResults','datapointer':"appPublicSearch|"+JSON.stringify(elasticsearch),'extension':'store_search','templateID':'productListTemplateResults','list':$('#resultsProductListContainer')}));
+becomes
+_app.ext.store_search.calls.appPublicSearch.init(elasticsearch,$.extend(true,{},infoObj,{'callback':'handleElasticResults','datapointer':"appPublicSearch|"+JSON.stringify(elasticsearch),'extension':'store_search','templateID':'productListTemplateResultsNoPreview','list':$('#resultsProductListContainer')}));
