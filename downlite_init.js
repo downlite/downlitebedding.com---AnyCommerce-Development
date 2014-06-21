@@ -204,7 +204,7 @@ myApp.u.appInitComplete = function()	{
 			prev : ".headerTopNavPrev",
 			next : ".headerTopNavNext"
 		});
-		}, 2000);
+		}, 3000);
 	
 		//CONTROLING FUNCTION FOR POSITIONING THE TOP NAV CAROUSEL CORRECTLY AT ANY RESOLUTION
 		$(window).resize(function(){

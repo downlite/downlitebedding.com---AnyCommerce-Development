@@ -1391,7 +1391,7 @@ h1	{color:#665d51; font-size:18px; font-weight:bold; margin:0 0 12px 0; padding:
    /* margin:7px 0 10px 0\0/;
     *margin:6px 0 10px 0;*/
     padding: 0;
-    width: 100%;
+    width: 100% !important;
 }
 .nav_menu ul li{
 	float:left;
