@@ -989,7 +989,7 @@ div.cartItemImgCont{
 	
 	.header_contact {
 		margin: 10px 0 0;
-		widows:auto;
+		width:auto;
 	}
 	
 	.header_cart_menu{
@@ -1039,7 +1039,7 @@ div.cartItemImgCont{
 	}
 	.nav_menu ul li a{
 		font-size: 9px;
-		padding: 24px 1px;
+		padding: 24px 0;
 		text-align: center;
 		width: 74px;
 	}
@@ -1047,7 +1047,7 @@ div.cartItemImgCont{
 		margin-top:0;
 	}
 	.dropdownCategoryTextCont h6{
-		font-size: 9px;
+		font-size: 12px;
 	}
 	
 	.headerTopNavPrev{
