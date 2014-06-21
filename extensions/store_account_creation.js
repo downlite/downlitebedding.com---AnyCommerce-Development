@@ -99,6 +99,7 @@ var store_account_creation = function(_app) {
 												$form.anymessage({'message':rd});
 										}
 										else {
+												/*
 												if(sessionStorage.accountCreateFromCheckout){
 													dump(sessionStorage.accountCreateFromCheckout);
 													var fromCheckout = sessionStorage.accountCreateFromCheckout;
@@ -113,9 +114,10 @@ var store_account_creation = function(_app) {
 													}
 												}
 												else{
+													*/
 													showContent('customer',{'show':'myaccount'});
 													_app.u.throwMessage(_app.u.successMsgObject("Your account has been created!"));
-												}
+												//}
 										}
 								}
 						}
