@@ -172,7 +172,7 @@ myApp.u.appInitComplete = function()	{
 				myApp.ext.store_navcats.calls.appCategoryList.init('.brands',{'callback':'getChildData','extension':'store_navcats','parentID':'brandCategories','templateID':'categoryListTemplateThumb'},'passive');
 				myApp.model.dispatchThis('passive'); //use passive or going into checkout could cause request to get muted.		
 			};
-			setTimeout(addBrands, 1000);
+			setTimeout(addBrands, 2000);
 		
 		//EB+ND 
 	//Adding category nav tabs
