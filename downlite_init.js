@@ -41,6 +41,7 @@ myApp.rq.push(['extension',0,'google_dynamicremarketing','extensions/partner_goo
 myApp.rq.push(['extension',0,'prodlist_infinite','extensions/prodlist_infinite.js']);
 myApp.rq.push(['extension',0,'_store_filter','extensions/_store_filter.js','startExtension']);
 myApp.rq.push(['extension',0,'store_account_creation','extensions/store_account_creation.js']);
+myApp.rq.push(['extension',0,'seo_robots','extensions/seo_robots.js']);
 
 myApp.rq.push(['script',0,'jquery-cycle2/jquery.cycle2.min.js']);
 myApp.rq.push(['script',0,myApp.vars.baseURL+'carouFredSel-6.2.1/jquery.carouFredSel-6.2.1-packed.js']);

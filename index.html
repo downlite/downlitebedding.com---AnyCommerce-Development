@@ -131,6 +131,9 @@ css files should be included before any .js file to ensure they are downloaded i
 <script src="controller.js"></script>
 <script src="model.js"></script>
 
+<!--CUSTOM SCRIPTS GO HERE-->
+<script data-apptimize="embed" type="text/javascript" src="extensions/seo_robots.js"></script>
+
 <!-- ### TODO -> test how the load process goes w/ these in init. if includes is moved, move the new Parse  -->
 <script src="resources/jquery.ui.anyplugins.js"></script>
 <script type="text/javascript" src="includes.js"></script><!-- contains some polyfills and should be loaded early -->
@@ -159,6 +162,35 @@ $(document).ready(function(){
 	myCreole = new Parse.Simple.Creole();
 	}
 	});
+</script>
+
+<script data-apptimize="minify" type="text/javascript">
+ var _robots = {
+ 	hello : function(botStr){
+ 		_robots._robotGreeting = botStr || true;
+ 		console.log("Bot saying hello: "+botStr);
+ 		return "1.0";
+ 		},
+ 	next : function(){
+ 		//This implementation of _robots.next returns a function that simply blocks with a '100' until the app has been fully instantiated
+ 		_robots.status = function(){
+ 			if(typeof myApp !== 'undefined' && 
+ 				typeof myApp.ext !== 'undefined' && 
+ 				typeof myApp.ext.quickstart !== 'undefined' && 
+ 				typeof myApp.ext.quickstart.vars !== 'undefined' &&
+ 				myApp.ext.quickstart.vars.showContentFinished && myApp.ext.quickstart.vars.showContentCompleteFired){
+ 				return 204;
+ 				}
+ 			else{
+ 				return 100;
+ 				}
+ 			}
+ 		},
+ 	ready : function(){return false;},
+ 	goodbye : function(){
+ 		console.log("Bot saying goodbye: "+botStr);
+ 		}
+ 	}
 </script>
 
 
