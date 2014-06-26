@@ -24,7 +24,7 @@ myApp.rq.push(['extension',0,'cart_message','extensions/cart_message/extension.j
 myApp.rq.push(['extension',0,'store_crm','extensions/store_crm.js']);
 myApp.rq.push(['extension',0,'quickstart','app-quickstart.js','startMyProgram']);
 
-myApp.rq.push(['extension',0,'tracking_hubspot','extensions/tracking_hubspot.js','startExtension']);
+//myApp.rq.push(['extension',0,'tracking_hubspot','extensions/tracking_hubspot.js','startExtension']);
 
 //myApp.rq.push(['extension',0,'entomologist','extensions/entomologist/extension.js']);
 //myApp.rq.push(['extension',0,'tools_animation','extensions/tools_animation.js']);
@@ -37,7 +37,7 @@ myApp.rq.push(['extension',0,'partner_addthis','extensions/partner_addthis.js','
 //myApp.rq.push(['extension',1,'powerReviews_reviews','extensions/partner_powerreviews_reviews.js','startExtension']);
 //myApp.rq.push(['extension',0,'magicToolBox_mzp','extensions/partner_magictoolbox_mzp.js','startExtension']); // (not working yet - ticket in to MTB)
 
-myApp.rq.push(['extension',0,'google_dynamicremarketing','extensions/partner_google_dynamicremarketing.js']); 
+//myApp.rq.push(['extension',0,'google_dynamicremarketing','extensions/partner_google_dynamicremarketing.js']); 
 myApp.rq.push(['extension',0,'prodlist_infinite','extensions/prodlist_infinite.js']);
 myApp.rq.push(['extension',0,'_store_filter','extensions/_store_filter.js','startExtension']);
 myApp.rq.push(['extension',0,'store_account_creation','extensions/store_account_creation.js']);

@@ -1059,6 +1059,13 @@ for legacy browsers. That means old browsers will use the anchor to retain 'back
 						break;
 	
 					case 'cart':
+						if (app.data.whoAmI) {
+							if (app.data.whoAmI.email) {
+								var s = document.createElement("img");
+								s.src = 'http://track.hubspot.com/v1/event?_n=000000026217&_a=286471&email=' + app.data.whoAmI.email + '&t=' + new Date().getTime();
+								$("body").append(s);
+							}
+						}
 						$new = _app.ext.quickstart.u.showCart(infoObj);
 						break;
 
@@ -1122,6 +1129,16 @@ for legacy browsers. That means old browsers will use the anchor to retain 'back
 //NOT POSTING THIS MESSAGE AS ASYNC BEHAVIOR IS NOT CURRENTLY QUANTIFIABLE					
 				//Used by the SEO generation utility to signal that a page has finished loading. 
 				//parent.postMessage("renderFinished","*");
+				
+				var hubSpotWidget = '<div><script type="text/javascript">';
+				hubSpotWidget += '(function(d,s,i,r) {';
+				hubSpotWidget += 'var n=d.createElement(s),e=d.getElementsByTagName(s)[0];';
+				hubSpotWidget += "n.id=i;n.src='//js.hs­analytics.net/analytics/'+(Math.ceil(newDate()/r)*r)+'/286471.js';";
+				hubSpotWidget += 'e.parentNode.insertBefore(n, e);';
+				hubSpotWidget +='})(document,"script","hs­analytics",300000);';
+				hubSpotWidget += '</script></div>';
+				$('#mainContentArea').append(hubSpotWidget);
+
 				
 				return false; //always return false so the default action (href) is cancelled. hashstate will address the change.
 				}, //showContent
@@ -2921,6 +2938,9 @@ else	{
 					_app.model.addDispatchToQ(sfo,"immutable");
 					_app.calls.refreshCart.init({},'immutable'); //cart needs to be updated as part of authentication process.
 					_app.model.dispatchThis('immutable');
+					var s = document.createElement("img");
+					s.src = 'http://track.hubspot.com/v1/event?_n=000000026217&_a=286471&email=' + obj.login + '&t=' + new Date().getTime();
+					$("body").append(s);
 					}
 				else	{} //validateForm will handle the error display.
 				return false;
