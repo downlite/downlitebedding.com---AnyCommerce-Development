@@ -525,7 +525,7 @@ need to be customized on a per-ria basis.
 						})
 					} 
 				else	{
-					$o.fadeOut(1000, function(){$n.fadeIn(1000)}); //fade out old, fade in new.
+					$o.fadeOut(100, function(){$n.fadeIn(100); callback(); setTimeout(function(){_app.ext.quickstart.vars.showContentFinished = true;},100);}); //fade out old, fade in new.
 					}
 				}
 			else if($n instanceof jQuery)	{
@@ -1103,6 +1103,7 @@ for legacy browsers. That means old browsers will use the anchor to retain 'back
 						});
 					}
 				else if(infoObj.performTransition == false)	{
+					_app.ext.quickstart.vars.showContentFinished = true;
 					}
 				else if(typeof _app.ext.quickstart.pageTransition == 'function')	{
 					var callback = function(){
@@ -1120,7 +1121,6 @@ for legacy browsers. That means old browsers will use the anchor to retain 'back
 //no page transition specified. hide old content, show new. fancy schmancy.
 					$("#mainContentArea :visible:first").hide();
 					$new.show();
-					_app.ext.quickstart.vars.showContentFinished = true;
 					}
 				else	{
 					dump("WARNING! in showContent and no parentID is set for the element being translated.");
