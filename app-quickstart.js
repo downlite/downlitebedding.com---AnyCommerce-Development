@@ -60,6 +60,9 @@ var quickstart = function(_app) {
 			'shipAddressTemplate'],
 		"sotw" : {}, //state of the world. set to most recent page info object.
 		"hotw" : new Array(15), //history of the world. contains 15 most recent sotw objects.
+		"showContentFinished" : false,
+ 		"showContentCompleteFired" : false,
+ 		"cachedPageCount" : 20,
 		"session" : {
 			"recentSearches" : [],
 			"recentlyViewedItems" : [],
@@ -505,7 +508,7 @@ need to be customized on a per-ria basis.
 			}, //wiki
 
 // * 201403 -> infoObj now passed into pageTransition.
-		pageTransition : function($o,$n, infoObj)	{
+		pageTransition : function($o,$n, infoObj, callback)	{
 //if $o doesn't exist, the animation doesn't run and the new element doesn't show up, so that needs to be accounted for.
 //$o MAY be a jquery instance but have no length, so check both.
 			if($o instanceof jQuery && $o.length)	{
@@ -518,7 +521,7 @@ need to be customized on a per-ria basis.
 				if(infoObj.performJumpToTop && $(window).scrollTop() > 0)	{ // >0 scrolltop check should be on window, it'll work in ff AND chrome (body or html won't).
 					//new page content loading. scroll to top.
 					$('html, body').animate({scrollTop : 0},'fast',function(){
-						$o.fadeOut(1000, function(){$n.fadeIn(1000)}); //fade out old, fade in new.
+						$o.fadeOut(100, function(){$n.fadeIn(100); callback(); setTimeout(function(){_app.ext.quickstart.vars.showContentFinished = true;},100);}); //fade out old, fade in new.
 						})
 					} 
 				else	{
@@ -529,11 +532,14 @@ need to be customized on a per-ria basis.
 				dump(" -> $o is not properly defined.  jquery: "+($o instanceof jQuery)+" and length: "+$o.length);
 				$('html, body').animate({scrollTop : 0},'fast',function(){
 					$n.fadeIn(1000);
+					callback();
+ 					setTimeout(function(){_app.ext.quickstart.vars.showContentFinished = true;},100);
 					});
 				}
 			else	{
 				//hhmm  not sure how or why we got here.
 				dump("WARNING! in pageTransition, neither $o nor $n were instances of jQuery.  how odd.",'warn');
+				_app.ext.quickstart.vars.showContentFinished = true;
 				}
 			}, //pageTransition
 
@@ -910,6 +916,8 @@ fallback is to just output the value.
 // -> unshift is used in the case of 'recent' so that the 0 spot always holds the most recent and also so the length can be maintained (kept to a reasonable #).
 // infoObj.back can be set to 0 to skip a URI update (will skip both hash state and popstate.) 
 			showContent : function(pageType,infoObj)	{
+				_app.ext.quickstart.vars.showContentFinsihed = false;
+ 				_app.ext.quickstart.vars.showContentCompleteFired = false;
 //				dump("BEGIN showContent ["+pageType+"]."); dump(infoObj);
 				infoObj = infoObj || {}; //could be empty for a cart or checkout
 /*
@@ -1051,6 +1059,13 @@ for legacy browsers. That means old browsers will use the anchor to retain 'back
 						break;
 	
 					case 'cart':
+						if (app.data.whoAmI) {
+							if (app.data.whoAmI.email) {
+								var s = document.createElement("img");
+								s.src = 'http://track.hubspot.com/v1/event?_n=000000026217&_a=286471&email=' + app.data.whoAmI.email + '&t=' + new Date().getTime();
+								$("body").append(s);
+							}
+						}
 						$new = _app.ext.quickstart.u.showCart(infoObj);
 						break;
 
@@ -1090,12 +1105,22 @@ for legacy browsers. That means old browsers will use the anchor to retain 'back
 				else if(infoObj.performTransition == false)	{
 					}
 				else if(typeof _app.ext.quickstart.pageTransition == 'function')	{
-					_app.ext.quickstart.pageTransition($old,$new,infoObj);
+					var callback = function(){
+ 						var $hiddenpages = $("#mainContentArea > :hidden");
+ 						var L = $hiddenpages.length;
+ 						dump(L);
+ 						dump(L - _app.ext.quickstart.vars.cachedPageCount);
+ 						for(var i = 0; i < L - _app.ext.quickstart.vars.cachedPageCount; i++){
+ 							$($hiddenpages.get(i)).intervaledEmpty().remove();
+ 							}
+ 						};
+ 					_app.ext.quickstart.pageTransition($old,$new,infoObj, callback);
 					}
 				else if($new instanceof jQuery)	{
 //no page transition specified. hide old content, show new. fancy schmancy.
 					$("#mainContentArea :visible:first").hide();
 					$new.show();
+					_app.ext.quickstart.vars.showContentFinished = true;
 					}
 				else	{
 					dump("WARNING! in showContent and no parentID is set for the element being translated.");
@@ -1104,6 +1129,16 @@ for legacy browsers. That means old browsers will use the anchor to retain 'back
 //NOT POSTING THIS MESSAGE AS ASYNC BEHAVIOR IS NOT CURRENTLY QUANTIFIABLE					
 				//Used by the SEO generation utility to signal that a page has finished loading. 
 				//parent.postMessage("renderFinished","*");
+				
+				var hubSpotWidget = '<div><script type="text/javascript">';
+				hubSpotWidget += '(function(d,s,i,r) {';
+				hubSpotWidget += 'var n=d.createElement(s),e=d.getElementsByTagName(s)[0];';
+				hubSpotWidget += "n.id=i;n.src='//js.hs­analytics.net/analytics/'+(Math.ceil(newDate()/r)*r)+'/286471.js';";
+				hubSpotWidget += 'e.parentNode.insertBefore(n, e);';
+				hubSpotWidget +='})(document,"script","hs­analytics",300000);';
+				hubSpotWidget += '</script></div>';
+				$('#mainContentArea').append(hubSpotWidget);
+
 				
 				return false; //always return false so the default action (href) is cancelled. hashstate will address the change.
 				}, //showContent
@@ -2215,7 +2250,7 @@ elasticsearch.size = 50;
 				
 				_app.ext.store_search.u.updateDataOnListElement($('#resultsProductListContainer'),elasticsearch,1);
 //				_app.ext.store_search.calls.appPublicSearch.init(elasticsearch,infoObj);
-				_app.ext.store_search.calls.appPublicSearch.init(elasticsearch,$.extend(true,{},infoObj,{'callback':'handleElasticResults','datapointer':"appPublicSearch|"+JSON.stringify(elasticsearch),'extension':'store_search','templateID':'productListTemplateResults','list':$('#resultsProductListContainer')}));
+				_app.ext.store_search.calls.appPublicSearch.init(elasticsearch,$.extend(true,{},infoObj,{'callback':'handleElasticResults','datapointer':"appPublicSearch|"+JSON.stringify(elasticsearch),'extension':'store_search','templateID':'productListTemplateResultsNoPreview','list':$('#resultsProductListContainer')}));
 				_app.model.dispatchThis();
 				infoObj.state = 'complete'; //needed for handleTemplateEvents.
 				_app.renderFunctions.handleTemplateEvents($page,infoObj);
@@ -2903,6 +2938,9 @@ else	{
 					_app.model.addDispatchToQ(sfo,"immutable");
 					_app.calls.refreshCart.init({},'immutable'); //cart needs to be updated as part of authentication process.
 					_app.model.dispatchThis('immutable');
+					var s = document.createElement("img");
+					s.src = 'http://track.hubspot.com/v1/event?_n=000000026217&_a=286471&email=' + obj.login + '&t=' + new Date().getTime();
+					$("body").append(s);
 					}
 				else	{} //validateForm will handle the error display.
 				return false;

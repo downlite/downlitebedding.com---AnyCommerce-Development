@@ -27,6 +27,38 @@
 
 <base href='' /><!-- leave blank so it works for a local file. updated to / if protocol is not file: -->
 
+<script type="text/javascript">
+var myCreole, baseURL;
+
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+// Replace the UA number below with the UA property to send tracking info to.
+ga('create', 'UA-30870435-1', 'auto');
+ga('require','linker');
+ga('require','ecommerce', 'ecommerce.js');
+ga('set', {
+	// Replace name below
+	'appName' : 'MyAppName',
+	'appID' : 'ZMVC',
+	'appVersion' : '201405'
+	});
+ga('send','pageview');
+ga('send','screenview');
+
+//set base url so images, css, js, etc all load from appropriate location once deployed.
+//baseURL as blank lets loadScript function run off local copy when testing locally.
+if(document.location.protocol == 'file:')	{
+	baseURL  = "";
+	}
+else	{
+	baseURL = document.location.protocol+"//"+document.domain+"/";
+	}
+document.getElementsByTagName('base')[0].href = baseURL;
+</script>
+
 
 <!-- Pinterest Verification -->
 <meta name="p:domain_verify" content="063e7c935fc43b64383ccf015aa06f0b"/>
@@ -41,8 +73,9 @@ if(document.location.protocol != 'file:' && document.domain.indexOf('www') == -1
 
 //ROI Revolution custom tracking code
 
-var _roiq = []; var _gaq = { push: function () { var a; for (a = 0; a < arguments.length; a++) { _roiq.push(arguments[a]) } } };
 /*
+var _roiq = []; var _gaq = { push: function () { var a; for (a = 0; a < arguments.length; a++) { _roiq.push(arguments[a]) } } };
+
 (function () {
 	var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
 	ga.src = ('https:' == document.location.protocol ? 'https://c14323198.ssl.cf2.rackcdn.com/gascript.js' : 'http://c14323198.r98.cf2.rackcdn.com/gascript.js');
@@ -51,6 +84,8 @@ var _roiq = []; var _gaq = { push: function () { var a; for (a = 0; a < argument
 })();
 */
 
+
+/*
 _gaq.push(['_setAccount', 'UA-30870435-1']); //downlitebedding.com = UA-30870435-1    -2 is for .zoovy.com
 _gaq.push(['_trackPageview']);
 
@@ -60,6 +95,7 @@ var google_conversion_format = "2";
 var google_conversion_color = "ffffff";
 var google_conversion_label = "O1ylCOHf-QMQ766S4QM";
 var google_conversion_value = {}; // Will be replaced by subtotal on checkout
+*/
 
 
 var myCreole, baseURL;
@@ -97,6 +133,9 @@ css files should be included before any .js file to ensure they are downloaded i
 <script src="controller.js"></script>
 <script src="model.js"></script>
 
+<!--CUSTOM SCRIPTS GO HERE-->
+<script data-apptimize="embed" type="text/javascript" src="extensions/seo_robots.js"></script>
+
 <!-- ### TODO -> test how the load process goes w/ these in init. if includes is moved, move the new Parse  -->
 <script src="resources/jquery.ui.anyplugins.js"></script>
 <script type="text/javascript" src="includes.js"></script><!-- contains some polyfills and should be loaded early -->
@@ -104,8 +143,10 @@ css files should be included before any .js file to ensure they are downloaded i
 
 <script type="text/javascript">
 $(document).ready(function(){
+	var paramStr = window.location.href.replace(window.location.hash, '').split('?')[1];
+ 	if(!paramStr || paramStr.indexOf('_escaped_fragment_') < 0){
 	window.myApp = new initApp({
-		"release":"201404.astest1",  //increment this with each change. should solve caching issues. format: YYYYMMDDHHMMSS
+		"release":"201404.ai",  //increment this with each change. should solve caching issues. format: YYYYMMDDHHMMSS
 		"_clientid":"zmvc", //zmvc for store app, 1pc for one page checkout.
 		"baseURL":baseURL, //used in non-local mode.
 		"checkoutAuthMode" : "required",//can be passive, active or required
@@ -121,15 +162,46 @@ $(document).ready(function(){
 		});
 	myApp.vars.initComplete();
 	myCreole = new Parse.Simple.Creole();
+	}
 	});
 </script>
 
+<script data-apptimize="minify" type="text/javascript">
+ var _robots = {
+ 	hello : function(botStr){
+ 		_robots._robotGreeting = botStr || true;
+ 		console.log("Bot saying hello: "+botStr);
+ 		return "1.0";
+ 		},
+ 	next : function(){
+ 		//This implementation of _robots.next returns a function that simply blocks with a '100' until the app has been fully instantiated
+ 		_robots.status = function(){
+ 			if(typeof myApp !== 'undefined' && 
+ 				typeof myApp.ext !== 'undefined' && 
+ 				typeof myApp.ext.quickstart !== 'undefined' && 
+ 				typeof myApp.ext.quickstart.vars !== 'undefined' &&
+ 				myApp.ext.quickstart.vars.showContentFinished && myApp.ext.quickstart.vars.showContentCompleteFired){
+ 				return 204;
+ 				}
+ 			else{
+ 				return 100;
+ 				}
+ 			}
+ 		},
+ 	ready : function(){return false;},
+ 	goodbye : function(){
+ 		console.log("Bot saying goodbye: "+botStr);
+ 		}
+ 	}
+</script>
 
 <script type="text/javascript">
-(function(d) {
- var h = ('https:' == d.location.protocol ? 'https://c14323198.ssl' : 'http://c14323198.r98') + '.cf2.rackcdn.com/gascript.js';
-       d.write(unescape("%3Cscript src='" + h + "' type='text/javascript'%3E%3C/script%3E"));
-})(document);
+    (function(d,s,i,r) {
+      if (d.getElementById(i)){return;}
+      var n=d.createElement(s),e=d.getElementsByTagName(s)[0];
+      n.id=i;n.src='//js.hs­analytics.net/analytics/'+(Math.ceil(new Date()/r)*r)+'/286471.js';
+      e.parentNode.insertBefore(n, e);
+    })(document,"script","hs­analytics",300000);
 </script>
 
 
@@ -210,7 +282,7 @@ ANIMATION TESTING
 				<div class="header_cart_menu">					
 					<ul class="cart">
 						<li><a href="#!cart"><img src="images/cart_img.png" alt="" /><span class='cartItemCount'>0</span> item(s)</a></li>
-						<li><a href="#!checkout" class='highlight'>Checkout</a></li>
+						<li><a href="#!cart" class='highlight'>Checkout</a></li>
 					</ul>						
 					<ul class="account">
 						<li ><a href="#!customer/myaccount">Sign In</a></li>
