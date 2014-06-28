@@ -16,3 +16,7 @@
 - _app.ext.store_search.calls.appPublicSearch.init(elasticsearch,$.extend(true,{},infoObj,{'callback':'handleElasticResults','datapointer':"appPublicSearch|"+JSON.stringify(elasticsearch),'extension':'store_search','templateID':'productListTemplateResults','list':$('#resultsProductListContainer')}));
 becomes
 _app.ext.store_search.calls.appPublicSearch.init(elasticsearch,$.extend(true,{},infoObj,{'callback':'handleElasticResults','datapointer':"appPublicSearch|"+JSON.stringify(elasticsearch),'extension':'store_search','templateID':'productListTemplateResultsNoPreview','list':$('#resultsProductListContainer')}));
+
+6. extension.js (in checkout folder):
+- Find execBuyerAddressSelect : function($ele,p)	{
+Add in to the function: $(".checkoutAdressSelectGif").hide();

@@ -402,7 +402,8 @@ the defaultVar on prodName & image is for promotions, which have a 'description'
 	<div data-tlc="bind $var '.bill/address1'; if(is $var --blank;) {{bind $var '.ship/address1'; }}; if (is $var --notblank;) {{apply --append;}};"></div>
 	<div data-tlc="bind $var '.bill/postal'; if(is $var --blank;) {{bind $var '.ship/postal'; }}; if (is $var --notblank;) {{apply --append;}};"></div>
 	<div class="clearfix">
-		<button class="floatRight applyButton" data-app-click="order_create|execBuyerAddressSelect" data-icon="false" data-icon-primary="ui-icon-check">Use This Address</button>
+        <img class="checkoutAdressSelectGif" src="images/please_select_checkoff.gif" />
+        <button class="floatRight applyButton" data-app-click="order_create|execBuyerAddressSelect" data-icon="false" data-icon-primary="ui-icon-check">Use This Address</button>
 		<button class="floatRight marginRight applyButton" data-app-role="addressEditButton" data-app-click="order_create|showBuyerAddressUpdate" data-icon="false" data-icon-primary="ui-icon-pencil">Edit</button>
 	</div>
 </address>

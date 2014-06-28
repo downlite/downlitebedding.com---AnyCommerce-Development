@@ -1544,6 +1544,7 @@ _app.u.handleButtons($chkContainer); //will handle buttons outside any of the fi
 
 //executed when an predefined address (from a buyer who is logged in) is selected.
 			execBuyerAddressSelect : function($ele,p)	{
+				$(".checkoutAdressSelectGif").hide();
 				p.preventDefault();
 				var
 					addressType = $ele.closest('fieldset').data('app-addresstype'), //will be ship or bill.
