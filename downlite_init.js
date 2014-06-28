@@ -189,7 +189,7 @@ myApp.u.appInitComplete = function()	{
 			prev : ".headerTopNavPrev",
 			next : ".headerTopNavNext"
 		});
-		}, 3000);
+		}, 4000);
 	
 		//CONTROLING FUNCTION FOR POSITIONING THE TOP NAV CAROUSEL CORRECTLY AT ANY RESOLUTION
 		$(window).resize(function(){
