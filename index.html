@@ -550,7 +550,7 @@ APP SPECIFIC TEMPLATES
 <!-- used in the 'brands' carousel in the header. -->
 <ul>
 
-<li id='categoryListTemplateThumb' class='pointer'><a data-tlc="bind $var '.'; store_routing#seoanchor --type='category' --seo; apply --attrib='href';"><img data-tlc="bind $var '.%meta.CAT_THUMB'; if (is $var --notblank;) {{ apply --img --media=$var --width=100 --height=35 --bgcolor='#ffffff' --replace;}};" src="blank.gif" class="catThumb" height="35" width="100"></a></li>
+<li id='categoryListTemplateThumb' class='pointer'><a data-tlc="bind $var '.'; store_routing#seoanchor --type='category'; apply --attrib='href';"><img data-tlc="bind $var '.%meta.CAT_THUMB'; if (is $var --notblank;) {{ apply --img --media=$var --width=100 --height=35 --bgcolor='#ffffff' --replace;}};" src="blank.gif" class="catThumb" height="35" width="100"></a></li>
 
 <li id='categoryListTemplateName'><a data-tlc="bind $var '.pretty'; if (is $var --notblank;) {{apply --append;}};" href="#" onclick="showContent('category',{'navcat':$(this).parent().attr('data-catsafeid')}); return false"></a></li>
 
@@ -836,7 +836,7 @@ don't modify the 'data-templateid' unless you are changing template names and up
 <!-- used to display a category within a 'list', usually in the body of a category or the homepage. -->
 <ul>
 <li id='categoryListTemplate' class='categoryBox pointer categoryInnerBox'>
-	<a data-tlc="bind $var '.'; store_routing#seoanchor --type='category' --seo; apply --attrib='href';">
+	<a data-tlc="bind $var '.'; store_routing#seoanchor --type='category'; apply --attrib='href';">
 		<div class="thumbContainer"><img data-tlc="bind $var '.%meta.CAT_THUMB'; if (is $var --notblank){{apply --img --media=$var --width=230 --height=230 --bgcolor='#ffffff' --replace;}};" src="blank.gif" class="catThumb" alt="" height="230" width="230"></div>
 		<div class="catName white2LGray"><span data-tlc="bind $var '.pretty'; quickstart#cattext  --legacy;"></span></div>
 	</a>
@@ -844,14 +844,14 @@ don't modify the 'data-templateid' unless you are changing template names and up
 
 
 <li id='categoryListTemplateRootCats'>
-	<a class="dropdownCategoryTextCont" data-tlc="bind $var '.'; store_routing#seoanchor --type='category' --seo; apply --attrib='href';">
+	<a class="dropdownCategoryTextCont" data-tlc="bind $var '.'; store_routing#seoanchor --type='category'; apply --attrib='href';">
 		<h6 style="margin-top:0; margin-bottom:0;" data-tlc="bind $var '.pretty'; if (is $var --notblank;) {{apply --append;}};"></h6>
     </a>
 	<ul data-tlc="bind $var '.@subcategoryDetail'; controller#loop --templateid='simpleSubcatTemplate'; if (is $var --notblank;) {{apply --append;}};" class="child_menu">
 		<li><div data-tlc="bind $var '.%meta.CAT_THUMB'; store_downlite#showhidearea  --legacy;"><img data-tlc="bind $var '.%meta.CAT_THUMB'; if (is $var --notblank){{apply --img --media=$var --height=155 --width=155 --bgcolor='#ffffff' --replace;}};" alt="" height="155" width="155" /></div></li>
 	</ul>	
 	<!--
-	<a data-tlc="bind $var '.'; store_routing#seoanchor --type='category' --seo; apply --attrib='href';">
+	<a data-tlc="bind $var '.'; store_routing#seoanchor --type='category'; apply --attrib='href';">
 		<div class="thumbContainer"><img data-tlc="bind $var '.%meta.CAT_THUMB'; if (is $var --notblank){{apply --img --media=$var --width=35 --height=35 --bgcolor='#ffffff' --replace;}};" src="blank.gif" class="catThumb" alt="" height="35" width="35"></div>
 		<div class="catName"><span data-tlc="bind $var '.pretty'; quickstart#cattext  --legacy; apply --append;"></span></div>
 	</a>
@@ -948,7 +948,7 @@ container ul should have lineItemProdlist class on it instead of productList
 				<img data-tlc="bind $var '.%attribs.zoovy:prod_thumb'; if(is $var --blank;){{bind $var '.%attribs.zoovy:prod_image1';}}; if(is $var --notblank;){{apply --img --media=$var --width=120 --height=120 --bgcolor='#ffffff' --replace;}};" src="blank.gif" class="prodThumb" alt="" height="120" width="120">
 				<div class="smallButtonList ui-widget ui-widget-header ui-corner-all alignCenter">
 
-<a data-tlc="bind $var '.'; store_routing#seoanchor --type='product' --seo; apply --attrib='href';" class='applyButton' data-text='false' data-icon-primary='ui-icon-cart'>Add To Cart</a>
+<a data-tlc="bind $var '.'; store_routing#seoanchor --type='product'; apply --attrib='href';" class='applyButton' data-text='false' data-icon-primary='ui-icon-cart'>Add To Cart</a>
 <a href='#' data-app-click="quickstart|quickviewShow" class='applyButton' data-text='false' data-icon-primary='ui-icon-info' data-loadstemplate='productTemplate'>Details</a>
 <a href='#' data-app-click="store_crm|productReviewShow" class='applyButton' data-text='false' data-icon-primary='ui-icon-star'>Write Review</a>
 <a href='#' data-app-click="store_crm|productBuyerListRemoveExec" class='applyButton' data-text='false' data-icon-primary='ui-icon-trash'>Remove From List</a>
@@ -997,7 +997,7 @@ SANITY -> if you change the height and width of this image, change the .minimalM
 </li>
 
 <li id="productListTemplateResultsNoPreview" class="loadingBG searchResultsProduct ">
-	<a data-tlc="bind $var '.'; store_routing#seoanchor --type='product' --seo; apply --attrib='href';" class="pointer">
+	<a data-tlc="bind $var '.'; store_routing#seoanchor --type='product'; apply --attrib='href';" class="pointer">
 		<div class="prodThumbContainer">
 			<img data-tlc="bind $var '.images.0'; apply --img --media=$var --width=120 --height=120 --bgcolor='#ffffff' --replace;" src="blank.gif" class="prodThumb" alt="" height="120" width="120" />
 		</div>
@@ -1011,7 +1011,7 @@ SANITY -> if you change the height and width of this image, change the .minimalM
 </li>
 
 <li id='productListHotelFilteredSearch' class='loadingBG searchResultsProduct ' >
-	<a data-tlc="bind $var '.'; store_routing#seoanchor --type='product' --seo; apply --attrib='href';" class="pointer">
+	<a data-tlc="bind $var '.'; store_routing#seoanchor --type='product'; apply --attrib='href';" class="pointer">
 		<div class="prodThumbContainer">
 		<img data-tlc="bind $var '.images.0'; if (is $var --notblank;) {{apply --img --media=$var --width=230 --height=230 --bgcolor='#ffffff' --replace;}};" src="blank.gif" class="prodThumb" alt="" height="230" width="230">
 		</div>
@@ -1020,11 +1020,11 @@ SANITY -> if you change the height and width of this image, change the .minimalM
 
 		<h6 class='value' data-tlc="bind $var '.base_price'; if (is $var --notblank;) {{store_downlite#searchcurrencyprodlist --legacy; apply --append;}};"></h6>
 	</a>
-	<a class="hideInMinimalMode pointer moreDetails" data-tlc="bind $var '.'; store_routing#seoanchor --type='product' --seo; apply --attrib='href';">more details</a>
+	<a class="hideInMinimalMode pointer moreDetails" data-tlc="bind $var '.'; store_routing#seoanchor --type='product'; apply --attrib='href';">more details</a>
 </li>
 
 <li id="simpleSubcatTemplate">
- 	<a data-tlc="bind $var '.'; store_routing#seoanchor --type='category' --seo; apply --attrib='href';">
+ 	<a data-tlc="bind $var '.'; store_routing#seoanchor --type='category'; apply --attrib='href';" >
  		<span data-tlc="bind $var '.pretty'; if (is $var --notblank;) {{apply --append;}};"></span>
  	</a>
 </li>

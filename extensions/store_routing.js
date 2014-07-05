@@ -209,6 +209,8 @@ optional params:
 					
 					case 'category':
 						r = true;
+						dump("args.seo = ");
+						dump(args.seo);
 						var seo = args.seo || data.value.pretty;
 						data.globals.binds[data.globals.focusBind] = _app.ext.store_routing.u.categoryAnchor(data.value.path, seo);
 						break;
@@ -255,6 +257,8 @@ optional params:
 					}
 				},
 			cleanURIComponent : function(str){
+				dump("str = ")
+				dump(str);
 				var component = str.replace(/^\s+|\s+$/g, '');
 				//component = component.replace(' ', '-');
 				component = component.replace(/[^a-zA-Z0-9]+/g, '-');
