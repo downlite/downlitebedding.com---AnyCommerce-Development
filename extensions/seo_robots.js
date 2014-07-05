@@ -27,8 +27,7 @@ var seo_robots = function(_app) {
 		pages : [],
 		pagesLoaded : false,
 		counter : 0,
-		counterReset : 50,
-		robotPresent : false
+		counterReset : 50
 		},
 
 ////////////////////////////////////   CALLBACKS    \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
@@ -45,8 +44,9 @@ var seo_robots = function(_app) {
 				if(_robots._robotGreeting){
 					_app.ext.seo_robots.u.welcomeRobot(_robots._robotGreeting);
 					}
-				_robots.hello = _app.ext.seo_robots.u.welcomeRobot;
-				_robots.goodbye = _app.ext.seo_robots.u.goodbyeRobot;
+				else {
+					_robots.hello = _app.ext.seo_robots.u.welcomeRobot;
+					}
 				//Replace the _robots.next default functionality with some real stuff
 				
 				
@@ -198,20 +198,12 @@ var seo_robots = function(_app) {
 								}
 							}
 						_app.ext.seo_robots.vars.pagesLoaded = true;
-						_app.ext.seo_robots.vars.robotPresent = true;
 						}
 					};
 				_app.model.addDispatchToQ(request, 'immutable');
 				_app.model.dispatchThis('immutable');
 				
 				return "1.0";
-				},
-			goodbyeRobot : function(botStr){
-				dump("Bot saying goodbye: "+botStr);
-				_app.ext.seo_robots.vars.robotPresent = false;
-				},
-			isRobotPresent : function(){
-				return _app.ext.seo_robots.vars.robotPresent;
 				}
 			}, //u [utilities]
 

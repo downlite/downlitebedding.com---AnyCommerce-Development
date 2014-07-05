@@ -12,7 +12,7 @@ myApp.rq.push(['script',0,(document.location.protocol == 'file:') ? myApp.vars.t
 myApp.rq.push(['extension',0,'order_create','extensions/checkout/extension.js']);
 myApp.rq.push(['extension',0,'cco','extensions/cart_checkout_order.js']);
 
-myApp.rq.push(['extension',0,'store_routing','extensions/store_routing.js', 'attachEventHandlers']);
+myApp.rq.push(['extension',0,'store_routing','extensions/store_routing.js']);
 
 myApp.rq.push(['extension',0,'store_downlite','extensions/_store_downlite.js','startExtension']);
 
@@ -37,7 +37,7 @@ myApp.rq.push(['extension',0,'partner_addthis','extensions/partner_addthis.js','
 //myApp.rq.push(['extension',1,'powerReviews_reviews','extensions/partner_powerreviews_reviews.js','startExtension']);
 //myApp.rq.push(['extension',0,'magicToolBox_mzp','extensions/partner_magictoolbox_mzp.js','startExtension']); // (not working yet - ticket in to MTB)
 
-//myApp.rq.push(['extension',0,'google_dynamicremarketing','extensions/partner_google_dynamicremarketing.js']); 
+myApp.rq.push(['extension',0,'google_dynamicremarketing','extensions/partner_google_dynamicremarketing.js']); 
 myApp.rq.push(['extension',0,'prodlist_infinite','extensions/prodlist_infinite.js']);
 myApp.rq.push(['extension',0,'_store_filter','extensions/_store_filter.js','startExtension']);
 myApp.rq.push(['extension',0,'store_account_creation','extensions/store_account_creation.js']);

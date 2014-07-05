@@ -7,9 +7,11 @@
 <title>http://www.downlitebedding.com/</title><!-- this will get populated by the SEO layer -->
 
 <!-- used for optional social media extensions -->
+<meta property="og:title" content="DOWNLITE.com" id='ogTitle' />
 <meta property="og:type" content="" id='ogType' />
 <meta property="og:image" content="" id='ogImage' />
 <meta property="og:description" content="" id='ogDescription' />
+<meta name="google-site-verification" content="uBY4YH_feAicQyog4fc94syBOLfoBRzFymMdZYLGU-Q" />
 
 <meta name=viewport content="width=device-width, initial-scale=1">
 
@@ -25,28 +27,21 @@
 
 <base href='' /><!-- leave blank so it works for a local file. updated to / if protocol is not file: -->
 
-<meta name="description" content="">
-<meta name="google-site-verification" content="uBY4YH_feAicQyog4fc94syBOLfoBRzFymMdZYLGU-Q" />
-
-
-<script data-apptimize="minify" type="text/javascript">
-//var _gaq = _gaq || [];
-//_gaq.push(['_setAccount','UA-30870435-1']);
-//_gaq.push(['_trackPageview']);
+<script type="text/javascript">
+var myCreole, baseURL;
 
 (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
 (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
 m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
 })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
 
-
-
+// Replace the UA number below with the UA property to send tracking info to.
+ga('create', 'UA-30870435-1', 'auto');
 ga('require','linker');
 ga('require','ecommerce', 'ecommerce.js');
-ga('create', 'UA-30870435-1', 'auto', {'allowLinker':true});
 ga('set', {
-
-	'appName' : 'Downlite',
+	// Replace name below
+	'appName' : 'MyAppName',
 	'appID' : 'ZMVC',
 	'appVersion' : '201405'
 	});
@@ -123,40 +118,38 @@ document.getElementsByTagName('base')[0].href = baseURL;
 all css includes need to be after the js that changes the base url.
 css files should be included before any .js file to ensure they are downloaded in parallel
 -->
-<link data-apptimize="embed" href='https://fonts.googleapis.com/css?family=PT+Sans:400,700' rel='stylesheet' type='text/css'>
-<link data-apptimize="embed" rel="stylesheet" type="text/css" href="app-quickstart.css" />
-<link data-apptimize="embed" rel="stylesheet" type="text/css" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.10.2/themes/ui-lightness/jquery-ui.css" />
-<link data-apptimize="embed" rel="stylesheet" type="text/css" href="_dl12_style-20120725.css" />
-<link data-apptimize="embed" rel="stylesheet" type="text/css" href="_downlite_styles.css" />
-<link data-apptimize="embed" rel="shortcut icon" href="http://www.downlitebedding.com/favicon.ico" type="image/icon"> <link rel="icon" href="http://www.downlitebedding.com/favicon.ico" type="image/icon">
+<link href='https://fonts.googleapis.com/css?family=PT+Sans:400,700' rel='stylesheet' type='text/css'>
+<link rel="stylesheet" type="text/css" href="app-quickstart.css" />
+<link rel="stylesheet" type="text/css" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.10.2/themes/ui-lightness/jquery-ui.css" />
+<link rel="stylesheet" type="text/css" href="_dl12_style-20120725.css" />
+<link rel="stylesheet" type="text/css" href="_downlite_styles.css" />
+<link rel="shortcut icon" href="http://www.downlitebedding.com/favicon.ico" type="image/icon"> <link rel="icon" href="http://www.downlitebedding.com/favicon.ico" type="image/icon">
 
 <!-- jquery and jquery ui are pivotal to the functionality of the app. load them early -->
-<script data-apptimize="embed" type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
-<script data-apptimize="embed" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.10.2/jquery-ui.min.js"></script>
-<script data-apptimize="embed" src="controller.js"></script>
-<script data-apptimize="embed" src="model.js"></script>
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.10.2/jquery-ui.min.js"></script>
+<script src="controller.js"></script>
+<script src="model.js"></script>
 
 <!--CUSTOM SCRIPTS GO HERE-->
 <script data-apptimize="embed" type="text/javascript" src="extensions/seo_robots.js"></script>
 
 <!-- ### TODO -> test how the load process goes w/ these in init. if includes is moved, move the new Parse  -->
-<script data-apptimize="embed" type="text/javascript" src="resources/jquery.ui.anyplugins.js"></script>
-<script data-apptimize="embed" type="text/javascript" src="includes.js"></script>
+<script src="resources/jquery.ui.anyplugins.js"></script>
+<script type="text/javascript" src="includes.js"></script><!-- contains some polyfills and should be loaded early -->
 
 
-<script data-apptimize="minify" type="text/javascript">
+<script type="text/javascript">
 $(document).ready(function(){
 	var paramStr = window.location.href.replace(window.location.hash, '').split('?')[1];
  	if(!paramStr || paramStr.indexOf('_escaped_fragment_') < 0){
 	window.myApp = new initApp({
-		"_robotHasGreeted" : false,
 		"release":"201405.ac",  //increment this with each change. should solve caching issues. format: YYYYMMDDHHMMSS
 		"_clientid":"zmvc", //zmvc for store app, 1pc for one page checkout.
 		"baseURL":baseURL, //used in non-local mode.
 		"checkoutAuthMode" : "required",//can be passive, active or required
 		"testURL":"http://www.downlitebedding.com/", //used ONLY if protocol is file: (for testing)
 		"addjQueryPointer" : true,
-		"analyticsPointer" : "ga",
 		"initComplete" : function(){
 			myApp.u.loadScript('downlite_init.js',function(){
 				var progress = myApp.u.loadResources(); //the object returns by loadResources will get updated as the resources finish loading.
@@ -172,32 +165,32 @@ $(document).ready(function(){
 </script>
 
 <script data-apptimize="minify" type="text/javascript">
-var _robots = {
-	hello : function(botStr){
-		_robots._robotGreeting = botStr || true;
-		console.log("Bot saying hello: "+botStr);
-		return "1.0";
-		},
-	next : function(){
-		//This implementation of _robots.next returns a function that simply blocks with a '100' until the app has been fully instantiated
-		_robots.status = function(){
-			if(typeof myApp !== 'undefined' && 
-				typeof myApp.ext !== 'undefined' && 
-				typeof myApp.ext.quickstart !== 'undefined' && 
-				typeof myApp.ext.quickstart.vars !== 'undefined' &&
-				myApp.ext.quickstart.vars.showContentFinished && myApp.ext.quickstart.vars.showContentCompleteFired){
-				return 204;
-				}
-			else{
-				return 100;
-				}
-			}
-		},
-	ready : function(){return false;},
-	goodbye : function(botStr){
-		console.log("Bot saying goodbye: "+botStr);
-		}
-	}
+ var _robots = {
+ 	hello : function(botStr){
+ 		_robots._robotGreeting = botStr || true;
+ 		console.log("Bot saying hello: "+botStr);
+ 		return "1.0";
+ 		},
+ 	next : function(){
+ 		//This implementation of _robots.next returns a function that simply blocks with a '100' until the app has been fully instantiated
+ 		_robots.status = function(){
+ 			if(typeof myApp !== 'undefined' && 
+ 				typeof myApp.ext !== 'undefined' && 
+ 				typeof myApp.ext.quickstart !== 'undefined' && 
+ 				typeof myApp.ext.quickstart.vars !== 'undefined' &&
+ 				myApp.ext.quickstart.vars.showContentFinished && myApp.ext.quickstart.vars.showContentCompleteFired){
+ 				return 204;
+ 				}
+ 			else{
+ 				return 100;
+ 				}
+ 			}
+ 		},
+ 	ready : function(){return false;},
+ 	goodbye : function(){
+ 		console.log("Bot saying goodbye: "+botStr);
+ 		}
+ 	}
 </script>
 
 
