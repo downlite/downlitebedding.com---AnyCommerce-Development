@@ -1544,6 +1544,7 @@ _app.u.handleButtons($chkContainer); //will handle buttons outside any of the fi
 
 //executed when an predefined address (from a buyer who is logged in) is selected.
 			execBuyerAddressSelect : function($ele,p)	{
+				$(".checkoutAdressSelectGif").hide();
 				p.preventDefault();
 				var
 					addressType = $ele.closest('fieldset').data('app-addresstype'), //will be ship or bill.
@@ -1731,13 +1732,7 @@ _app.u.handleButtons($chkContainer); //will handle buttons outside any of the fi
 							'iama':_app.vars.passInDispatchV, 
 							'domain' : (_app.vars.thisSessionIsAdmin ? 'www.'+_app.vars.domain : '')
 							},'immutable');
-						_app.model.dispatchThis('immutable');
-						
-						if (app.data.cartOrderCreate.order.bill.email) {
-							var s = document.createElement("img");
-							s.src = 'http://track.hubspot.com/v1/event?_n=000000026717&_a=286471&email=' + app.data.cartOrderCreate.order.bill.email + '&t=' + new Date().getTime();
-							$("body").append(s);
-						}						
+						_app.model.dispatchThis('immutable');						
 						
 						}
 					else	{

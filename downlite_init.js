@@ -12,7 +12,7 @@ myApp.rq.push(['script',0,(document.location.protocol == 'file:') ? myApp.vars.t
 myApp.rq.push(['extension',0,'order_create','extensions/checkout/extension.js']);
 myApp.rq.push(['extension',0,'cco','extensions/cart_checkout_order.js']);
 
-myApp.rq.push(['extension',0,'store_routing','extensions/store_routing.js']);
+myApp.rq.push(['extension',0,'store_routing','extensions/store_routing.js', 'attachEventHandlers']);
 
 myApp.rq.push(['extension',0,'store_downlite','extensions/_store_downlite.js','startExtension']);
 
@@ -32,6 +32,7 @@ myApp.rq.push(['extension',0,'tracking_hubspot','extensions/tracking_hubspot.js'
 //myApp.rq.push(['extension',1,'google_analytics','extensions/partner_google_analytics.js','startExtension']);
 //myApp.rq.push(['extension',1,'tools_ab_testing','extensions/tools_ab_testing.js']);
 myApp.rq.push(['extension',0,'partner_addthis','extensions/partner_addthis.js','startExtension']);
+myApp.rq.push(['extension',0,'seo_robots','extensions/seo_robots.js']);
 //myApp.rq.push(['extension',1,'resellerratings_survey','extensions/partner_buysafe_guarantee.js','startExtension']); /// !!! needs testing.
 //myApp.rq.push(['extension',1,'buysafe_guarantee','extensions/partner_buysafe_guarantee.js','startExtension']);
 //myApp.rq.push(['extension',1,'powerReviews_reviews','extensions/partner_powerreviews_reviews.js','startExtension']);
@@ -41,7 +42,6 @@ myApp.rq.push(['extension',0,'partner_addthis','extensions/partner_addthis.js','
 myApp.rq.push(['extension',0,'prodlist_infinite','extensions/prodlist_infinite.js']);
 myApp.rq.push(['extension',0,'_store_filter','extensions/_store_filter.js','startExtension']);
 myApp.rq.push(['extension',0,'store_account_creation','extensions/store_account_creation.js']);
-myApp.rq.push(['extension',0,'seo_robots','extensions/seo_robots.js']);
 
 myApp.rq.push(['script',0,'jquery-cycle2/jquery.cycle2.min.js']);
 myApp.rq.push(['script',0,myApp.vars.baseURL+'carouFredSel-6.2.1/jquery.carouFredSel-6.2.1-packed.js']);
@@ -60,23 +60,7 @@ myApp.u.loadScript(myApp.vars.baseURL+'resources/peg-0.8.0.js',function(){
 
 
 	
-	//MINI CART FIX
- 	$('#cartTemplate').on('complete.updateMinicart',function(state,$ele,infoObj)	{
-		var cartid = infoObj.cartid || myApp.model.fetchCartID();
-		var $appView = $('#appView'), cart = myApp.data['cartDetail|'+cartid], itemCount = 0, subtotal = 0, total = 0;
-		dump(" -> cart "+cartid+": "); dump(cart);
-		if(!$.isEmptyObject(cart['@ITEMS']))	{
-			itemCount = cart.sum.items_count || 0;
-			subtotal = cart.sum.items_total;
-			total = cart.sum.order_total;
-			}
-		else	{
-			//cart not in memory yet. use defaults.
-			}
-		$('.cartItemCount',$appView).text(itemCount);
-		$('.cartSubtotal',$appView).text(myApp.u.formatMoney(subtotal,'$',2,false));
-		$('.cartTotal',$appView).text(myApp.u.formatMoney(total,'$',2,false));
-	});
+	
 
 
 //gets executed from app-admin.html as part of controller init process.
@@ -205,7 +189,7 @@ myApp.u.appInitComplete = function()	{
 			prev : ".headerTopNavPrev",
 			next : ".headerTopNavNext"
 		});
-		}, 3000);
+		}, 4000);
 	
 		//CONTROLING FUNCTION FOR POSITIONING THE TOP NAV CAROUSEL CORRECTLY AT ANY RESOLUTION
 		$(window).resize(function(){

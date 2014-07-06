@@ -7,11 +7,9 @@
 <title>http://www.downlitebedding.com/</title><!-- this will get populated by the SEO layer -->
 
 <!-- used for optional social media extensions -->
-<meta property="og:title" content="DOWNLITE.com" id='ogTitle' />
 <meta property="og:type" content="" id='ogType' />
 <meta property="og:image" content="" id='ogImage' />
 <meta property="og:description" content="" id='ogDescription' />
-<meta name="google-site-verification" content="uBY4YH_feAicQyog4fc94syBOLfoBRzFymMdZYLGU-Q" />
 
 <meta name=viewport content="width=device-width, initial-scale=1">
 
@@ -27,21 +25,28 @@
 
 <base href='' /><!-- leave blank so it works for a local file. updated to / if protocol is not file: -->
 
-<script type="text/javascript">
-var myCreole, baseURL;
+<meta name="description" content="">
+<meta name="google-site-verification" content="uBY4YH_feAicQyog4fc94syBOLfoBRzFymMdZYLGU-Q" />
+
+
+<script data-apptimize="minify" type="text/javascript">
+//var _gaq = _gaq || [];
+//_gaq.push(['_setAccount','UA-30870435-1']);
+//_gaq.push(['_trackPageview']);
 
 (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
 (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
 m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
 })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
 
-// Replace the UA number below with the UA property to send tracking info to.
-ga('create', 'UA-30870435-1', 'auto');
+
+
 ga('require','linker');
 ga('require','ecommerce', 'ecommerce.js');
+ga('create', 'UA-30870435-1', 'auto', {'allowLinker':true});
 ga('set', {
-	// Replace name below
-	'appName' : 'MyAppName',
+
+	'appName' : 'Downlite',
 	'appID' : 'ZMVC',
 	'appVersion' : '201405'
 	});
@@ -73,7 +78,6 @@ if(document.location.protocol != 'file:' && document.domain.indexOf('www') == -1
 
 //ROI Revolution custom tracking code
 
-/*
 var _roiq = []; var _gaq = { push: function () { var a; for (a = 0; a < arguments.length; a++) { _roiq.push(arguments[a]) } } };
 
 (function () {
@@ -82,7 +86,6 @@ var _roiq = []; var _gaq = { push: function () { var a; for (a = 0; a < argument
 	var s = document.getElementsByTagName('script')[0];
 	s.parentNode.insertBefore(ga, s);
 })();
-*/
 
 
 /*
@@ -120,38 +123,40 @@ document.getElementsByTagName('base')[0].href = baseURL;
 all css includes need to be after the js that changes the base url.
 css files should be included before any .js file to ensure they are downloaded in parallel
 -->
-<link href='https://fonts.googleapis.com/css?family=PT+Sans:400,700' rel='stylesheet' type='text/css'>
-<link rel="stylesheet" type="text/css" href="app-quickstart.css" />
-<link rel="stylesheet" type="text/css" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.10.2/themes/ui-lightness/jquery-ui.css" />
-<link rel="stylesheet" type="text/css" href="_dl12_style-20120725.css" />
-<link rel="stylesheet" type="text/css" href="_downlite_styles.css" />
-<link rel="shortcut icon" href="http://www.downlitebedding.com/favicon.ico" type="image/icon"> <link rel="icon" href="http://www.downlitebedding.com/favicon.ico" type="image/icon">
+<link data-apptimize="embed" href='https://fonts.googleapis.com/css?family=PT+Sans:400,700' rel='stylesheet' type='text/css'>
+<link data-apptimize="embed" rel="stylesheet" type="text/css" href="app-quickstart.css" />
+<link data-apptimize="embed" rel="stylesheet" type="text/css" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.10.2/themes/ui-lightness/jquery-ui.css" />
+<link data-apptimize="embed" rel="stylesheet" type="text/css" href="_dl12_style-20120725.css" />
+<link data-apptimize="embed" rel="stylesheet" type="text/css" href="_downlite_styles.css" />
+<link data-apptimize="embed" rel="shortcut icon" href="http://www.downlitebedding.com/favicon.ico" type="image/icon"> <link rel="icon" href="http://www.downlitebedding.com/favicon.ico" type="image/icon">
 
 <!-- jquery and jquery ui are pivotal to the functionality of the app. load them early -->
-<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
-<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.10.2/jquery-ui.min.js"></script>
-<script src="controller.js"></script>
-<script src="model.js"></script>
+<script data-apptimize="embed" type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+<script data-apptimize="embed" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.10.2/jquery-ui.min.js"></script>
+<script data-apptimize="embed" src="controller.js"></script>
+<script data-apptimize="embed" src="model.js"></script>
 
 <!--CUSTOM SCRIPTS GO HERE-->
 <script data-apptimize="embed" type="text/javascript" src="extensions/seo_robots.js"></script>
 
 <!-- ### TODO -> test how the load process goes w/ these in init. if includes is moved, move the new Parse  -->
-<script src="resources/jquery.ui.anyplugins.js"></script>
-<script type="text/javascript" src="includes.js"></script><!-- contains some polyfills and should be loaded early -->
+<script data-apptimize="embed" type="text/javascript" src="resources/jquery.ui.anyplugins.js"></script>
+<script data-apptimize="embed" type="text/javascript" src="includes.js"></script>
 
 
-<script type="text/javascript">
+<script data-apptimize="minify" type="text/javascript">
 $(document).ready(function(){
 	var paramStr = window.location.href.replace(window.location.hash, '').split('?')[1];
  	if(!paramStr || paramStr.indexOf('_escaped_fragment_') < 0){
 	window.myApp = new initApp({
-		"release":"201404.aitest1",  //increment this with each change. should solve caching issues. format: YYYYMMDDHHMMSS
+		"_robotHasGreeted" : false,
+		"release":"201405.ad",  //increment this with each change. should solve caching issues. format: YYYYMMDDHHMMSS
 		"_clientid":"zmvc", //zmvc for store app, 1pc for one page checkout.
 		"baseURL":baseURL, //used in non-local mode.
 		"checkoutAuthMode" : "required",//can be passive, active or required
 		"testURL":"http://www.downlitebedding.com/", //used ONLY if protocol is file: (for testing)
 		"addjQueryPointer" : true,
+		"analyticsPointer" : "ga",
 		"initComplete" : function(){
 			myApp.u.loadScript('downlite_init.js',function(){
 				var progress = myApp.u.loadResources(); //the object returns by loadResources will get updated as the resources finish loading.
@@ -167,42 +172,43 @@ $(document).ready(function(){
 </script>
 
 <script data-apptimize="minify" type="text/javascript">
- var _robots = {
- 	hello : function(botStr){
- 		_robots._robotGreeting = botStr || true;
- 		console.log("Bot saying hello: "+botStr);
- 		return "1.0";
- 		},
- 	next : function(){
- 		//This implementation of _robots.next returns a function that simply blocks with a '100' until the app has been fully instantiated
- 		_robots.status = function(){
- 			if(typeof myApp !== 'undefined' && 
- 				typeof myApp.ext !== 'undefined' && 
- 				typeof myApp.ext.quickstart !== 'undefined' && 
- 				typeof myApp.ext.quickstart.vars !== 'undefined' &&
- 				myApp.ext.quickstart.vars.showContentFinished && myApp.ext.quickstart.vars.showContentCompleteFired){
- 				return 204;
- 				}
- 			else{
- 				return 100;
- 				}
- 			}
- 		},
- 	ready : function(){return false;},
- 	goodbye : function(){
- 		console.log("Bot saying goodbye: "+botStr);
- 		}
- 	}
+var _robots = {
+	hello : function(botStr){
+		_robots._robotGreeting = botStr || true;
+		console.log("Bot saying hello: "+botStr);
+		return "1.0";
+		},
+	next : function(){
+		//This implementation of _robots.next returns a function that simply blocks with a '100' until the app has been fully instantiated
+		_robots.status = function(){
+			if(typeof myApp !== 'undefined' && 
+				typeof myApp.ext !== 'undefined' && 
+				typeof myApp.ext.quickstart !== 'undefined' && 
+				typeof myApp.ext.quickstart.vars !== 'undefined' &&
+				myApp.ext.quickstart.vars.showContentFinished && myApp.ext.quickstart.vars.showContentCompleteFired){
+				return 204;
+				}
+			else{
+				return 100;
+				}
+			}
+		},
+	ready : function(){return false;},
+	goodbye : function(botStr){
+		console.log("Bot saying goodbye: "+botStr);
+		}
+	}
 </script>
 
+
+<!--
 <script type="text/javascript">
-    (function(d,s,i,r) {
-      if (d.getElementById(i)){return;}
-      var n=d.createElement(s),e=d.getElementsByTagName(s)[0];
-      n.id=i;n.src='//js.hs­analytics.net/analytics/'+(Math.ceil(new Date()/r)*r)+'/286471.js';
-      e.parentNode.insertBefore(n, e);
-    })(document,"script","hs­analytics",300000);
+(function(d) {
+ var h = ('https:' == d.location.protocol ? 'https://c14323198.ssl' : 'http://c14323198.r98') + '.cf2.rackcdn.com/gascript.js';
+       d.write(unescape("%3Cscript src='" + h + "' type='text/javascript'%3E%3C/script%3E"));
+})(document);
 </script>
+-->
 
 
 
@@ -544,7 +550,7 @@ APP SPECIFIC TEMPLATES
 <!-- used in the 'brands' carousel in the header. -->
 <ul>
 
-<li id='categoryListTemplateThumb' class='pointer'><a data-tlc="bind $var '.'; store_routing#seoanchor --type='category' --seo; apply --attrib='href';"><img data-tlc="bind $var '.%meta.CAT_THUMB'; if (is $var --notblank;) {{ apply --img --media=$var --width=100 --height=35 --bgcolor='#ffffff' --replace;}};" src="blank.gif" class="catThumb" height="35" width="100"></a></li>
+<li id='categoryListTemplateThumb' class='pointer'><a data-tlc="bind $var '.'; store_routing#seoanchor --type='category'; apply --attrib='href';"><img data-tlc="bind $var '.%meta.CAT_THUMB'; if (is $var --notblank;) {{ apply --img --media=$var --width=100 --height=35 --bgcolor='#ffffff' --replace;}};" src="blank.gif" class="catThumb" height="35" width="100"></a></li>
 
 <li id='categoryListTemplateName'><a data-tlc="bind $var '.pretty'; if (is $var --notblank;) {{apply --append;}};" href="#" onclick="showContent('category',{'navcat':$(this).parent().attr('data-catsafeid')}); return false"></a></li>
 
@@ -751,7 +757,7 @@ don't modify the 'data-templateid' unless you are changing template names and up
 <div id="categoryTemplate" class=" categoryTemplate">
 	<span class="displayNone" data-tlc="bind $var '.%page.seo_title'; if(is $var --null) {{bind $var '.%page.head_title';}}; if(is $var --null;){{bind $var '.page_title';}}; if(is $var --blank;){{bind $var '.pretty';}}; apply --attrib='data-seo-title';"></span>
 	<span class="displayNone" data-tlc="bind $var '.%page.meta_description'; if(is $var --null;){{bind $var '.%page.description';}}; if(is $var --null;){{set $var '';}}; apply --attrib='data-seo-desc';"></span>
-	<span class="displayNone" data-tlc="bind $navcat '.navcat'; bind $seo '.pretty'; bind $hash ''; store_routing#categorylink --navcat=$navcat --seo=$seo; apply --attrib='data-routing-hash';"></span>
+	<span class="displayNone" data-tlc="store_routing#seoanchor --seo; apply --attrib='data-routing-hash';"></span>
 	
 	<ul data-tlc="bind $var '.path'; store_navcats#breadcrumb  --templateid='breadcrumbTemplate'  --legacy;" class="breadcrumb clearfix noPadOrMargin fluidList"></ul>
 
@@ -830,7 +836,7 @@ don't modify the 'data-templateid' unless you are changing template names and up
 <!-- used to display a category within a 'list', usually in the body of a category or the homepage. -->
 <ul>
 <li id='categoryListTemplate' class='categoryBox pointer categoryInnerBox'>
-	<a data-tlc="bind $var '.'; store_routing#seoanchor --type='category' --seo; apply --attrib='href';">
+	<a data-tlc="bind $var '.'; store_routing#seoanchor --type='category'; apply --attrib='href';">
 		<div class="thumbContainer"><img data-tlc="bind $var '.%meta.CAT_THUMB'; if (is $var --notblank){{apply --img --media=$var --width=230 --height=230 --bgcolor='#ffffff' --replace;}};" src="blank.gif" class="catThumb" alt="" height="230" width="230"></div>
 		<div class="catName white2LGray"><span data-tlc="bind $var '.pretty'; quickstart#cattext  --legacy;"></span></div>
 	</a>
@@ -838,14 +844,14 @@ don't modify the 'data-templateid' unless you are changing template names and up
 
 
 <li id='categoryListTemplateRootCats'>
-	<a class="dropdownCategoryTextCont" data-tlc="bind $var '.'; store_routing#seoanchor --type='category' --seo; apply --attrib='href';">
+	<a class="dropdownCategoryTextCont" data-tlc="bind $var '.'; store_routing#seoanchor --type='category'; apply --attrib='href';">
 		<h6 style="margin-top:0; margin-bottom:0;" data-tlc="bind $var '.pretty'; if (is $var --notblank;) {{apply --append;}};"></h6>
     </a>
 	<ul data-tlc="bind $var '.@subcategoryDetail'; controller#loop --templateid='simpleSubcatTemplate'; if (is $var --notblank;) {{apply --append;}};" class="child_menu">
 		<li><div data-tlc="bind $var '.%meta.CAT_THUMB'; store_downlite#showhidearea  --legacy;"><img data-tlc="bind $var '.%meta.CAT_THUMB'; if (is $var --notblank){{apply --img --media=$var --height=155 --width=155 --bgcolor='#ffffff' --replace;}};" alt="" height="155" width="155" /></div></li>
 	</ul>	
 	<!--
-	<a data-tlc="bind $var '.'; store_routing#seoanchor --type='category' --seo; apply --attrib='href';">
+	<a data-tlc="bind $var '.'; store_routing#seoanchor --type='category'; apply --attrib='href';">
 		<div class="thumbContainer"><img data-tlc="bind $var '.%meta.CAT_THUMB'; if (is $var --notblank){{apply --img --media=$var --width=35 --height=35 --bgcolor='#ffffff' --replace;}};" src="blank.gif" class="catThumb" alt="" height="35" width="35"></div>
 		<div class="catName"><span data-tlc="bind $var '.pretty'; quickstart#cattext  --legacy; apply --append;"></span></div>
 	</a>
@@ -942,7 +948,7 @@ container ul should have lineItemProdlist class on it instead of productList
 				<img data-tlc="bind $var '.%attribs.zoovy:prod_thumb'; if(is $var --blank;){{bind $var '.%attribs.zoovy:prod_image1';}}; if(is $var --notblank;){{apply --img --media=$var --width=120 --height=120 --bgcolor='#ffffff' --replace;}};" src="blank.gif" class="prodThumb" alt="" height="120" width="120">
 				<div class="smallButtonList ui-widget ui-widget-header ui-corner-all alignCenter">
 
-<a data-tlc="bind $var '.'; store_routing#seoanchor --type='product' --seo; apply --attrib='href';" class='applyButton' data-text='false' data-icon-primary='ui-icon-cart'>Add To Cart</a>
+<a data-tlc="bind $var '.'; store_routing#seoanchor --type='product'; apply --attrib='href';" class='applyButton' data-text='false' data-icon-primary='ui-icon-cart'>Add To Cart</a>
 <a href='#' data-app-click="quickstart|quickviewShow" class='applyButton' data-text='false' data-icon-primary='ui-icon-info' data-loadstemplate='productTemplate'>Details</a>
 <a href='#' data-app-click="store_crm|productReviewShow" class='applyButton' data-text='false' data-icon-primary='ui-icon-star'>Write Review</a>
 <a href='#' data-app-click="store_crm|productBuyerListRemoveExec" class='applyButton' data-text='false' data-icon-primary='ui-icon-trash'>Remove From List</a>
@@ -991,7 +997,7 @@ SANITY -> if you change the height and width of this image, change the .minimalM
 </li>
 
 <li id="productListTemplateResultsNoPreview" class="loadingBG searchResultsProduct ">
-	<a data-tlc="bind $var '.'; store_routing#seoanchor --type='product' --seo; apply --attrib='href';" class="pointer">
+	<a data-tlc="bind $var '.'; store_routing#seoanchor --type='product'; apply --attrib='href';" class="pointer">
 		<div class="prodThumbContainer">
 			<img data-tlc="bind $var '.images.0'; apply --img --media=$var --width=120 --height=120 --bgcolor='#ffffff' --replace;" src="blank.gif" class="prodThumb" alt="" height="120" width="120" />
 		</div>
@@ -1005,7 +1011,7 @@ SANITY -> if you change the height and width of this image, change the .minimalM
 </li>
 
 <li id='productListHotelFilteredSearch' class='loadingBG searchResultsProduct ' >
-	<a data-tlc="bind $var '.'; store_routing#seoanchor --type='product' --seo; apply --attrib='href';" class="pointer">
+	<a data-tlc="bind $var '.'; store_routing#seoanchor --type='product'; apply --attrib='href';" class="pointer">
 		<div class="prodThumbContainer">
 		<img data-tlc="bind $var '.images.0'; if (is $var --notblank;) {{apply --img --media=$var --width=230 --height=230 --bgcolor='#ffffff' --replace;}};" src="blank.gif" class="prodThumb" alt="" height="230" width="230">
 		</div>
@@ -1014,11 +1020,11 @@ SANITY -> if you change the height and width of this image, change the .minimalM
 
 		<h6 class='value' data-tlc="bind $var '.base_price'; if (is $var --notblank;) {{store_downlite#searchcurrencyprodlist --legacy; apply --append;}};"></h6>
 	</a>
-	<a class="hideInMinimalMode pointer moreDetails" data-tlc="bind $var '.'; store_routing#seoanchor --type='product' --seo; apply --attrib='href';">more details</a>
+	<a class="hideInMinimalMode pointer moreDetails" data-tlc="bind $var '.'; store_routing#seoanchor --type='product'; apply --attrib='href';">more details</a>
 </li>
 
 <li id="simpleSubcatTemplate">
- 	<a data-tlc="bind $var '.'; store_routing#seoanchor --type='category' --seo; apply --attrib='href';">
+ 	<a data-tlc="bind $var '.'; store_routing#seoanchor --type='category'; apply --attrib='href';" >
  		<span data-tlc="bind $var '.pretty'; if (is $var --notblank;) {{apply --append;}};"></span>
  	</a>
 </li>
@@ -1053,7 +1059,7 @@ this will likely become more flexible in the future. ###
 
     <span class="displayNone" data-tlc="bind $var '.%attribs.zoovy:seo_title'; if(is $var --blank) {{bind $var '.%attribs.zoovy:prod_name';}}; apply --attrib='data-seo-title';"></span>
     <span class="displayNone" data-tlc="bind $var '.%attribs.zoovy:meta_description'; if(is $var --blank;){{bind $var '.%attribs.zoovy:prod_desc';}}; apply --attrib='data-seo-desc';"></span>
-	<span class="displayNone" data-tlc="bind $pid '.pid'; bind $seo '.%attribs.zoovy:prod_name'; bind $href ''; store_routing#productlink --pid=$pid --seo=$seo; apply --attrib='data-routing-hash';"></span>
+	<span class="displayNone" data-tlc="store_routing#seoanchor --seo; apply --attrib='data-routing-hash';"></span>
 	<div class='breadAndAddThisContainer'>
 
 	<!-- MC's addthis extension -->
@@ -1528,8 +1534,7 @@ if you change these, you should move them above this comment so that when you (o
 					Mason, OH 45040 <br />
 				</p>
 				<p>
-					Phone: 1-866-931-3696. Please note our phones are staffed between 10 AM EST and 4 PM EST. If you are not getting the help you 
-					need or not satisfied with the support - please contact Stefan Hunter, Director of eCommerce (shunter@downlite.com).
+					Phone: 1-866-931-3696. Please note our phones are staffed between 10 AM EST and 4 PM EST, Monday to Friday. If you are not getting the help you need or not satisfied with the support - please contact Stefan Hunter, Director of eCommerce (shunter@downlite.com).
 				</p>
 			</div>
 			
@@ -2039,7 +2044,7 @@ This is the template used both within a dialog and inline, unless implicitly ove
 	<div class="cartZipCodeContainer marginBottom">
 		<label>Zip/Postal Code:
 		<input data-tlc="bind $var '.ship.postal'; if(is $var --blank) {{bind $var '.bill.postal'; }}; apply --select=$var; " size="6" name="ship/postal" value="" maxlength="10" data-app-keypress="quickstart|triggerBlurOnEnter" data-app-blur="cco|cartZipUpdateExec" type="text"></label>
-    </div>
+    	</div>
 
 	<ul data-tlc="order_create#shipmethodsasradiobuttons  --legacy;" class="noPadOrMargin listStyleNone shippingOptionsList" data-bind="useParentData:true; format:shipmethodsasradiobuttons; extension: order_create;" data-app-role="shipMethodsUL"></ul>
 </section>
