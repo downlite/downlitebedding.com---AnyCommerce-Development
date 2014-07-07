@@ -150,7 +150,7 @@ $(document).ready(function(){
  	if(!paramStr || paramStr.indexOf('_escaped_fragment_') < 0){
 	window.myApp = new initApp({
 		"_robotHasGreeted" : false,
-		"release":"201405.aetest4",  //increment this with each change. should solve caching issues. format: YYYYMMDDHHMMSS
+		"release":"201405.aftest1",  //increment this with each change. should solve caching issues. format: YYYYMMDDHHMMSS
 		"_clientid":"zmvc", //zmvc for store app, 1pc for one page checkout.
 		"baseURL":baseURL, //used in non-local mode.
 		"checkoutAuthMode" : "required",//can be passive, active or required
@@ -1136,7 +1136,7 @@ this will likely become more flexible in the future. ###
     <section id='prodViewerReviewSummary' data-tlc="bind $var '.pid'; apply --attrib='data-pid';">
 		<a data-app-click="store_crm|productReviewShow">Review This Item</a>
         <span data-tlc="bind $var '.reviews.average'; if(is $var --notblank) {{format --prepend='review_'; apply --add --class=$var; }};" class="reviewSprite"></span>
-		<!--<span data-tlc="bind $var '.reviews.average'; if(is $var --notblank;) {{ apply --class='review_'; }}; if (is $var --notblank;) {{apply --add --class='review_'; apply --append;}};" class="reviewSprite"></span>
+		<span data-tlc="bind $var '.reviews.average'; if(is $var --notblank;) {{ apply --class='review_'; }}; if (is $var --notblank;) {{apply --add --class='review_'; apply --append;}};" class="reviewSprite"></span>
 	</section>
 
 	
