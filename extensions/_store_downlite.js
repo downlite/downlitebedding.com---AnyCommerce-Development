@@ -369,6 +369,7 @@ var store_downlite = function(_app) {
 				
 				
 				renderyoutubevideos : function($tag,data)	{
+					//dump("renderyoutubevideos data = ");
 					//dump(data);
 					var $context = $tag.parent();
 					var videoIds = data.value.split(',');
