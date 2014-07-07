@@ -757,7 +757,7 @@ don't modify the 'data-templateid' unless you are changing template names and up
 <div id="categoryTemplate" class=" categoryTemplate">
 	<span class="displayNone" data-tlc="bind $var '.%page.seo_title'; if(is $var --null) {{bind $var '.%page.head_title';}}; if(is $var --null;){{bind $var '.page_title';}}; if(is $var --blank;){{bind $var '.pretty';}}; apply --attrib='data-seo-title';"></span>
 	<span class="displayNone" data-tlc="bind $var '.%page.meta_description'; if(is $var --null;){{bind $var '.%page.description';}}; if(is $var --null;){{set $var '';}}; apply --attrib='data-seo-desc';"></span>
-	<span class="displayNone" data-tlc="store_routing#seoanchor --seo; apply --attrib='data-routing-hash';"></span>
+	<span class="displayNone" data-tlc="store_routing#seoanchor; apply --attrib='data-routing-hash';"></span>
 	
 	<ul data-tlc="bind $var '.path'; store_navcats#breadcrumb  --templateid='breadcrumbTemplate'  --legacy;" class="breadcrumb clearfix noPadOrMargin fluidList"></ul>
 
@@ -1059,7 +1059,7 @@ this will likely become more flexible in the future. ###
 
     <span class="displayNone" data-tlc="bind $var '.%attribs.zoovy:seo_title'; if(is $var --blank) {{bind $var '.%attribs.zoovy:prod_name';}}; apply --attrib='data-seo-title';"></span>
     <span class="displayNone" data-tlc="bind $var '.%attribs.zoovy:meta_description'; if(is $var --blank;){{bind $var '.%attribs.zoovy:prod_desc';}}; apply --attrib='data-seo-desc';"></span>
-	<span class="displayNone" data-tlc="store_routing#seoanchor --seo; apply --attrib='data-routing-hash';"></span>
+	<span class="displayNone" data-tlc="store_routing#seoanchor; apply --attrib='data-routing-hash';"></span>
 	<div class='breadAndAddThisContainer'>
 
 	<!-- MC's addthis extension -->
@@ -1134,8 +1134,9 @@ this will likely become more flexible in the future. ###
 	<!--<h5 data-bind='var: product(zoovy:prod_mfgid); format:text; pretext: Mfg ID: ;'></h5>-->
     
     <section id='prodViewerReviewSummary' data-tlc="bind $var '.pid'; apply --attrib='data-pid';">
-		<a data-app-click="store_crm|productReviewShow">Review This Item</a> 
-        <span data-tlc="bind $var '.reviews.average'; if(is $var --notblank;) {{ apply --class='review_'; }}; if (is $var --notblank;) {{apply --add --class='review_'; apply --append;}};" class="reviewSprite"></span>
+		<a data-app-click="store_crm|productReviewShow">Review This Item</a>
+        <span data-tlc="bind $var '.reviews.average'; if(is $var --notblank) {{format --prepend='review_'; apply --add --class=$var; }};" class="reviewSprite"></span>
+		<!--<span data-tlc="bind $var '.reviews.average'; if(is $var --notblank;) {{ apply --class='review_'; }}; if (is $var --notblank;) {{apply --add --class='review_'; apply --append;}};" class="reviewSprite"></span>
 	</section>
 
 	
@@ -1266,8 +1267,10 @@ It's done this way because ID's hard coded into template are bad mojo (templates
 	</div>
 	-->
 	<div class='tabContent' data-anytab-content='aboutDL'>
+		<!--
 		<img data-tlc="bind $var '.%attribs.nonexistent'; if(is $var --blank;) {{bind var '4/480x360_made_in_the_usa_bedding.jpg';}}; if (is $var --notblank;) {{ apply --img --media=$var --width=240 --height=180 --bgcolor='#ffffff' --replace;}};" class="floatLeft prodTabImage" src="blank.gif" height="180" width="240" />
-
+		-->
+		
 		<div class="textBlock"><h2>Made In The USA Bedding</h2><p>DOWNLITE is a fourth generation business that is proudly located in the United States. With a 100 plus years of family history in down bedding we are the largest down and feather processor in the United States. Not only do we manufacturer down bedding for the best department stores, catalogs, hotels and resorts but we also sell our hypoallergenic fillings to other bedding companies. Another branch of DOWNLITE sells our RestAssured Hypoallergenic fillings to other manufacturers including jacket and outerwear companies as well as to luxury furniture manufacturers.</p>
 		<p>Making bedding involves using materials from around the globe - from the filling to the fabric. As such we sometimes get asked to be more specific about what is considered 'Made In The USA'? </p></div>
 	</div>
