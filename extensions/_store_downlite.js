@@ -330,8 +330,7 @@ var store_downlite = function(_app) {
 					$tag.append("<input type='hidden' name='sku' value='"+data.value+"' />");
 					//_app.u.dump($tag);
 					//_app.u.dump(data.value);
-					/*REPLACE THIS ATTRIBUTE WITH NEW CUSTOM ATTRIBUTE WHENEVER IT IS CREATED.*/
-					if(_app.data['appProductGet|'+data.value]['%attribs'] && _app.data['appProductGet|'+data.value]['%attribs']["user:offer_pillow_protector"]){
+					/*REPLACE THIS ATTRIBUTE WITH NEW CUSTOM ATTRIBUTE WHENEVER IT IS CREATED.*/if(_app.data['appProductGet|'+data.value]['%attribs'] && _app.data['appProductGet|'+data.value]['%attribs']["user:offer_pillow_protector"]){
 						//_app.u.dump("user2 is checked. running the modal pop for pillow protectors.");
 						$tag.attr("onSubmit","").unbind("submit");
 						$tag.bind('submit', function(){
@@ -363,13 +362,12 @@ var store_downlite = function(_app) {
 							});
 					}
 					else{
-						_app.u.dump("user2 attribute is not checked for this product. Continuing as normal.");
+						_app.u.dump("user2 is not checked. Continuing as normal.");
 					}
 				}, //END atcForm
 				
 				
 				renderyoutubevideos : function($tag,data)	{
-					//dump("renderyoutubevideos data = ");
 					//dump(data);
 					var $context = $tag.parent();
 					var videoIds = data.value.split(',');
@@ -508,7 +506,7 @@ var store_downlite = function(_app) {
 				
 				priceretailsavingsdifferenceprodlistitem : function($tag,data)	{
 				var o; //output generated.
-				//dump(data);
+				dump(data);
 				var pData = _app.data['appProductGet|'+data.value]['%attribs'];
 	//use original pdata vars for display of price/msrp. use parseInts for savings computation only.
 				var price = Number(pData['zoovy:base_price']);
@@ -544,14 +542,14 @@ var store_downlite = function(_app) {
 					//dump("Begin currency product list format");
 					//dump(data);
 					//dump($tag);
-					//dump("data.value = ");
-					//dump(data.value);
+					dump("data.value = ");
+					dump(data.value);
 					
 					var r = data.value;
 					var b = ".";
 					var position = r.length - 2;
-					//dump("position = ");
-					//dump(position);
+					dump("position = ");
+					dump(position);
 					
 					var r = [r.slice(0, position), b, r.slice(position)].join('');
 					
