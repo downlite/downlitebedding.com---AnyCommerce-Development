@@ -20,7 +20,7 @@
 
 //    !!! ->   TODO: replace 'username' in the line below with the merchants username.     <- !!!
 
-var tracking_hubspot = function() {
+var tracking_hubspot = function(_app) {
 	var theseTemplates = new Array('');
 	var r = {
 	
@@ -38,6 +38,7 @@ var tracking_hubspot = function() {
 			onSuccess : function()	{
 				var r = false; //return false if extension won't load for some reason (account config, dependencies, etc).
 				
+				/*
 				myApp.rq.push(['templateFunction','homepageTemplate',	'onCompletes',	function(infoObj){ app.ext.tracking_hubspot.u.trackPageView(infoObj); }]);
 				myApp.rq.push(['templateFunction','categoryTemplate',	'onCompletes',	function(infoObj){ app.ext.tracking_hubspot.u.trackPageView(infoObj); }]);
 				myApp.rq.push(['templateFunction','productTemplate',	'onCompletes',	function(infoObj){ app.ext.tracking_hubspot.u.trackPageView(infoObj); }]);
@@ -45,6 +46,7 @@ var tracking_hubspot = function() {
 				myApp.rq.push(['templateFunction','customerTemplate',	'onCompletes',	function(infoObj){ app.ext.tracking_hubspot.u.trackPageView(infoObj); }]);
 				myApp.rq.push(['templateFunction','cartTemplate',		'onCompletes',	function(infoObj){ app.ext.tracking_hubspot.u.trackPageView(infoObj); }]);
 				myApp.rq.push(['templateFunction','checkoutTemplate',	'onCompletes',	function(infoObj){ app.ext.tracking_hubspot.u.trackPageView(infoObj); }]);
+				*/
 				
 				
 				
@@ -61,10 +63,30 @@ var tracking_hubspot = function() {
 			},
 		startExtension : {
 			onSuccess : function(){
-				myApp.ext.order_create.checkoutCompletes.push(function(infoObj){ app.ext.tracking_hubspot.u.trackBuyerConvert(infoObj); });
+				
+				_app.templates.homepageTemplate.on('complete',	function(event,$context,infoObj){_app.ext.tracking_hubspot.u.trackPageView(infoObj);});
+				_app.templates.categoryTemplate.on('complete',	function(event,$context,infoObj){_app.ext.tracking_hubspot.u.trackPageView(infoObj);});
+				_app.templates.productTemplate.on('complete',	function(event,$context,infoObj){_app.ext.tracking_hubspot.u.trackPageView(infoObj);});
+				_app.templates.companyTemplate.on('complete',	function(event,$context,infoObj){_app.ext.tracking_hubspot.u.trackPageView(infoObj);});
+				_app.templates.customerTemplate.on('complete',	function(event,$context,infoObj){_app.ext.tracking_hubspot.u.trackPageView(infoObj);});
+				_app.templates.checkoutTemplate.on('complete',	function(event,$context,infoObj){_app.ext.tracking_hubspot.u.trackPageView(infoObj);});
+				_app.templates.cartTemplate.on('complete',		function(event,$context,infoObj){_app.ext.tracking_hubspot.u.trackPageView(infoObj);});
+				_app.templates.searchTemplate.on('complete',	function(event,$context,infoObj){_app.ext.tracking_hubspot.u.trackPageView(infoObj);});
+				
+				/*
+				myApp.rq.push(['templateFunction','homepageTemplate',	'onCompletes',	function(infoObj){ app.ext.tracking_hubspot.u.trackPageView(infoObj); }]);
+				myApp.rq.push(['templateFunction','categoryTemplate',	'onCompletes',	function(infoObj){ app.ext.tracking_hubspot.u.trackPageView(infoObj); }]);
+				myApp.rq.push(['templateFunction','productTemplate',	'onCompletes',	function(infoObj){ app.ext.tracking_hubspot.u.trackPageView(infoObj); }]);
+				myApp.rq.push(['templateFunction','companyTemplate',	'onCompletes',	function(infoObj){ app.ext.tracking_hubspot.u.trackPageView(infoObj); }]);
+				myApp.rq.push(['templateFunction','customerTemplate',	'onCompletes',	function(infoObj){ app.ext.tracking_hubspot.u.trackPageView(infoObj); }]);
+				myApp.rq.push(['templateFunction','cartTemplate',		'onCompletes',	function(infoObj){ app.ext.tracking_hubspot.u.trackPageView(infoObj); }]);
+				myApp.rq.push(['templateFunction','checkoutTemplate',	'onCompletes',	function(infoObj){ app.ext.tracking_hubspot.u.trackPageView(infoObj); }]);
+				*/
+				
+				_app.ext.order_create.checkoutCompletes.push(function(infoObj){ _app.ext.tracking_hubspot.u.trackBuyerConvert(infoObj); });
 				},
 			onError : function(){
-				myApp.u.dump('BEGIN tracking_hubspot.callbacks.startExtension.onError');
+				_app.u.dump('BEGIN tracking_hubspot.callbacks.startExtension.onError');
 				}
 			}
 		}, //callbacks
@@ -96,15 +118,15 @@ var tracking_hubspot = function() {
 				$('#hs-analytics').remove();
 				var n = document.createElement("script"),
 					e = document.getElementsByTagName("script")[0];
-				n.src = (document.location.protocol == "https:" ? "https:" : "http:") + '//js.hs-analytics.net/analytics/'+new Date().getTime()+'/'+app.ext.tracking_hubspot.vars.userID+'.js';
+				n.src = (document.location.protocol == "https:" ? "https:" : "http:") + '//js.hs-analytics.net/analytics/'+new Date().getTime()+'/'+_app.ext.tracking_hubspot.vars.userID+'.js';
 				n.id = "hs-analytics";
 				e.parentNode.insertBefore(n, e);
 				},
 			trackBuyerConvert : function(infoObj){
-				$('body').append('<img src="http://track.hubspot.com/v1/event/?_n=000000026717&_a='+app.ext.tracking_hubspot.vars.userID+'&email='+app.data[infoObj.datapointer].order.bill.email+'&t='+new Date().getTime()+'"/>');
+				$('body').append('<img src="http://track.hubspot.com/v1/event/?_n=000000026717&_a='+_app.ext.tracking_hubspot.vars.userID+'&email='+_app.data[infoObj.datapointer].order.bill.email+'&t='+new Date().getTime()+'"/>');
 				},
 			trackBuyerTarget : function(username){
-				$('body').append('<img src="http://track.hubspot.com/v1/event/?_n=000000026217&_a='+app.ext.tracking_hubspot.vars.userID+'&email='+username+'&t='+new Date().getTime()+'"/>');
+				$('body').append('<img src="http://track.hubspot.com/v1/event/?_n=000000026217&_a='+_app.ext.tracking_hubspot.vars.userID+'&email='+username+'&t='+new Date().getTime()+'"/>');
 				}
 			}, //u [utilities]
 
