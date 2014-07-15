@@ -14,7 +14,8 @@ myApp.rq.push(['extension',0,'cco','extensions/cart_checkout_order.js']);
 
 myApp.rq.push(['extension',0,'store_routing','extensions/store_routing.js', 'attachEventHandlers']);
 
-myApp.rq.push(['extension',0,'store_downlite','extensions/_store_downlite.js','startExtension']);
+myApp.rq.push(['extension',0,'store_tracking','extensions/store_tracking.js', 'attachHandlers']);
+myApp.rq.push(['extension',0,'store_seo','extensions/store_seo.js', 'attachHandlers']);
 
 myApp.rq.push(['extension',0,'store_prodlist','extensions/store_prodlist.js']);
 myApp.rq.push(['extension',0,'store_navcats','extensions/store_navcats.js']);
@@ -24,7 +25,6 @@ myApp.rq.push(['extension',0,'cart_message','extensions/cart_message/extension.j
 myApp.rq.push(['extension',0,'store_crm','extensions/store_crm.js']);
 myApp.rq.push(['extension',0,'quickstart','app-quickstart.js','startMyProgram']);
 
-myApp.rq.push(['extension',0,'tracking_hubspot','extensions/tracking_hubspot.js','startExtension']);
 
 //myApp.rq.push(['extension',0,'entomologist','extensions/entomologist/extension.js']);
 //myApp.rq.push(['extension',0,'tools_animation','extensions/tools_animation.js']);
@@ -33,24 +33,28 @@ myApp.rq.push(['extension',0,'tracking_hubspot','extensions/tracking_hubspot.js'
 //myApp.rq.push(['extension',1,'tools_ab_testing','extensions/tools_ab_testing.js']);
 myApp.rq.push(['extension',0,'partner_addthis','extensions/partner_addthis.js','startExtension']);
 myApp.rq.push(['extension',0,'seo_robots','extensions/seo_robots.js']);
-myApp.rq.push(['extension',0,'store_tracking','extensions/store_tracking.js', 'attachHandlers']);
 //myApp.rq.push(['extension',1,'resellerratings_survey','extensions/partner_buysafe_guarantee.js','startExtension']); /// !!! needs testing.
 //myApp.rq.push(['extension',1,'buysafe_guarantee','extensions/partner_buysafe_guarantee.js','startExtension']);
 //myApp.rq.push(['extension',1,'powerReviews_reviews','extensions/partner_powerreviews_reviews.js','startExtension']);
 //myApp.rq.push(['extension',0,'magicToolBox_mzp','extensions/partner_magictoolbox_mzp.js','startExtension']); // (not working yet - ticket in to MTB)
 
-//myApp.rq.push(['extension',0,'google_dynamicremarketing','extensions/partner_google_dynamicremarketing.js']); 
-myApp.rq.push(['extension',0,'prodlist_infinite','extensions/prodlist_infinite.js']);
-myApp.rq.push(['extension',0,'_store_filter','extensions/_store_filter.js','startExtension']);
-myApp.rq.push(['extension',0,'store_account_creation','extensions/store_account_creation.js']);
-
-myApp.rq.push(['script',0,'jquery-cycle2/jquery.cycle2.min.js']);
-myApp.rq.push(['script',0,myApp.vars.baseURL+'carouFredSel-6.2.1/jquery.carouFredSel-6.2.1-packed.js']);
-
 myApp.rq.push(['script',0,myApp.vars.baseURL+'resources/jquery.showloading-v1.0.jt.js']); //used pretty early in process..
 myApp.rq.push(['script',0,myApp.vars.baseURL+'resources/jquery.ui.anyplugins.js']); //in zero pass because it's essential to rendering and error handling.
 myApp.rq.push(['script',0,myApp.vars.baseURL+'resources/tlc.js']); //in zero pass cuz you can't render a page without it..
 myApp.rq.push(['css',1,myApp.vars.baseURL+'resources/anyplugins.css']);
+
+//CUSTOM EXTENSIONS/SCRIPTS
+myApp.rq.push(['extension',0,'store_downlite','extensions/_store_downlite.js','startExtension']);
+//myApp.rq.push(['extension',0,'google_dynamicremarketing','extensions/partner_google_dynamicremarketing.js']); 
+myApp.rq.push(['extension',0,'prodlist_infinite','extensions/prodlist_infinite.js']);
+myApp.rq.push(['extension',0,'_store_filter','extensions/_store_filter.js','startExtension']);
+myApp.rq.push(['extension',0,'store_account_creation','extensions/store_account_creation.js']);
+myApp.rq.push(['extension',0,'tracking_hubspot','extensions/tracking_hubspot.js','startExtension']);
+
+myApp.rq.push(['script',0,'jquery-cycle2/jquery.cycle2.min.js']);
+myApp.rq.push(['script',0,myApp.vars.baseURL+'carouFredSel-6.2.1/jquery.carouFredSel-6.2.1-packed.js']);
+
+
 
 myApp.rq.push(['script',0,myApp.vars.baseURL+'resources/jsonpath.0.8.0.js']); //used pretty early in process..
 
