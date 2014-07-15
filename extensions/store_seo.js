@@ -37,7 +37,14 @@ var store_seo = function(_app) {
 			onSuccess : function()	{
 				var r = false; 
 				
-				
+				_app.templates.homepageTemplate.on('complete',	function(event,$context,infoObj){_app.ext.store_seo.u.generateMeta(infoObj);});
+				_app.templates.categoryTemplate.on('complete',	function(event,$context,infoObj){_app.ext.store_seo.u.generateMeta(infoObj);});
+				_app.templates.productTemplate.on('complete',	function(event,$context,infoObj){_app.ext.store_seo.u.generateMeta(infoObj);});
+				_app.templates.companyTemplate.on('complete',	function(event,$context,infoObj){_app.ext.store_seo.u.generateMeta(infoObj);});
+				_app.templates.customerTemplate.on('complete',	function(event,$context,infoObj){_app.ext.store_seo.u.generateMeta(infoObj);});
+				_app.templates.checkoutTemplate.on('complete',	function(event,$context,infoObj){_app.ext.store_seo.u.generateMeta(infoObj);});
+				_app.templates.cartTemplate.on('complete',		function(event,$context,infoObj){_app.ext.store_seo.u.generateMeta(infoObj);});
+				_app.templates.searchTemplate.on('complete',	function(event,$context,infoObj){_app.ext.store_seo.u.generateMeta(infoObj);});
 				
 				r = true;
 
@@ -45,20 +52,6 @@ var store_seo = function(_app) {
 				},
 			onError : function()	{
 				_app.u.dump('BEGIN store_seo.callbacks.init.onError');
-				}
-			},
-		attachHandlers : {
-			onSuccess : function(){
-				var callback = function(event, $context, infoObj){dump('--> store_seo complete event'); event.stopPropagation(); if(infoObj){_app.ext.store_seo.u.generateMeta($context, infoObj);}}
-				for(var i in _app.templates){
-					_app.templates[i].on('complete.seo', callback);
-					}
-				$('#appTemplates').children().each(function(){
-					$(this).on('complete.seo', callback);
-					});
-				},
-			onError : function()	{
-				_app.u.dump('BEGIN store_seo.callbacks.attachHandlers.onError');
 				}
 			}
 		}, //callbacks
@@ -87,12 +80,22 @@ var store_seo = function(_app) {
 						//Use Default Title
 						break;
 					case "category" :
-					case "product" :
-						//Grab from the titles and descriptions on the page
-						baseTitle = $('[data-seo-title]', $context).attr('data-seo-title') || '';
-						desc = $('[data-seo-desc]', $context).attr('data-seo-desc') || '';
+						break;
+					case "product" :dump('------generateMeta:product');
+ 						//Grab from the titles and descriptions on the page
+ 						var baseTitle = $('[data-seo-title]', $context).attr('data-seo-title');
+ 						desc = $('[data-seo-desc]', $context).attr('data-seo-desc');
 						break;
 					case "company" :
+					if(infoObj.show == "about") { 
+ 							dump('ABOUT case worked.'); 
+ 							var baseTitle = $('[data-seo-title-about]', $context).attr('data-seo-title-about');
+ 							desc = $('[data-seo-desc-about]', $context).attr('data-seo-desc-about');
+ 						}
+ 						else if(infoObj.show == "contact") {
+ 							var baseTitle = $('[data-seo-title-contact]', $context).attr('data-seo-title-contact');
+ 							desc = $('[data-seo-desc-contact]', $context).attr('data-seo-desc-contact');
+ 						}
 						break;
 					case "customer" :
 						break;
@@ -103,8 +106,6 @@ var store_seo = function(_app) {
 					case "search" :
 						break;
 					default :
-						baseTitle = $('[data-seo-title]', $context).attr('data-seo-title') || '';
-						desc = $('[data-seo-desc]', $context).attr('data-seo-desc') || '';
 						break;
 					}
 				if(!baseTitle){
