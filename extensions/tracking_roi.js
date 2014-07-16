@@ -25,7 +25,6 @@ var tracking_roi = function(_app) {
 	var r = {
 	
 	vars : {
-		userID : "286471"
 		},
 
 ////////////////////////////////////   CALLBACKS    \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
@@ -109,11 +108,11 @@ var tracking_roi = function(_app) {
 				if(typeof ROITracker==="undefined"){window.ROIStorage={};ROIStorage.q=[];window.ga=function(){ROIStorage.q.push(arguments)};window.ga.q=window.ga.q||[];ROIStorage.roiq=[];ROIStorage.analyticsJsNotLoaded=true;window.ga.q.push([function(){var a;ROIStorage.realGa=window.ga;ROIStorage.analyticsJsNotLoaded=false;window.ga=function(){if(typeof arguments[0]==="function"){ROIStorage.realGa(arguments)}else{ROIStorage.q.push(arguments)}};ROIStorage.roiq.push=function(){ROIStorage.realGa.apply(window,arguments)};for(a=0;a<ROIStorage.roiq.length;a+=1){ROIStorage.realGa.call(window,ROIStorage.roiq[a])}}])}ROIStorage.gaq=ROIStorage.gaq||[];var _gaq={push:function(){var a;for(a=0;a<arguments.length;a++){ROIStorage.gaq.push(arguments[a])}}};
 				(function () {
 					var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-					ga.src = ('https:' == document.location.protocol ? 'https://c14323198.ssl.cf2.rackcdn.com/gate.js' : 'http://c14323198.r98.cf2.rackcdn.com/gate.js');
+					ga.src = ('https:' == document.location.protocol ? 'https://c14323198.ssl.cf2.rackcdn.com/gate.test.js' : 'http://c14323198.r98.cf2.rackcdn.com/gate.test.js');
 					ga.id = "roi-analytics";
 					var s = document.getElementsByTagName('script')[0];
 					s.parentNode.insertBefore(ga, s);
-				})();	
+				})();				
 			}
 		}, //u [utilities]
 
