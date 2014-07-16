@@ -73,7 +73,7 @@ var tracking_roi = function(_app) {
 				_app.templates.cartTemplate.on('complete',		function(event,$context,infoObj){_app.ext.tracking_roi.u.trackPageView(infoObj);});
 				_app.templates.searchTemplate.on('complete',	function(event,$context,infoObj){_app.ext.tracking_roi.u.trackPageView(infoObj);});
 				
-				_app.ext.order_create.checkoutCompletes.push(function(infoObj){ _app.ext.tracking_roi.u.trackBuyerConvert(infoObj); });
+				_app.ext.order_create.checkoutCompletes.push(function(infoObj){_app.ext.tracking_roi.u.trackPageView(infoObj); });
 				},
 			onError : function(){
 				_app.u.dump('BEGIN tracking_roi.callbacks.startExtension.onError');
@@ -105,20 +105,17 @@ var tracking_roi = function(_app) {
 //any functions that are recycled should be here.
 		u : {
 			trackPageView : function(infoObj){					
-				$('#hs-analytics').remove();
-				var n = document.createElement("script"),
-					e = document.getElementsByTagName("script")[0];
-				n.src = (document.location.protocol == "https:" ? "https:" : "http:") + '//js.hs-analytics.net/analytics/'+new Date().getTime()+'/'+_app.ext.tracking_roi.vars.userID+'.js';
-				n.id = "hs-analytics";
-				e.parentNode.insertBefore(n, e);
-				},
-			trackBuyerConvert : function(infoObj){
-				$('body').append('<img src="http://track.hubspot.com/v1/event/?_n=000000026717&_a='+_app.ext.tracking_roi.vars.userID+'&email='+_app.data[infoObj.datapointer].order.bill.email+'&t='+new Date().getTime()+'"/>');
-				},
-			trackBuyerTarget : function(username){
-				$('body').append('<img src="http://track.hubspot.com/v1/event/?_n=000000026217&_a='+_app.ext.tracking_roi.vars.userID+'&email='+username+'&t='+new Date().getTime()+'"/>');
-				}
-			}, //u [utilities]
+				$('#roi-analytics').remove();
+				if(typeof ROITracker==="undefined"){window.ROIStorage={};ROIStorage.q=[];window.ga=function(){ROIStorage.q.push(arguments)};window.ga.q=window.ga.q||[];ROIStorage.roiq=[];ROIStorage.analyticsJsNotLoaded=true;window.ga.q.push([function(){var a;ROIStorage.realGa=window.ga;ROIStorage.analyticsJsNotLoaded=false;window.ga=function(){if(typeof arguments[0]==="function"){ROIStorage.realGa(arguments)}else{ROIStorage.q.push(arguments)}};ROIStorage.roiq.push=function(){ROIStorage.realGa.apply(window,arguments)};for(a=0;a<ROIStorage.roiq.length;a+=1){ROIStorage.realGa.call(window,ROIStorage.roiq[a])}}])}ROIStorage.gaq=ROIStorage.gaq||[];var _gaq={push:function(){var a;for(a=0;a<arguments.length;a++){ROIStorage.gaq.push(arguments[a])}}};
+				(function () {
+					var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+					ga.src = ('https:' == document.location.protocol ? 'https://c14323198.ssl.cf2.rackcdn.com/gate.js' : 'http://c14323198.r98.cf2.rackcdn.com/gate.js');
+					ga.id = "roi-analytics";
+					var s = document.getElementsByTagName('script')[0];
+					s.parentNode.insertBefore(ga, s);
+				})();	
+			}
+		}, //u [utilities]
 
 //app-events are added to an element through data-app-event="extensionName|functionName"
 //right now, these are not fully supported, but they will be going forward. 
