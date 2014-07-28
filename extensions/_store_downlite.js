@@ -332,40 +332,12 @@ var store_downlite = function(_app) {
 					//_app.u.dump(data.value);
 					/*REPLACE THIS ATTRIBUTE WITH NEW CUSTOM ATTRIBUTE WHENEVER IT IS CREATED.*/
 					if(_app.data['appProductGet|'+data.value]['%attribs'] && _app.data['appProductGet|'+data.value]['%attribs']["user:offer_pillow_protector"]){
-						//_app.u.dump("user2 is checked. running the modal pop for pillow protectors.");
-						$tag.attr("onSubmit","").unbind("submit");
-						$tag.bind('submit', function(){
-							var $notice = $('<div><h3>Would you like to add a pillow protector to your order?</h3></div>');
-							
-							var $buttonYes = $('<div class="pillowProtPopupButtonYes"><button class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only"><span class="ui-button-text">Let\'s see them</span></button></div>');
-							$buttonYes.bind('click',function(){
-								$notice.dialog('close');
-								var cartShow = "none";
-								_app.ext.store_downlite.u.addItemToCartPillowProtector($tag,cartShow); 
-								showContent('category',{'navcat':'.415-protectors-and-covers.100-pillow-protectors'});
-								return false;
-								});
-								
-							$notice.append($buttonYes);
-							
-							var $buttonNo = $('<div class="pillowProtPopupButtonNo"><button class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only"><span class="ui-button-text">No thanks</span></button></div>');
-							$buttonNo.bind('click',function(){
-								$notice.dialog('close');
-								var cartShow = $tag.data('show');
-								_app.ext.store_downlite.u.addItemToCartPillowProtector($tag,cartShow); 
-								return false;
-								});
-								
-							$notice.append($buttonNo);
-							
-							$notice.dialog({'modal':'true','title':'Add a pillow protector', 'width':400});
-							return false;
-							});
-					}
-					else{
-						_app.u.dump("user2 attribute is not checked for this product. Continuing as normal.");
-					}
-				}, //END atcForm
+						$tag.data('pillow-offer', true);
+ 						}
+ 					else {
+ 						$tag.data('pillow-offer', false);
+ 						}
+ 					}, //END atcForm
 				
 				
 				renderyoutubevideos : function($tag,data)	{
@@ -638,40 +610,8 @@ var store_downlite = function(_app) {
 					//just a banner!
 					}
 				return $banner;
-				},
 				
-			addItemToCartPillowProtector : function($ele,cartType)	{
-				//p.preventDefault();
-				//the buildCartItemAppendObj needs a _cartid param in the form.
-				//_app.u.dump($ele.data('show'));
-				if($("input[name='_cartid']",$ele).length)	{}
-				else{
-					$ele.append("<input type='hidden' name='_cartid' value='"+_app.model.fetchCartID()+"' \/>");
-				}
-
-				var cartObj = _app.ext.store_product.u.buildCartItemAppendObj($ele);
-				if(cartObj)	{
-					_app.ext.cco.calls.cartItemAppend.init(cartObj,{},'immutable');
-					_app.model.destroy('cartDetail|'+cartObj._cartid);
-					_app.calls.cartDetail.init(cartObj._cartid,{'callback':function(rd){
-						if(_app.model.responseHasErrors(rd)){
-							$('#globalMessaging').anymessage({'message':rd});
-							}
-						else	{
-							if((cartType == "modal") || (cartType == "inline")){
-								if(cartType == "inline"){
-									showContent('cart',{'show':$ele.data('show')});
-								}
-								else if(cartType == "modal"){
-									_app.ext.quickstart.u.showCartInModal({'templateID':'cartTemplate'});
-								}
-							}
-							else{}
-						}
-					}},'immutable');
-					_app.model.dispatchThis('immutable');
-				}
-				else	{} //do nothing, the validation handles displaying the errors.
+						
 				}
 				
 				
@@ -688,27 +628,53 @@ var store_downlite = function(_app) {
 		e : {
 				productAdd2Cart : function($ele,p)	{
 				p.preventDefault();
-				//the buildCartItemAppendObj needs a _cartid param in the form.
-				if($("input[name='_cartid']",$ele).length)	{}
-				else	{
-					$ele.append("<input type='hidden' name='_cartid' value='"+_app.model.fetchCartID()+"' \/>");
+				function addItem(show){
+ 					var cartObj = _app.ext.store_product.u.buildCartItemAppendObj($ele);
+ 					if(cartObj)	{
+ 						cartObj["_cartid"] = _app.model.fetchCartID();
+ 						_app.ext.cco.calls.cartItemAppend.init(cartObj,{},'immutable');
+ 						_app.model.destroy('cartDetail|'+cartObj._cartid);
+ 						_app.calls.cartDetail.init(cartObj._cartid,{'callback':function(rd){
+ 							if(_app.model.responseHasErrors(rd)){
+ 								$('#globalMessaging').anymessage({'message':rd});
+ 								}
+ 							else	{
+ 								showContent('cart',{'show':show});
+ 								}
+ 							}},'immutable');
+ 						_app.model.dispatchThis('immutable');
+ 						}
+ 					else	{} //do nothing, the validation handles displaying the errors.
 					}
 
-				var cartObj = _app.ext.store_product.u.buildCartItemAppendObj($ele);
-				if(cartObj)	{
-					_app.ext.cco.calls.cartItemAppend.init(cartObj,{},'immutable');
-					_app.model.destroy('cartDetail|'+cartObj._cartid);
-					_app.calls.cartDetail.init(cartObj._cartid,{'callback':function(rd){
-						if(_app.model.responseHasErrors(rd)){
-							$('#globalMessaging').anymessage({'message':rd});
-							}
-						else	{
-							showContent('cart',{'show':$ele.data('show')});
-							}
-						}},'immutable');
-					_app.model.dispatchThis('immutable');
+				if($ele.data('pillow-offer')){
+ 					var $notice = $('<div><h3>Would you like to add a pillow protector to your order?</h3></div>');
+ 								
+ 					var $buttonYes = $('<div class="pillowProtPopupButtonYes"><button class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only"><span class="ui-button-text">Let\'s see them</span></button></div>');
+ 					$buttonYes.on('click',function(){
+ 						$notice.dialog('close');
+ 						addItem('none');
+ 						showContent('category',{'navcat':'.415-protectors-and-covers.100-pillow-protectors'});
+ 						return false;
+ 						});
+ 						
+ 					$notice.append($buttonYes);
+ 					
+ 					var $buttonNo = $('<div class="pillowProtPopupButtonNo"><button class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only"><span class="ui-button-text">No thanks</span></button></div>');
+ 					$buttonNo.on('click',function(){
+ 						$notice.dialog('close');
+ 						addItem($ele.data('show'));
+ 						return false;
+ 						});
+ 						
+ 					$notice.append($buttonNo);
+ 					
+ 					$notice.dialog({'modal':'true','title':'Add a pillow protector', 'width':400});
+ 					return false;
 					}
-				else	{} //do nothing, the validation handles displaying the errors.
+				else {
+ 					addItem($ele.data('show'));
+ 					}
 				}
 			} //e [app Events]
 		} //r object.

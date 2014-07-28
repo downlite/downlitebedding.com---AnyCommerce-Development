@@ -937,6 +937,8 @@ for legacy browsers. That means old browsers will use the anchor to retain 'back
 				infoObj.back = infoObj.back == 0 ? infoObj.back : -1; //0 is no 'back' action. -1 will add a pushState or hash change.
 				infoObj.performTransition = infoObj.performTransition || _app.ext.quickstart.u.showtransition(infoObj,$old); //specific instances skip transition.
 				infoObj.state = 'init'; //needed for handleTemplateEvents.
+				
+				infoObj.cartid = _app.model.fetchCartID();
 
 //if there's history (all pages loads after first, execute the onDeparts functions.
 //must be run before handleSandHOTW or history[0] will be this infoObj, not the last one.
@@ -2279,7 +2281,7 @@ elasticsearch.size = 50;
 				
 //only create instance once.
 				var $cart = $('#mainContentArea_cart');
-				if($cart.length)	{
+				if($cart.length && $cart.data('cartid') == infoObj.cartid)	{
 					_app.renderFunctions.handleTemplateEvents($cart,infoObj);
 					//the cart has already been rendered.
 					infoObj.trigger = 'refresh';
@@ -2287,7 +2289,6 @@ elasticsearch.size = 50;
 					}
 				else	{
 					infoObj.trigger = 'fetch';
-					infoObj.cartid = _app.model.fetchCartID();
 					$cart = _app.ext.cco.a.getCartAsJqObj(infoObj);
 					_app.renderFunctions.handleTemplateEvents($cart,infoObj);
 					$cart.hide().on('complete',function(){
