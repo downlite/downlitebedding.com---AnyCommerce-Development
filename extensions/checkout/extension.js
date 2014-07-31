@@ -64,13 +64,8 @@ var order_create = function(_app) {
 
 				var r = true; //returns false if checkout can't load due to account config conflict.
 
-				if(typeof _gaq === 'undefined' && !_app.vars.thisSessionIsAdmin)	{
-//					_app.u.dump(" -> _gaq is undefined");
-					$('#globalMessaging').anymessage({'message':'It appears you are not using the Asynchronous version of Google Analytics. It is required to use this checkout.','uiClass':'error','uiIcon':'alert'});
-					r = false;					
-					}
 //messaging for the test harness 'success'.
-				else if(_app.u.getParameterByName('_testharness'))	{
+				if(_app.u.getParameterByName('_testharness'))	{
 					$('#globalMessaging').anymessage({'message':'<strong>Excellent!<\/strong> Your store meets the requirements to use this one page checkout extension.','uiIcon':'circle-check','uiClass':'success'});
 					$('#'+_app.ext.order_create.vars.containerID).append("");
 					r = true;
@@ -218,13 +213,12 @@ _app.ext.order_create.u.handlePanel($context,'chkoutMethodsPay',['empty','transl
 						if(_app.data[_rtag.datapointer]['previous-cartid'])	{
 							dump(" -> removing the cartID from the session.");
 							//first attempt. To get here, the 'cart' has been received by the API and is in memory and being processed. Pull the cart out of memory.
-							//_app.model.removeCartFromSession(_app.data[_rtag.datapointer]['previous-cartid']);
+							_app.model.removeCartFromSession(_app.data[_rtag.datapointer]['previous-cartid']);
 							}
 						}
 //Continue polling till order is finished.
 					setTimeout(function(){
-						var cartid = _app.data[_rtag.datapointer]['status-cartid'];
- 						_app.model.addDispatchToQ({"_cmd":"cartOrderStatus","_cartid":cartid,"_tag":{"datapointer":"cartOrderStatus|"+cartid,"parentID":_rtag.parentID,"attempt" :(_rtag.attempt+1), "callback":"cartOrderStatus","extension":"order_create"}},"mutable");
+						_app.model.addDispatchToQ({"_cmd":"cartOrderStatus","_cartid":_app.data[_rtag.datapointer]['status-cartid'],"_tag":{"datapointer":"cartOrderStatus","parentID":_rtag.parentID,"attempt" :(_rtag.attempt+1), "callback":"cartOrderStatus","extension":"order_create"}},"mutable");
 						dump(" -------------> timeout triggered. dispatch cartOrderStatus. attempt: "+_rtag.attempt);
 						_app.model.dispatchThis("mutable");
 						},2000);
@@ -857,7 +851,7 @@ an existing user gets a list of previous addresses they've used and an option to
 					}
 				}, //chkoutCartSummary
 
-			chkoutMethodsPay : function(formObj,$fieldset)	{
+			chkoutMethodsPay : function(formObj,$fieldset,cartData)	{
 //the renderformat will handle the checked=checked. however some additional payment inputs may need to be added. that happens here.
 				var
 					checkoutMode = $fieldset.closest('form').data('app-checkoutmode'), //='required'
@@ -912,16 +906,27 @@ an existing user gets a list of previous addresses they've used and an option to
 
 //if a payment method has been selected, show the supplemental inputs and check the selected payment.
 //additionally, if the payment is NOT Purchase Order AND the company field is populated, show the reference # input.
-					if(formObj['want/payby'])	{
+//* 201405 -> issue w/ IE8 not recognizing want/payby being set after selecting/changing payment methods.
+					var payby = formObj['want/payby'];
+					if(!payby && _app.u.thisNestedExists("want.payby",cartData))	{
+						payby = cartData.want.payby;
+						}
+					if(payby)	{
 						var
-							$radio = $("input[value='"+formObj['want/payby']+"']",$fieldset),
+							$radio = $("input[value='"+payby+"']",$fieldset),
 							$supplemental = _app.ext.order_create.u.showSupplementalInputs($radio,_app.ext.order_create.vars);
-						
-						$radio.attr('checked','checked');
 						if($supplemental)	{
-							_app.u.dump(" -> payment method ["+formObj['want/payby']+"] HAS supplemental inputs");
+							_app.u.dump(" -> payment method ["+payby+"] HAS supplemental inputs");
 							$radio.closest("[data-app-role='paymentMethodContainer']").append($supplemental);
 							}
+						//the 'loop' renderformat for wallet display only accepts one piece of data. in this case, the walley payment method.
+						//so the 'cart' isn't available to load payby. crappy. a better long term solution would be a tlcFormat 
+						if(payby.indexOf('WALLET') >= 0)	{
+							$radio.prop('checked','checked')
+							}
+						}
+					else	{
+//no payment method selected yet.
 						}
 
 					}
@@ -1113,7 +1118,6 @@ _app.u.handleButtons($chkContainer); //will handle buttons outside any of the fi
 //cartDetail call in a callback to the appCartCreate call because that cartDetail call needs a cart id
 //			passed to it in order to know which cart to fetch (no longer connected to the session!).  This resulted in a bug that multiple
 //			orders placed from the same computer in multiple sessions could have the same cart id attached.  Very bad.
-							_app.model.removeCartFromSession(previousCartid);
 							_app.calls.appCartCreate.init({
 								"datapointer" : "appCartCreate",
 								"callback" : function(rd){
@@ -1133,11 +1137,9 @@ _app.u.handleButtons($chkContainer); //will handle buttons outside any of the fi
 							
 							} //ends the not admin/1pc if.
 		
-						if(typeof _gaq != 'undefined')	{
-							_gaq.push(['_trackEvent','Checkout','App Event','Order created']);
-							_gaq.push(['_trackEvent','Checkout','User Event','Order created ('+orderID+')']);
-							}
-	
+						window[_app.vars.analyticsPointer]('send','event','Checkout','App Event','Order created');
+						window[_app.vars.analyticsPointer]('send','event','Checkout','User Event','Order created ('+orderID+')');
+							
 		
 						if(_app.ext.order_create.checkoutCompletes)	{
 							var L = _app.ext.order_create.checkoutCompletes.length;
@@ -1154,19 +1156,26 @@ _app.u.handleButtons($chkContainer); //will handle buttons outside any of the fi
 // ### TODO -> move this out of here. move it into the appropriate app init.
 						if(_app.vars._clientid == '1pc')	{
 						//GTS for apps is handled in google extension
-							if(typeof window.GoogleTrustedStore)	{
-								delete window.GoogleTrustedStore; //delete existing object or gts conversion won't load right.
+// * 201405 -> IE8 didn't like this delete. changed how the check occurs and the delete itself.
+							if('GoogleTrustedStore' in window)	{
+								try	{
+									delete GoogleTrustedStore; //delete existing object or gts conversion won't load right.
 						//running this will reload the script. the 'span' will be added as part of html:roi
 						//if this isn't run in the time-out, the 'span' w/ order totals won't be added to DOM and this won't track as a conversion.
-								(function() {
-									var scheme = (("https:" == document.location.protocol) ? "https://" : "http://");
-									var gts = document.createElement("script");
-									gts.type = "text/javascript";
-									gts.async = true;
-									gts.src = scheme + "www.googlecommerce.com/trustedstores/gtmp_compiled.js";
-									var s = document.getElementsByTagName("script")[0];
-									s.parentNode.insertBefore(gts, s);
-									})();
+									(function() {
+										var scheme = (("https:" == document.location.protocol) ? "https://" : "http://");
+										var gts = document.createElement("script");
+										gts.type = "text/javascript";
+										gts.async = true;
+										gts.src = scheme + "www.googlecommerce.com/trustedstores/gtmp_compiled.js";
+										var s = document.getElementsByTagName("script")[0];
+										s.parentNode.insertBefore(gts, s);
+										})();
+									}
+								catch(e)	{
+									dump("Was unable to delete GoogleTrustedStore from window. conversion may not track properly. error: ",'warn'); dump(e);
+									}
+
 								}
 							}
 						else if(_app.u.thisIsAnAdminSession())	{
@@ -1546,7 +1555,6 @@ _app.u.handleButtons($chkContainer); //will handle buttons outside any of the fi
 
 //executed when an predefined address (from a buyer who is logged in) is selected.
 			execBuyerAddressSelect : function($ele,p)	{
-				$(".checkoutAdressSelectGif").hide();
 				p.preventDefault();
 				var
 					addressType = $ele.closest('fieldset').data('app-addresstype'), //will be ship or bill.
@@ -1730,7 +1738,7 @@ _app.u.handleButtons($chkContainer); //will handle buttons outside any of the fi
 							'_cmd':'cartOrderCreate',
 							'@PAYMENTS' : payments,
 							'async' : 1,
-							'_tag':{'datapointer':'cartOrderCreate|'+cartid,'callback':'cartOrderStatus','extension':'order_create','parentID':$checkout.attr('id'), 'previous-cartid':cartid},
+							'_tag':{'datapointer':'cartOrderCreate|'+cartid,'callback':'cartOrderStatus','extension':'order_create','parentID':$checkout.attr('id')},
 							'iama':_app.vars.passInDispatchV, 
 							'domain' : (_app.vars.thisSessionIsAdmin ? 'www.'+_app.vars.domain : '')
 							},'immutable');
@@ -1814,9 +1822,7 @@ _app.u.handleButtons($chkContainer); //will handle buttons outside any of the fi
 							_app.model.addDispatchToQ({'_cmd':'cartMessagePush','what':'cart.update','description':'Coupon added','_cartid':cartid},'passive');
 							_app.model.dispatchThis('passive');
 							}
-						if(typeof _gaq != 'undefined')	{
-							_gaq.push(['_trackEvent','Checkout','User Event','Cart updated - coupon added']);
-							}
+						window[_app.vars.analyticsPointer]('send', 'event','Checkout','User Event','Cart updated - coupon added');
 						}
 					}});
 				
@@ -1862,9 +1868,7 @@ _app.u.handleButtons($chkContainer); //will handle buttons outside any of the fi
 							_app.model.addDispatchToQ({'_cmd':'cartMessagePush','what':'cart.update','description':'Giftcard added','_cartid':cartid},'passive');
 							_app.model.dispatchThis('passive');
 							}
-						if(typeof _gaq != 'undefined')	{
-							_gaq.push(['_trackEvent','Checkout','User Event','Cart updated - giftcard added']);
-							}
+						window[_app.vars.analyticsPointer]('send','event','Checkout','User Event','Cart updated - giftcard added');
 						}
 					}});
 				_app.ext.order_create.u.handleCommonPanels($input.closest('form'));
@@ -2071,7 +2075,7 @@ _app.u.handleButtons($chkContainer); //will handle buttons outside any of the fi
 					ao.empty = function(formObj, $fieldset){$(".panelContent",$fieldset).empty()},
 					ao.handleDisplayLogic = function(formObj, $fieldset){
 						if(typeof _app.ext.order_create.panelDisplayLogic[role] === 'function')	{
-							_app.ext.order_create.panelDisplayLogic[role](formObj,$fieldset);
+							_app.ext.order_create.panelDisplayLogic[role](formObj,$fieldset,_app.data['cartDetail|'+cartID]);
 							}
 						else	{
 							$fieldset.anymessage({'message':'In order_create.u.handlePanel, panelDisplayLogic['+role+'] not a function','gMessage':true});
@@ -2234,7 +2238,7 @@ the timeout is added for multiple reasons.
 									$(document.body).append(thisArr.script);
 									}
 								catch(e)	{
-									scriptCallback(thisArr.owner,e)
+									window.scriptCallback(thisArr.owner,e);
 									}
 								},(200 * (i + 1)),arr[i]);
 							}
@@ -2322,7 +2326,8 @@ _app.model.dispatchThis('passive');
 								}
 							else	{
 								//onClick event is added through an app-event. allows for app-specific events.
-								$label.append("<input type='radio' name='want/payby' value='"+pMethods[i].id+"' />");
+								// ** 201405 -> the 'checked=checked' needs to occur here for IE8.
+								$label.append("<input type='radio' name='want/payby' value='"+pMethods[i].id+"' "+(pMethods[i].id == payby ? "checked='checked'" : "")+" />");
 								$label.append((pMethods[i].id == 'CREDIT' ? 'Credit Card' : pMethods[i].pretty));
 								if(pMethods[i].icons)	{
 									$.each(pMethods[i].icons.split(' '),function(){
@@ -2331,7 +2336,6 @@ _app.model.dispatchThis('passive');
 									}
 								$label.appendTo($div); //keep cc text short. use icons
 								}
-							
 							$div.appendTo($r);
 							}
 						}
@@ -2344,7 +2348,7 @@ _app.model.dispatchThis('passive');
 							}
 						}
 					if(payby)	{
-						$("input[value='"+payby+"']",$r).prop('checked','checked').closest('label').addClass('selected ui-state-active')
+						$("input[value='"+payby+"']",$r).closest('label').addClass('selected ui-state-active')
 						}	
 				return $r.children();
 				}
