@@ -341,71 +341,88 @@ var store_downlite = function(_app) {
 				
 				
 				renderyoutubevideos : function($tag,data)	{
-					//dump("renderyoutubevideos data = ");
-					//dump(data);
-					var $context = $tag.parent();
-					var videoIds = data.value.split(',');
-					//dump("videoIds = " + videoIds);
-					var totalVideoAmount = videoIds.length;
-					//dump("totalVideoAmount = " + totalVideoAmount);
-					
-					for(var i=0;i<totalVideoAmount;i++){
-						var $videoContent = $("<div class='prodVideoContainer pointer clearfix youtubeVideo"+i+"' onClick=\"myApp.ext.quickstart.a.showYoutubeInModal($(this).attr('data-videoid'));\">"
-							+ "<div class='vidThumb'><img src='blank.gif' width='120' height='90' /></div>"
-							+"</div>"
-						);
-						$($tag).append($videoContent);
-						$(".youtubeVideo" + i + " div img", $tag).attr('src',"https://i3.ytimg.com/vi/"+videoIds[i]+"/default.jpg");
+					if(data.value != null && data.value != ""){
+						dump("Youtube video content detected for this page. Adding the videos.")
+						//dump("renderyoutubevideos data = ");
+						//dump(data);
+						var $context = $tag.parent();
+						var videoIds = data.value.split(',');
+						//dump("videoIds = " + videoIds);
+						var totalVideoAmount = videoIds.length;
+						//dump("totalVideoAmount = " + totalVideoAmount);
 						
-						$(".youtubeVideo" + i, $tag).attr("data-videoid",videoIds[i]);
-					}
-					
-					if(totalVideoAmount > 1){
+						for(var i=0;i<totalVideoAmount;i++){
+							var $videoContent = $("<div class='prodVideoContainer pointer clearfix youtubeVideo"+i+"' onClick=\"myApp.ext.quickstart.a.showYoutubeInModal($(this).attr('data-videoid'));\">"
+								+ "<div class='vidThumb'><img src='blank.gif' width='120' height='90' /></div>"
+								+"</div>"
+							);
+							$($tag).append($videoContent);
+							$(".youtubeVideo" + i + " div img", $tag).attr('src',"https://i3.ytimg.com/vi/"+videoIds[i]+"/default.jpg");
+							
+							$(".youtubeVideo" + i, $tag).attr("data-videoid",videoIds[i]);
+						}
 						
-						$(".ytVideoCont", $context).carouFredSel({
-							width   : 478,
-							height	: 110,
-							items   : 1,
-							scroll: 1,
-							auto : false,
-							prev : ".prodYTPrev",
-							next : ".prodYTNext"
-						});
-						$(".ytVideoCont", $context).css("left","0");
-						
+						if(totalVideoAmount > 1){
+							
+							$(".ytVideoCont", $context).carouFredSel({
+								width   : 478,
+								height	: 110,
+								items   : 1,
+								scroll: 1,
+								auto : false,
+								prev : ".prodYTPrev",
+								next : ".prodYTNext"
+							});
+							$(".ytVideoCont", $context).css("left","0");
+							
+						}
+						else{
+							$(".prodYTPrev", $context).hide();
+							$(".prodYTNext", $context).hide();
+						}
 					}
 					else{
-						$(".prodYTPrev", $context).hide();
-						$(".prodYTNext", $context).hide();
+						dump("No Youtube video content detected for this page.")
 					}
 				},//renderYouTubeVideos
 				
 				renderyoutubetitles : function($tag,data)	{
-					var $context = $tag.parent();
-					var videoTitles = data.value.split(',');
-					//dump("videoTitles = " + videoTitles);
-					var totalTitlesAmount = videoTitles.length;
-					//dump("totalTitlesAmount = " + totalTitlesAmount);
-					
-					for(var i=0;i<totalTitlesAmount;i++){
-						var $title = $("<h2>"+videoTitles[i]+"</h2>");
-						$(".youtubeVideo" + i, $context).append($title);
+					if(data.value != null && data.value != ""){
+						dump("Youtube video title exists. Rendering it.");
+						var $context = $tag.parent();
+						var videoTitles = data.value.split(',');
+						//dump("videoTitles = " + videoTitles);
+						var totalTitlesAmount = videoTitles.length;
+						//dump("totalTitlesAmount = " + totalTitlesAmount);
+						
+						for(var i=0;i<totalTitlesAmount;i++){
+							var $title = $("<h2>"+videoTitles[i]+"</h2>");
+							$(".youtubeVideo" + i, $context).append($title);
+						}
+					}
+					else{
+						dump("youtube video title does not exist. Do nothing.");
 					}
 					
 				},//renderYouTubeTitles
 				
 				renderyoutubedesc : function($tag,data)	{
-					var $context = $tag.parent();
-					var videoDesc = data.value.split(',');
-					//dump("videoDesc = " + videoDesc);
-					var totalDescAmount = videoDesc.length;
-					//dump("totalDescAmount = " + totalDescAmount);
-					
-					for(var i=0;i<totalDescAmount;i++){
-						var $desc = $("<p>"+videoDesc[i]+"</p>");
-						$(".youtubeVideo" + i, $context).append($desc);
+					if(data.value != null && data.value != ""){
+						dump("Youtube video description exists. Rendering it.");
+						var $context = $tag.parent();
+						var videoDesc = data.value.split(',');
+						//dump("videoDesc = " + videoDesc);
+						var totalDescAmount = videoDesc.length;
+						//dump("totalDescAmount = " + totalDescAmount);
+						
+						for(var i=0;i<totalDescAmount;i++){
+							var $desc = $("<p>"+videoDesc[i]+"</p>");
+							$(".youtubeVideo" + i, $context).append($desc);
+						}
 					}
-					
+					else{
+						dump("youtube video description does not exist. Do nothing.");
+					}
 				},//renderYouTubeDesc
 				
 				showhidearea : function($tag,data)	{
