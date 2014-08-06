@@ -78,6 +78,10 @@ function controller(_app)	{
 			_app.u.dump = function(){};
 			}
 		
+		if (_app.u.getParameterByName('apidomain')) {
+			// ?apidomain=www.domain.com will set jqurl to an alternate source (ex: testing)
+			_app.vars.jqurl = "https://"+_app.u.getParameterByName('apidomain')+":9000/jsonapi/";
+			}
 
 		//needs to be after the 'flush' above, or there's no way to flush the cart/session.
 		_app.vars.carts = _app.model.dpsGet('app','carts'); //get existing carts. Does NOT create one if none exists. that's app-specific behavior. Don't default to a blank array either. fetchCartID checks memory first.
@@ -339,7 +343,7 @@ If the data is not there, or there's no data to be retrieved (a Set, for instanc
 				_app.u.dump("Attempting to log in");
 				obj._cmd = 'authAdminLogin';
 				obj.authid = obj.password;
-				obj.authtype = 'password';
+				obj.authtype = obj.authtype || 'password';
 // ** 201402 -> md5 is no longer used for login. 
 /*				if(obj.authtype == 'md5')	{
 					_app.vars.userid = obj.userid.toLowerCase();	 // important!
@@ -1172,12 +1176,7 @@ will load everything in the RQ will a pass <= [pass]. so pass of 10 loads everyt
 		// because the model will execute it for all extensions once the controller is initiated.
 		// so instead, a generic callback function is added to track if the extension is done loading.
 		// which is why the extension is added to the extension Q (above).
-					if(_app.rq[i][3]){
-						_app.u.loadScript(_app.rq[i][3],callback,(_app.rq[i]));
-						}
-					else {
-						callback(_app.rq[i]);
-						}
+					_app.u.loadScript(_app.rq[i][3],callback,(_app.rq[i]));
 					_app.rq.splice(i, 1); //remove from old array to avoid dupes.
 					}
 				else	{
@@ -2976,9 +2975,6 @@ return $r;
 
 							}
 						$ele.trigger(infoObj.state,[$ele,infoObj]);
-						if(infoObj.state == 'complete'){
-							_app.ext.quickstart.vars.showContentCompleteFired = true;
-							}
 						}
 					else	{
 						$ele.anymessage({'message':'_app.templateFunctions.handleTemplateEvents, infoObj.state ['+infoObj.state+'] is not valid. Only init, complete and depart are acceptable values.','gMessage':true});

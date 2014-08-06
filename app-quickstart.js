@@ -2215,7 +2215,8 @@ effects the display of the nav buttons only. should be run just after the handle
 					elasticsearch = _app.ext.store_search.u.buildElasticRaw({
 					   "filter":{
 						  "and" : [
-							 {"term":{"tags":infoObj.tag}},
+							 {"term":{"tags":decodeURIComponent(infoObj.tag)}},
+							 {"has_child":{"type":"sku","query": {"range":{"available":{"gte":1}}}}} //only return item w/ inventory
 							 ]
 						  }});
 					}
@@ -3064,14 +3065,10 @@ else	{
 
 			productAdd2Cart : function($ele,p)	{
 				p.preventDefault();
-				//the buildCartItemAppendObj needs a _cartid param in the form.
-				if($("input[name='_cartid']",$ele).length)	{}
-				else	{
-					$ele.append("<input type='hidden' name='_cartid' value='"+_app.model.fetchCartID()+"' \/>");
-					}
-
+				
 				var cartObj = _app.ext.store_product.u.buildCartItemAppendObj($ele);
 				if(cartObj)	{
+					cartObj["_cartid"] = _app.model.fetchCartID();
 					_app.ext.cco.calls.cartItemAppend.init(cartObj,{},'immutable');
 					_app.model.destroy('cartDetail|'+cartObj._cartid);
 					_app.calls.cartDetail.init(cartObj._cartid,{'callback':function(rd){

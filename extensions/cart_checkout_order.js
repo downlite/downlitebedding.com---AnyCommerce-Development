@@ -318,15 +318,15 @@ left them be to provide guidance later.
 					}
 				}
 			},
-
+//  TODO - deprecate google checkout
 		proceedToGoogleCheckout : {
 			onSuccess : function(tagObj)	{
 				_app.u.dump('BEGIN cco.callbacks.proceedToGoogleCheckout.onSuccess');
 //code for tracking the google wallet payment in GA as a conversion.
-				_gaq.push(function() {
-					var pageTracker = _gaq._getAsyncTracker();
-					setUrchinInputCode(pageTracker);
-					});
+				//_gaq.push(function() {
+				//	var pageTracker = _gaq._getAsyncTracker();
+				//	setUrchinInputCode(pageTracker);
+				//	});
 //getUrchinFieldValue is defined in the ga_post.js file. It's included as part of the google analytics plugin.
 				document.location= _app.data[tagObj.datapointer].URL +"&analyticsdata="+getUrchinFieldValue();
 				},
@@ -551,11 +551,13 @@ left them be to provide guidance later.
 				var r = false;
 				if(!$.isEmptyObject(cartObj))	{
 					var items = cartObj['@ITEMS'] || [], L = items.length;
+					//generally, we want to direct traffic to the non-secure domain first. That option will also be better for a native app which has no document.domain
+					var domain = (_app.vars.domain) ? 'http://'+_app.vars.domain : document.location.protocol+'//'+document.domain
 					if(L)	{r = ''}; //set to blank so += doesn't start with undefined. 
 					for(var i = 0; i < L; i += 1)	{
 						//if the first character of a sku is a %, then it's a coupon, not a product.
 						if(items[i].sku.charAt(0) != '%')	{
-							r +=  (_app.vars._clientid == '1pc') ? "http://"+_app.vars.sdomain+"/product/"+items[i].sku+"/\n" : "http://"+_app.vars.sdomain+"#!product/"+items[i].sku+"/\n";
+							r +=  (_app.vars._clientid == '1pc') ? domain+"/product/"+items[i].sku+"/\n" : domain+"#!product/"+items[i].sku+"/\n";
 							}
 						}
 					}
@@ -1113,17 +1115,17 @@ in a reorder, that data needs to be converted to the variations format required 
 //will tell you which third party checkouts are available. does NOT look to see if merchant has them enabled,
 // just checks to see if the cart contents would even allow it.
 //currently, there is only a google field for disabling their checkout, but this is likely to change.
-			which3PCAreAvailable :	function(cart){	
+			which3PCAreAvailable :	function(cartID){
 	//				_app.u.dump("BEGIN control.u.which3PCAreAvailable");
 					var obj = {};
-					if(cart)	{
+					if(_app.data['cartDetail|'+cartID])	{
 		//by default, everything is available
 						obj = {
 							paypalec : true,
 							amazonpayment : true,
 							googlecheckout : true
 							}
-						var items = cart['@ITEMS'], L = items.length;
+						var items = _app.data['cartDetail|'+cartID]['@ITEMS'], L = items.length;
 						for(var i = 0; i < L; i += 1)	{
 							if(items[i]['%attribs'] && items[i]['%attribs']['gc:blocked'])	{obj.googlecheckout = false}
 							if(items[i]['%attribs'] && items[i]['%attribs']['paypalec:blocked'])	{obj.paypalec = false}
@@ -1243,7 +1245,7 @@ in a reorder, that data needs to be converted to the variations format required 
 			googlecheckoutbutton : function($tag,data)	{
 	
 				if(zGlobals.checkoutSettings.googleCheckoutMerchantId && (window._gat && window._gat._getTracker))	{
-					var payObj = _app.ext.cco.u.which3PCAreAvailable(data.value); //certain product can be flagged to disable googlecheckout as a payment option.
+					var payObj = _app.ext.cco.u.which3PCAreAvailable(); //certain product can be flagged to disable googlecheckout as a payment option.
 					if(payObj.googlecheckout)	{
 					$tag.append("<img height=43 width=160 id='googleCheckoutButton' border=0 src='"+(document.location.protocol === 'https:' ? 'https:' : 'http:')+"//checkout.google.com/buttons/checkout.gif?merchant_id="+zGlobals.checkoutSettings.googleCheckoutMerchantId+"&w=160&h=43&style=trans&variant=text&loc=en_US' \/>").one('click',function(){
 						_app.ext.cco.calls.cartGoogleCheckoutURL.init();
