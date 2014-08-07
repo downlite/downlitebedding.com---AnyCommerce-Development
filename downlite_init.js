@@ -327,8 +327,8 @@ myApp.router.appendInit({
 			}
 			
 		if(document.location.hash)	{	
-			dump("document.location.hash = ");
-			dump(document.location.hash);
+			//dump("document.location.hash = ");
+			//dump(document.location.hash);
 			if(document.location.hash == "#company?show=about"){
 				myApp.ext.quickstart.a.showContent('company', {"show":"about"});
 			}
