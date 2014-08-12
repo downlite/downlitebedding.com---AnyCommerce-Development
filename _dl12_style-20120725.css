@@ -1475,7 +1475,7 @@ h1	{color:#665d51; font-size:18px; font-weight:bold; margin:0 0 12px 0; padding:
 	*margin:10px 0 0 0;
 }
 .searchBox {
-    float: left;
+    float: right;
     height: 38px;
     margin: 3px 0 0;
 }
@@ -1528,7 +1528,7 @@ h1	{color:#665d51; font-size:18px; font-weight:bold; margin:0 0 12px 0; padding:
     width: 14px;
 }
 .index_ads {
-    float: right;
+    float: left;
     height: 43px;
 /*    width: 579px;*/
 }

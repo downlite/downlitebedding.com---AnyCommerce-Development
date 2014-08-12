@@ -356,13 +356,24 @@ div.cartItemImgCont{
     border-right: 10px solid #FFFFFF;
     display: table-cell;
     float: left;
-    height: auto;
+    height: 550px;
     padding: 15px 15px 0 25px;
     width: 270px;
 	margin-top: 5px;
  }
- 
- .blog2, .blog3 {
+ .blog1Cont, .blog2Cont, .blog3Cont{
+	width: 330px;
+	float:left;
+	position: relative;
+}
+.blog1Link, .blog2Link, .blog3Link{
+	bottom: 0;
+    font-size: 15px;
+    font-style: italic;
+    position: absolute;
+    right: 37px;
+}
+ .blog2Link, .blog3Link {
  	margin-left: 15px;
  }
  
@@ -896,7 +907,7 @@ div.cartItemImgCont{
 		float: left;
 	}
 	.savings{
-		lear: left;
+		clear: left;
 		float: left;
 		margin-left: 0;
 	}

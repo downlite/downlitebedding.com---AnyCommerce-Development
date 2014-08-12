@@ -81,6 +81,70 @@ var store_downlite = function(_app) {
 					_app.templates.homepageTemplate.on('complete.downlite',function(event,$context,infoObj){
 						 _app.ext.store_downlite.u.loadBanners();
 						 _app.ext.store_downlite.u.startHomepageSlideshow();
+						 
+						 // BEGIN BLOG CONTENT CODE
+						var fileref=document.createElement('script');
+						fileref.setAttribute("type","text/javascript");
+						fileref.setAttribute("src", "rssfeeds.js");
+						if (typeof fileref!="undefined"){
+						  document.getElementsByTagName("head")[0].appendChild(fileref);
+						}
+							
+						var blogs = function(){
+							dump('Begin adding blogs to homepage.')
+							$('.blog1').rssfeed((document.location.protocol == 'https:' ? 'https:' : 'http:')+'//blog.downlitebedding.com/rss.xml', {
+								limit: 1,
+								header: false,
+								snippet: false,
+								date: false,
+								showerror: true,
+								errormsg: 'Sorry, the blog couldn\'t be loaded right now due to a technical problem. Please try again later.'
+							});
+							$('.blog2').rssfeed((document.location.protocol == 'https:' ? 'https:' : 'http:')+'//blog.downlitebedding.com/rss.xml', {
+								limit: 1,
+								offset: 2,
+								header: false,
+								snippet: false,
+								date: false
+							});
+							$('.blog3').rssfeed((document.location.protocol == 'https:' ? 'https:' : 'http:')+'//blog.downlitebedding.com/rss.xml', {
+								limit: 1,
+								offset: 3,
+								header: false,
+								snippet: false,
+								date: false
+							});
+						}
+						
+						var URL = window.location.toString();
+						//dump("URL is " + URL);
+						//dump("URL.indexOf('https') > 0 = ");
+						//dump(URL.indexOf('https'));
+						if(URL.indexOf('https') >= 0){
+							//dump("https in url detected. Hiding blogs");
+							$(".hpBlogCont").hide();
+						}
+						else{
+							setTimeout(blogs, 2000);
+						}
+						
+						setTimeout( function()	{
+							var blogOneLink = $(".blog1 a:first").attr('href');
+							dump("blogOneLink =");
+							dump(blogOneLink);
+							$(".blog1Link").attr('href',blogOneLink);
+							
+							var blogTwoLink = $(".blog2 a:first").attr('href');
+							dump("blogTwoLink =");
+							dump(blogTwoLink);
+							$(".blog2Link").attr('href',blogTwoLink);
+							
+							var blogThreeLink = $(".blog3 a:first").attr('href');
+							dump("blogThreeLink =");
+							dump(blogThreeLink);
+							$(".blog3Link").attr('href',blogThreeLink);
+						}, 2500);
+						// END BLOG CONTENT CODE
 					 });
 					 
 					 _app.templates.productTemplate.on('complete.downlite',function(event,$context,infoObj){
@@ -148,54 +212,6 @@ var store_downlite = function(_app) {
 					//if there is any functionality required for this extension to load, put it here. such as a check for async google, the FB object, etc. return false if dependencies are not present. don't check for other extensions.
 					r = true;
 					
-					_app.templates.homepageTemplate.on('complete.downlite',function(event,$context,infoObj){
-						
-						// BEGIN BLOG CONTENT CODE
-						var fileref=document.createElement('script');
-						fileref.setAttribute("type","text/javascript");
-						fileref.setAttribute("src", "rssfeeds.js");
-						if (typeof fileref!="undefined"){
-						  document.getElementsByTagName("head")[0].appendChild(fileref);
-						}
-							
-						var blogs = function(){
-							dump('Begin adding blogs to homepage.')
-							$('.blog1').rssfeed((document.location.protocol == 'https:' ? 'https:' : 'http:')+'//blog.downlitebedding.com/rss.xml', {
-								limit: 1,
-								header: false,
-								snippet: false,
-								date: false,
-								showerror: true,
-								errormsg: 'Sorry, the blog couldn\'t be loaded right now due to a technical problem. Please try again later.'
-							});
-							$('.blog2').rssfeed((document.location.protocol == 'https:' ? 'https:' : 'http:')+'//blog.downlitebedding.com/rss.xml', {
-								limit: 1,
-								offset: 2,
-								header: false,
-								snippet: false,
-								date: false
-							});
-							$('.blog3').rssfeed((document.location.protocol == 'https:' ? 'https:' : 'http:')+'//blog.downlitebedding.com/rss.xml', {
-								limit: 1,
-								offset: 3,
-								header: false,
-								snippet: false,
-								date: false
-							});
-						}
-						var URL = window.location.toString();
-						//dump("URL is " + URL);
-						//dump("URL.indexOf('https') > 0 = ");
-						//dump(URL.indexOf('https'));
-						if(URL.indexOf('https') >= 0){
-							//dump("https in url detected. Hiding blogs");
-							$(".hpBlogCont").hide();
-						}
-						else{
-							setTimeout(blogs, 2000);
-						}
-						// END BLOG CONTENT CODE
-					});
 					/*
 					_app.templates.cartTemplate.on('complete.downlite',function(event,$context,infoObj){
 						 setTimeout(_app.ext.store_downlite.a.hideShippingOptionWeight(), 1000);
