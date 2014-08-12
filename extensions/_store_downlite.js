@@ -83,6 +83,50 @@ var store_downlite = function(_app) {
 						 _app.ext.store_downlite.u.startHomepageSlideshow();
 					 });
 					 
+					 _app.templates.productTemplate.on('complete.downlite',function(event,$context,infoObj){
+						 //**SELECTOR EVENT FOR A PRODUCT VARIATION URL**
+						var URL = window.location.toString();
+						if(URL.indexOf('sku=') >= 0){
+							dump("URL has a product variation SKU in it. Starting URL variation configuring.");
+							var URLArray = URL.split('sku=');
+							URLArray = URLArray[1].split(/[:\/]/);
+							//dump("URLArray = ");
+							//dump(URLArray);
+							var varCount = URLArray.length;
+							varCount = varCount;
+							//dump(varCount);
+							
+							for(i = 1; i < varCount; i++){
+								var variationItem = URLArray[i];
+								variationItem = variationItem.match(/.{1,2}/g);
+								//dump("variationItem = ");
+								//dump(variationItem);
+								var variation = variationItem[0];
+								var variationValue = variationItem[1];
+								//dump("variation = ");
+								//dump(variation);
+								//dump("variationValue = ");
+								//dump(variationValue);							
+								var $variationElement = $(".variation_" + variation + " select");
+								//dump("$variationElement = ");
+								//dump($variationElement);
+								$variationElement.val(variationValue);
+							}
+						}
+						else{
+							dump("No URL variation SKU detected. Continuing on as normal.");
+						}
+						//**END PRODUCT VARIATION URL EVENT**
+						
+						//**UPDATE PRICE ON OPTION CHANGE**
+						/*
+						var product = _app.data['appProductGet|'+infoObj.pid]['@variations'];
+						dump("Product attributes = ");
+						dump(product);
+						*/
+						//**END PRICE UPDATE ON OPTION CHANGE**
+					 });
+					 
 					 //FUNCTIONALITY FOR 
 					 $( window ).resize(function() {
 						var resolution = $(window).width();

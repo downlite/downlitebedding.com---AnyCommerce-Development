@@ -133,39 +133,7 @@ _app.router.appendHash({'type':'match','route':'modal/product/{{pid}}*','callbac
 					dump(hash);
 					_app.ext.store_routing.u.setHash(hash);
 					
-					//**SELECTOR EVENT FOR A PRODUCT VARIATION URL**
-					var URL = window.location.toString();
-					if(URL.indexOf('sku=') >= 0){
-						dump("URL has a product variation SKU in it. Starting URL variation configuring.");
-						var URLArray = URL.split('sku=');
-					    URLArray = URLArray[1].split(/[:\/]/);
-						//dump("URLArray = ");
-						//dump(URLArray);
-						var varCount = URLArray.length;
-						varCount = varCount;
-						//dump(varCount);
-						
-						for(i = 1; i < varCount; i++){
-							var variationItem = URLArray[i];
-							variationItem = variationItem.match(/.{1,2}/g);
-							//dump("variationItem = ");
-							//dump(variationItem);
-							var variation = variationItem[0];
-							var variationValue = variationItem[1];
-							//dump("variation = ");
-							//dump(variation);
-							//dump("variationValue = ");
-							//dump(variationValue);							
-							var $variationElement = $(".variation_" + variation + " select");
-							//dump("$variationElement = ");
-							//dump($variationElement);
-							$variationElement.val(variationValue);
-						}
-					}
-					else{
-						dump("No URL variation SKU detected. Continuing on as normal.");
-					}
-					//**END PRODUCT VARIATION URL EVENT**
+					
 				});
 				
 				_app.templates.companyTemplate.on('complete.routing', function(event, $context, infoObj){_app.ext.store_routing.u.setHash("#!/company/"+infoObj.show+"/");});
