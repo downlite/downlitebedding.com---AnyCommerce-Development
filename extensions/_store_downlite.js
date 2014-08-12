@@ -130,18 +130,10 @@ var store_downlite = function(_app) {
 						
 						setTimeout( function()	{
 							var blogOneLink = $(".blog1 a:first").attr('href');
-							dump("blogOneLink =");
-							dump(blogOneLink);
 							$(".blog1Link").attr('href',blogOneLink);
-							
 							var blogTwoLink = $(".blog2 a:first").attr('href');
-							dump("blogTwoLink =");
-							dump(blogTwoLink);
 							$(".blog2Link").attr('href',blogTwoLink);
-							
 							var blogThreeLink = $(".blog3 a:first").attr('href');
-							dump("blogThreeLink =");
-							dump(blogThreeLink);
 							$(".blog3Link").attr('href',blogThreeLink);
 						}, 2500);
 						// END BLOG CONTENT CODE
