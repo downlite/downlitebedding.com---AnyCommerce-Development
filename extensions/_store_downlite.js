@@ -744,10 +744,6 @@ var store_downlite = function(_app) {
 				else {
  					addItem($ele.data('show'));
  					}
-				},
-				
-				showBuyerAddressDelete : function($ele,p)	{
-					dump("showBuyerAddressDelete works.");
 				}
 			} //e [app Events]
 		} //r object.
