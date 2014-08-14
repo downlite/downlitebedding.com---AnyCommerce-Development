@@ -937,6 +937,8 @@ for legacy browsers. That means old browsers will use the anchor to retain 'back
 				infoObj.back = infoObj.back == 0 ? infoObj.back : -1; //0 is no 'back' action. -1 will add a pushState or hash change.
 				infoObj.performTransition = infoObj.performTransition || _app.ext.quickstart.u.showtransition(infoObj,$old); //specific instances skip transition.
 				infoObj.state = 'init'; //needed for handleTemplateEvents.
+				
+				infoObj.cartid = _app.model.fetchCartID();
 
 //if there's history (all pages loads after first, execute the onDeparts functions.
 //must be run before handleSandHOTW or history[0] will be this infoObj, not the last one.
@@ -2213,7 +2215,8 @@ effects the display of the nav buttons only. should be run just after the handle
 					elasticsearch = _app.ext.store_search.u.buildElasticRaw({
 					   "filter":{
 						  "and" : [
-							 {"term":{"tags":infoObj.tag}},
+							 {"term":{"tags":decodeURIComponent(infoObj.tag)}},
+							 {"has_child":{"type":"sku","query": {"range":{"available":{"gte":1}}}}} //only return item w/ inventory
 							 ]
 						  }});
 					}
@@ -2277,7 +2280,6 @@ elasticsearch.size = 50;
 				infoObj.trigger = '';
 				infoObj.state = 'init'; //needed for handleTemplateEvents.
 				
-				infoObj.cartid = _app.model.fetchCartID();
 //only create instance once.
 				var $cart = $('#mainContentArea_cart');
 				if($cart.length && $cart.data('cartid') == infoObj.cartid)	{
@@ -3063,14 +3065,10 @@ else	{
 
 			productAdd2Cart : function($ele,p)	{
 				p.preventDefault();
-				//the buildCartItemAppendObj needs a _cartid param in the form.
-				if($("input[name='_cartid']",$ele).length)	{}
-				else	{
-					$ele.append("<input type='hidden' name='_cartid' value='"+_app.model.fetchCartID()+"' \/>");
-					}
-
+				
 				var cartObj = _app.ext.store_product.u.buildCartItemAppendObj($ele);
 				if(cartObj)	{
+					cartObj["_cartid"] = _app.model.fetchCartID();
 					_app.ext.cco.calls.cartItemAppend.init(cartObj,{},'immutable');
 					_app.model.destroy('cartDetail|'+cartObj._cartid);
 					_app.calls.cartDetail.init(cartObj._cartid,{'callback':function(rd){
@@ -3149,6 +3147,18 @@ else	{
 					});
 				return false;
 				}, //showBuyerAddressAdd
+				
+			showBuyerAddressRemove : function($ele, p){
+				p.preventDefault();
+				_app.ext.store_crm.u.showAddressRemoveModal({
+					"addressID" : $ele.closest("address").data('_id'),
+					'addressType' : $ele.closest("[data-app-addresstype]").data('app-addresstype')
+					},function(){
+					$('#mainContentArea_customer').empty().remove(); //kill so it gets regenerated. this a good idea?
+					showContent('customer',{'show':'myaccount'});
+					});
+				return false;
+				},
 
 			quickviewShow : function($ele,p)	{
 				p.preventDefault();

@@ -9,6 +9,8 @@ myApp.rq.push(['script',0,(document.location.protocol == 'file:') ? myApp.vars.t
 	myApp.vars.jqurl = (document.location.protocol === 'file:') ? myApp.vars.testURL+'jsonapi/' : '/jsonapi/';
 	}]); //The config.js is dynamically generated.
 	
+myApp.rq.push(['extension',0,'tracking_roi','extensions/tracking_roi.js','startExtension']);
+	
 myApp.rq.push(['extension',0,'order_create','extensions/checkout/extension.js']);
 myApp.rq.push(['extension',0,'cco','extensions/cart_checkout_order.js']);
 
@@ -31,7 +33,7 @@ myApp.rq.push(['extension',0,'tracking_hubspot','extensions/tracking_hubspot.js'
 
 //myApp.rq.push(['extension',1,'google_analytics','extensions/partner_google_analytics.js','startExtension']);
 //myApp.rq.push(['extension',1,'tools_ab_testing','extensions/tools_ab_testing.js']);
-myApp.rq.push(['extension',1,'google_adwords','extensions/partner_google_adwords.js','startExtension']);
+//myApp.rq.push(['extension',1,'google_adwords','extensions/partner_google_adwords.js','startExtension']);
 myApp.rq.push(['extension',0,'partner_addthis','extensions/partner_addthis.js','startExtension']);
 myApp.rq.push(['extension',0,'seo_robots','extensions/seo_robots.js']);
 myApp.rq.push(['extension',0,'store_tracking','extensions/store_tracking.js', 'attachHandlers']);
@@ -107,25 +109,25 @@ myApp.u.appInitComplete = function()	{
 	myApp.ext.order_create.checkoutCompletes.push(function(vars,$checkout){
 		dump(" -> begin checkoutCOmpletes code: "); dump(vars);
 		
-		var cartContentsAsLinks = myApp.ext.cco.u.cartContentsAsLinks(myApp.data[vars.datapointer].order);
-		dump(" -> cartContentsAsLinks: "+cartContentsAsLinks);
-		
+		var cartContentsAsLinks = encodeURIComponent(myApp.ext.cco.u.cartContentsAsLinks(myApp.data[vars.datapointer].order));
+	
 //append this to 
 		$("[data-app-role='thirdPartyContainer']",$checkout).append("<h2>What next?</h2><div class='ocm ocmFacebookComment pointer zlink marginBottom checkoutSprite  '></div><div class='ocm ocmTwitterComment pointer zlink marginBottom checkoutSprit ' ></div><div class='ocm ocmContinue pointer zlink marginBottom checkoutSprite'></div>");
 		$('.ocmTwitterComment',$checkout).click(function(){
 			window.open('http://twitter.com/home?status='+cartContentsAsLinks,'twitter');
-			_gaq.push(['_trackEvent','Checkout','User Event','Tweeted about order']);
+			window[myApp.vars.analyticsPointer]('send', 'event','Checkout','User Event','Tweeted about order');
 			});
 		//the fb code only works if an appID is set, so don't show banner if not present.				
 		if(myApp.u.thisNestedExists("zGlobals.thirdParty.facebook.appId") && typeof FB == 'object')	{
 			$('.ocmFacebookComment',$checkout).click(function(){
 				myApp.ext.quickstart.thirdParty.fb.postToWall(cartContentsAsLinks);
 				_gaq.push(['_trackEvent','Checkout','User Event','FB message about order']);
+				window[myApp.vars.analyticsPointer]('send', 'event','Checkout','User Event','FB message about order');
 				});
 			}
 		else	{$('.ocmFacebookComment').hide()}
 		});
-
+	
 	//Cart Messaging Responses.
 	myApp.cmr.push(['chat.join',function(message){
 		if(message.FROM == 'ADMIN')	{
@@ -136,12 +138,7 @@ myApp.u.appInitComplete = function()	{
 			$('.hide4ActiveChat',$ui).hide();
 			}
 		}]);
-	
-	//the default behavior for an itemAppend is to show the chat portion of the dialog. that's an undesired behavior from the buyer perspective (chat only works if admin is actively listening).
-	myApp.cmr.push(['cart.itemAppend',function(message,$context)	{
-		$("[data-app-role='messageHistory']",$context).append("<p class='cart_item_append'>"+message.FROM+" has added item "+message.sku+" to the cart.<\/p>");
-		}]);
-	
+
 	myApp.cmr.push(['goto',function(message,$context){
 		var $history = $("[data-app-role='messageHistory']",$context);
 		$P = $("<P>")
@@ -310,6 +307,13 @@ myApp.router.appendInit({
 		g = g || {};
 		if(g.uriParams.seoRequest){
 			showContent(g.uriParams.pageType, g.uriParams);
+			}
+		else if (g.uriParams.marketplace){
+			var infoObj = {"pid":g.uriParams.product};
+			if(g.uriParams.sku){
+				infoObj.sku = g.uriParams.sku;
+				}
+			showContent("product",infoObj);
 			}
 		else if(document.location.hash)	{	
 			myApp.u.dump('triggering handleHash');

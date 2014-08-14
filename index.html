@@ -21,7 +21,8 @@
 <meta name="description" content="">
 <meta name="google-site-verification" content="uBY4YH_feAicQyog4fc94syBOLfoBRzFymMdZYLGU-Q" />
 
-<script type="text/javascript">
+<!--
+<script type="text/javascript" id ="roianalytics">
 	if(typeof ROITracker==="undefined"){window.ROIStorage={};ROIStorage.q=[];window.ga=function(){ROIStorage.q.push(arguments)};window.ga.q=window.ga.q||[];ROIStorage.roiq=[];ROIStorage.analyticsJsNotLoaded=true;window.ga.q.push([function(){var a;ROIStorage.realGa=window.ga;ROIStorage.analyticsJsNotLoaded=false;window.ga=function(){if(typeof arguments[0]==="function"){ROIStorage.realGa(arguments)}else{ROIStorage.q.push(arguments)}};ROIStorage.roiq.push=function(){ROIStorage.realGa.apply(window,arguments)};for(a=0;a<ROIStorage.roiq.length;a+=1){ROIStorage.realGa.call(window,ROIStorage.roiq[a])}}])}ROIStorage.gaq=ROIStorage.gaq||[];var _gaq={push:function(){var a;for(a=0;a<arguments.length;a++){ROIStorage.gaq.push(arguments[a])}}};
 	(function () {
 		var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
@@ -30,6 +31,7 @@
 		s.parentNode.insertBefore(ga, s);
 	})();
 </script>
+-->
 
 <!--
 <script type="text/javascript">
@@ -166,7 +168,7 @@ $(document).ready(function(){
  	if(!paramStr || paramStr.indexOf('_escaped_fragment_') < 0){
 	window.myApp = new initApp({
 		"_robotHasGreeted" : false,
-		"release":"201405.ao",  //increment this with each change. should solve caching issues. format: YYYYMMDDHHMMSS
+		"release":"201405.aotest2",  //increment this with each change. should solve caching issues. format: YYYYMMDDHHMMSS
 		"_clientid":"zmvc", //zmvc for store app, 1pc for one page checkout.
 		"baseURL":baseURL, //used in non-local mode.
 		"checkoutAuthMode" : "required",//can be passive, active or required
@@ -292,16 +294,16 @@ ANIMATION TESTING
 				</div>
 
 				<div class="header_cart_menu">					
-					<ul class="cart">
-						<li><a href="#!cart"><img src="images/cart_img.png" alt="" /><span class='cartItemCount'>0</span> item(s)</a></li>
-						<li><a href="#!cart" class='highlight'>Checkout</a></li>
-					</ul>						
 					<ul class="account">
 						<li ><a href="#!customer/myaccount">Sign In</a></li>
 						<li><a href="#!company/about">About Us</a></li>
 						<li ><a href="#!customer/createaccount">New Account</a></li>
 						<li><a href="#!company/faq">Help</a></li>
 					</ul>
+					<ul class="cart">
+						<li><a href="#!cart"><img src="images/cart_img.png" alt="" /><span class='cartItemCount'>0</span> item(s)</a></li>
+						<li><a href="#!cart" class='highlight'>Checkout</a></li>
+					</ul>						
 				</div>
 			</div><!-- /.header_bottom -->
 
@@ -319,21 +321,16 @@ ANIMATION TESTING
 			</div>
 			
 			<div class="index">
+				<div class="index_ads shopbybrand-btn">
+					<span class="hotelFindBlurb">Stayed at a hotel and loved the bedding?<br/>Find out what you slept on!</span>
+					<a class="hotelFinder pointer" href="#!category/.hotels/%Hotels">Hotel Bedding Finder</a>
+				</div>
+				<div class="dotted"></div>
 				<div class="searchBox">
-					
-                    
                     <form id="headerSearchFrm" name="headerSearchFrm" action="#" class="productSearchForm" method="get" data-app-submit='quickstart|searchFormSubmit'>
                         <input type='search' name='KEYWORDS' class="productSearchKeyword handleDefault secondary box" placeholder="Enter Search Term..." id="searchBar"/>
                         <input class="search pointer" type="submit" value="Search" id="searchButton" />
                     </form>
-		    		
-                    
-                    
-				</div>
-				<div class="dotted"></div>
-				<div class="index_ads shopbybrand-btn">
-					<span class="hotelFindBlurb">Stayed at a hotel and loved the bedding?<br/>Find out what you slept on!</span>
-					<a class="hotelFinder pointer" href="#!category/.hotels/%Hotels">Hotel Bedding Finder</a>
 				</div>
 			</div>
 		</div><!-- /header -->
@@ -735,9 +732,18 @@ the homepageTemplate template is loaded into mainContentArea by default when the
 <div class="hpBlogCont">
     <h3 class="rssTitle">Our Latest Blog Entries</h3>
      <div class="rssfeed">
-        <div class="blog1"></div>
-        <div class="blog2"></div>
-        <div class="blog3"></div>
+        <div class="blog1Cont">
+			<div class="blog1"></div>
+			<a class="blog1Link" target="_blank">Click here to read more about this blog</a>
+		</div>
+		<div class="blog2Cont">
+			<div class="blog2"></div>
+			<a class="blog2Link" target="_blank">Click here to read more about this blog</a>
+		</div>
+		<div class="blog3Cont">
+			<div class="blog3"></div>
+			<a class="blog3Link" target="_blank">Click here to read more about this blog</a>
+		</div>
      </div>
 </div>
  
@@ -2288,6 +2294,7 @@ The 'data-action' attribute is used to assign an onclick.
 
 <address id="billAddressTemplate" class="ui-widget ui-widget-content ui-corner-all marginBottom ">
 	<button data-app-click="quickstart|showBuyerAddressUpdate" class="floatRight applyButton">edit</button>
+	<button data-app-click="quickstart|showBuyerAddressRemove" class="floatRight applyButton">remove</button>
 	<div class="addressFullname">
 		<span data-tlc="bind $var '.bill/firstname'; if (is $var --notblank;) {{apply --append;}};" title="first name"></span>
 		<span data-tlc="bind $var '.bill/lastname'; if (is $var --notblank;) {{apply --append;}};" title="last name"></span>
@@ -2308,6 +2315,7 @@ The 'data-action' attribute is used to assign an onclick.
 <!-- used in the my account area -->
 <address id="shipAddressTemplate" class="ui-widget ui-widget-content ui-corner-all marginBottom ">
 	<button data-app-click="quickstart|showBuyerAddressUpdate" class="floatRight applyButton">edit</button>
+	<button data-app-click="quickstart|showBuyerAddressRemove" class="floatRight applyButton">remove</button>
 	<div class="addressFullname">
 		<span data-tlc="bind $var '.ship/firstname'; if (is $var --notblank;) {{apply --append;}};" title="first name"></span>
 		<span data-tlc="bind $var '.ship/lastname'; if (is $var --notblank;) {{apply --append;}};" title="last name"></span>

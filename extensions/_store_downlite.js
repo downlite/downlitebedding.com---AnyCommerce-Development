@@ -81,32 +81,8 @@ var store_downlite = function(_app) {
 					_app.templates.homepageTemplate.on('complete.downlite',function(event,$context,infoObj){
 						 _app.ext.store_downlite.u.loadBanners();
 						 _app.ext.store_downlite.u.startHomepageSlideshow();
-					 });
-					 
-					 //FUNCTIONALITY FOR 
-					 $( window ).resize(function() {
-						var resolution = $(window).width();
-						if (resolution >= 990){
-							$("#brandCategories").show();
-						}
-						else if ((resolution < 990) && (resolution >= 800)) {
-							$("#brandCategories").show();
-						}
-						else if ((resolution < 800) && (resolution >= 640)) {
-							if($(".showHideBrandsMobile").data("brandsState") == false){
-								$("#brandCategories").hide();
-							}
-							else if($(".showHideBrandsMobile").data("brandsState") == true){
-								$("#brandCategories").show();
-							}
-						}
-					 });
-					//if there is any functionality required for this extension to load, put it here. such as a check for async google, the FB object, etc. return false if dependencies are not present. don't check for other extensions.
-					r = true;
-					
-					_app.templates.homepageTemplate.on('complete.downlite',function(event,$context,infoObj){
-						
-						// BEGIN BLOG CONTENT CODE
+						 
+						 // BEGIN BLOG CONTENT CODE
 						var fileref=document.createElement('script');
 						fileref.setAttribute("type","text/javascript");
 						fileref.setAttribute("src", "rssfeeds.js");
@@ -139,6 +115,7 @@ var store_downlite = function(_app) {
 								date: false
 							});
 						}
+						
 						var URL = window.location.toString();
 						//dump("URL is " + URL);
 						//dump("URL.indexOf('https') > 0 = ");
@@ -150,8 +127,83 @@ var store_downlite = function(_app) {
 						else{
 							setTimeout(blogs, 2000);
 						}
+						
+						setTimeout( function()	{
+							var blogOneLink = $(".blog1 a:first").attr('href');
+							$(".blog1Link").attr('href',blogOneLink);
+							var blogTwoLink = $(".blog2 a:first").attr('href');
+							$(".blog2Link").attr('href',blogTwoLink);
+							var blogThreeLink = $(".blog3 a:first").attr('href');
+							$(".blog3Link").attr('href',blogThreeLink);
+						}, 2500);
 						// END BLOG CONTENT CODE
-					});
+					 });
+					 
+					 _app.templates.productTemplate.on('complete.downlite',function(event,$context,infoObj){
+						 //**SELECTOR EVENT FOR A PRODUCT VARIATION URL**
+						var URL = window.location.toString();
+						if(URL.indexOf('sku=') >= 0){
+							dump("URL has a product variation SKU in it. Starting URL variation configuring.");
+							var URLArray = URL.split('sku=');
+							URLArray = URLArray[1].split(/[:\/]/);
+							//dump("URLArray = ");
+							//dump(URLArray);
+							var varCount = URLArray.length;
+							varCount = varCount;
+							//dump(varCount);
+							
+							for(i = 1; i < varCount; i++){
+								var variationItem = URLArray[i];
+								variationItem = variationItem.match(/.{1,2}/g);
+								//dump("variationItem = ");
+								//dump(variationItem);
+								var variation = variationItem[0];
+								var variationValue = variationItem[1];
+								//dump("variation = ");
+								//dump(variation);
+								//dump("variationValue = ");
+								//dump(variationValue);							
+								var $variationElement = $(".variation_" + variation + " select");
+								//dump("$variationElement = ");
+								//dump($variationElement);
+								$variationElement.val(variationValue);
+							}
+						}
+						else{
+							dump("No URL variation SKU detected. Continuing on as normal.");
+						}
+						//**END PRODUCT VARIATION URL EVENT**
+						
+						//**UPDATE PRICE ON OPTION CHANGE**
+						/*
+						var product = _app.data['appProductGet|'+infoObj.pid]['@variations'];
+						dump("Product attributes = ");
+						dump(product);
+						*/
+						//**END PRICE UPDATE ON OPTION CHANGE**
+					 });
+					 
+					 //FUNCTIONALITY FOR 
+					 $( window ).resize(function() {
+						var resolution = $(window).width();
+						if (resolution >= 990){
+							$("#brandCategories").show();
+						}
+						else if ((resolution < 990) && (resolution >= 800)) {
+							$("#brandCategories").show();
+						}
+						else if ((resolution < 800) && (resolution >= 640)) {
+							if($(".showHideBrandsMobile").data("brandsState") == false){
+								$("#brandCategories").hide();
+							}
+							else if($(".showHideBrandsMobile").data("brandsState") == true){
+								$("#brandCategories").show();
+							}
+						}
+					 });
+					//if there is any functionality required for this extension to load, put it here. such as a check for async google, the FB object, etc. return false if dependencies are not present. don't check for other extensions.
+					r = true;
+					
 					/*
 					_app.templates.cartTemplate.on('complete.downlite',function(event,$context,infoObj){
 						 setTimeout(_app.ext.store_downlite.a.hideShippingOptionWeight(), 1000);
@@ -333,79 +385,96 @@ var store_downlite = function(_app) {
 					/*REPLACE THIS ATTRIBUTE WITH NEW CUSTOM ATTRIBUTE WHENEVER IT IS CREATED.*/
 					if(_app.data['appProductGet|'+data.value]['%attribs'] && _app.data['appProductGet|'+data.value]['%attribs']["user:offer_pillow_protector"]){
 						$tag.data('pillow-offer', true);
-						}
-					else {
-						$tag.data('pillow-offer', false);
-						}
-					}, //END atcForm
+ 						}
+ 					else {
+ 						$tag.data('pillow-offer', false);
+ 						}
+ 					}, //END atcForm
 				
 				
 				renderyoutubevideos : function($tag,data)	{
-					//dump("renderyoutubevideos data = ");
-					//dump(data);
-					var $context = $tag.parent();
-					var videoIds = data.value.split(',');
-					//dump("videoIds = " + videoIds);
-					var totalVideoAmount = videoIds.length;
-					//dump("totalVideoAmount = " + totalVideoAmount);
-					
-					for(var i=0;i<totalVideoAmount;i++){
-						var $videoContent = $("<div class='prodVideoContainer pointer clearfix youtubeVideo"+i+"' onClick=\"myApp.ext.quickstart.a.showYoutubeInModal($(this).attr('data-videoid'));\">"
-							+ "<div class='vidThumb'><img src='blank.gif' width='120' height='90' /></div>"
-							+"</div>"
-						);
-						$($tag).append($videoContent);
-						$(".youtubeVideo" + i + " div img", $tag).attr('src',"https://i3.ytimg.com/vi/"+videoIds[i]+"/default.jpg");
+					if(data.value != null && data.value != ""){
+						dump("Youtube video content detected for this page. Adding the videos.")
+						//dump("renderyoutubevideos data = ");
+						//dump(data);
+						var $context = $tag.parent();
+						var videoIds = data.value.split(',');
+						//dump("videoIds = " + videoIds);
+						var totalVideoAmount = videoIds.length;
+						//dump("totalVideoAmount = " + totalVideoAmount);
 						
-						$(".youtubeVideo" + i, $tag).attr("data-videoid",videoIds[i]);
-					}
-					
-					if(totalVideoAmount > 1){
+						for(var i=0;i<totalVideoAmount;i++){
+							var $videoContent = $("<div class='prodVideoContainer pointer clearfix youtubeVideo"+i+"' onClick=\"myApp.ext.quickstart.a.showYoutubeInModal($(this).attr('data-videoid'));\">"
+								+ "<div class='vidThumb'><img src='blank.gif' width='120' height='90' /></div>"
+								+"</div>"
+							);
+							$($tag).append($videoContent);
+							$(".youtubeVideo" + i + " div img", $tag).attr('src',"https://i3.ytimg.com/vi/"+videoIds[i]+"/default.jpg");
+							
+							$(".youtubeVideo" + i, $tag).attr("data-videoid",videoIds[i]);
+						}
 						
-						$(".ytVideoCont", $context).carouFredSel({
-							width   : 478,
-							height	: 110,
-							items   : 1,
-							scroll: 1,
-							auto : false,
-							prev : ".prodYTPrev",
-							next : ".prodYTNext"
-						});
-						$(".ytVideoCont", $context).css("left","0");
-						
+						if(totalVideoAmount > 1){
+							
+							$(".ytVideoCont", $context).carouFredSel({
+								width   : 478,
+								height	: 110,
+								items   : 1,
+								scroll: 1,
+								auto : false,
+								prev : ".prodYTPrev",
+								next : ".prodYTNext"
+							});
+							$(".ytVideoCont", $context).css("left","0");
+							
+						}
+						else{
+							$(".prodYTPrev", $context).hide();
+							$(".prodYTNext", $context).hide();
+						}
 					}
 					else{
-						$(".prodYTPrev", $context).hide();
-						$(".prodYTNext", $context).hide();
+						dump("No Youtube video content detected for this page.")
 					}
 				},//renderYouTubeVideos
 				
 				renderyoutubetitles : function($tag,data)	{
-					var $context = $tag.parent();
-					var videoTitles = data.value.split(',');
-					//dump("videoTitles = " + videoTitles);
-					var totalTitlesAmount = videoTitles.length;
-					//dump("totalTitlesAmount = " + totalTitlesAmount);
-					
-					for(var i=0;i<totalTitlesAmount;i++){
-						var $title = $("<h2>"+videoTitles[i]+"</h2>");
-						$(".youtubeVideo" + i, $context).append($title);
+					if(data.value != null && data.value != ""){
+						dump("Youtube video title exists. Rendering it.");
+						var $context = $tag.parent();
+						var videoTitles = data.value.split(',');
+						//dump("videoTitles = " + videoTitles);
+						var totalTitlesAmount = videoTitles.length;
+						//dump("totalTitlesAmount = " + totalTitlesAmount);
+						
+						for(var i=0;i<totalTitlesAmount;i++){
+							var $title = $("<h2>"+videoTitles[i]+"</h2>");
+							$(".youtubeVideo" + i, $context).append($title);
+						}
+					}
+					else{
+						dump("youtube video title does not exist. Do nothing.");
 					}
 					
 				},//renderYouTubeTitles
 				
 				renderyoutubedesc : function($tag,data)	{
-					var $context = $tag.parent();
-					var videoDesc = data.value.split(',');
-					//dump("videoDesc = " + videoDesc);
-					var totalDescAmount = videoDesc.length;
-					//dump("totalDescAmount = " + totalDescAmount);
-					
-					for(var i=0;i<totalDescAmount;i++){
-						var $desc = $("<p>"+videoDesc[i]+"</p>");
-						$(".youtubeVideo" + i, $context).append($desc);
+					if(data.value != null && data.value != ""){
+						dump("Youtube video description exists. Rendering it.");
+						var $context = $tag.parent();
+						var videoDesc = data.value.split(',');
+						//dump("videoDesc = " + videoDesc);
+						var totalDescAmount = videoDesc.length;
+						//dump("totalDescAmount = " + totalDescAmount);
+						
+						for(var i=0;i<totalDescAmount;i++){
+							var $desc = $("<p>"+videoDesc[i]+"</p>");
+							$(".youtubeVideo" + i, $context).append($desc);
+						}
 					}
-					
+					else{
+						dump("youtube video description does not exist. Do nothing.");
+					}
 				},//renderYouTubeDesc
 				
 				showhidearea : function($tag,data)	{
@@ -610,6 +679,8 @@ var store_downlite = function(_app) {
 					//just a banner!
 					}
 				return $banner;
+				
+						
 				}
 				
 				
@@ -626,55 +697,53 @@ var store_downlite = function(_app) {
 		e : {
 				productAdd2Cart : function($ele,p)	{
 				p.preventDefault();
-				
 				function addItem(show){
-					var cartObj = _app.ext.store_product.u.buildCartItemAppendObj($ele);
-					if(cartObj)	{
-						cartObj["_cartid"] = _app.model.fetchCartID();
-						_app.ext.cco.calls.cartItemAppend.init(cartObj,{},'immutable');
-						_app.model.destroy('cartDetail|'+cartObj._cartid);
-						_app.calls.cartDetail.init(cartObj._cartid,{'callback':function(rd){
-							if(_app.model.responseHasErrors(rd)){
-								$('#globalMessaging').anymessage({'message':rd});
-								}
-							else	{
-								showContent('cart',{'show':show});
-								}
-							}},'immutable');
-						_app.model.dispatchThis('immutable');
-						}
-					else	{} //do nothing, the validation handles displaying the errors.
+ 					var cartObj = _app.ext.store_product.u.buildCartItemAppendObj($ele);
+ 					if(cartObj)	{
+ 						cartObj["_cartid"] = _app.model.fetchCartID();
+ 						_app.ext.cco.calls.cartItemAppend.init(cartObj,{},'immutable');
+ 						_app.model.destroy('cartDetail|'+cartObj._cartid);
+ 						_app.calls.cartDetail.init(cartObj._cartid,{'callback':function(rd){
+ 							if(_app.model.responseHasErrors(rd)){
+ 								$('#globalMessaging').anymessage({'message':rd});
+ 								}
+ 							else	{
+ 								showContent('cart',{'show':show});
+ 								}
+ 							}},'immutable');
+ 						_app.model.dispatchThis('immutable');
+ 						}
+ 					else	{} //do nothing, the validation handles displaying the errors.
 					}
-				
+
 				if($ele.data('pillow-offer')){
-					var $notice = $('<div><h3>Would you like to add a pillow protector to your order?</h3></div>');
-								
-					var $buttonYes = $('<div class="pillowProtPopupButtonYes"><button class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only"><span class="ui-button-text">Let\'s see them</span></button></div>');
-					$buttonYes.on('click',function(){
-						$notice.dialog('close');
-						addItem('none');
-						showContent('category',{'navcat':'.415-protectors-and-covers.100-pillow-protectors'});
-						return false;
-						});
-						
-					$notice.append($buttonYes);
-					
-					var $buttonNo = $('<div class="pillowProtPopupButtonNo"><button class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only"><span class="ui-button-text">No thanks</span></button></div>');
-					$buttonNo.on('click',function(){
-						$notice.dialog('close');
-						addItem($ele.data('show'));
-						return false;
-						});
-						
-					$notice.append($buttonNo);
-					
-					$notice.dialog({'modal':'true','title':'Add a pillow protector', 'width':400});
-					return false;
+ 					var $notice = $('<div><h3>Would you like to add a pillow protector to your order?</h3></div>');
+ 								
+ 					var $buttonYes = $('<div class="pillowProtPopupButtonYes"><button class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only"><span class="ui-button-text">Let\'s see them</span></button></div>');
+ 					$buttonYes.on('click',function(){
+ 						$notice.dialog('close');
+ 						addItem('none');
+ 						showContent('category',{'navcat':'.415-protectors-and-covers.100-pillow-protectors'});
+ 						return false;
+ 						});
+ 						
+ 					$notice.append($buttonYes);
+ 					
+ 					var $buttonNo = $('<div class="pillowProtPopupButtonNo"><button class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only"><span class="ui-button-text">No thanks</span></button></div>');
+ 					$buttonNo.on('click',function(){
+ 						$notice.dialog('close');
+ 						addItem($ele.data('show'));
+ 						return false;
+ 						});
+ 						
+ 					$notice.append($buttonNo);
+ 					
+ 					$notice.dialog({'modal':'true','title':'Add a pillow protector', 'width':400});
+ 					return false;
 					}
 				else {
-					addItem($ele.data('show'));
-					}
-				
+ 					addItem($ele.data('show'));
+ 					}
 				}
 			} //e [app Events]
 		} //r object.

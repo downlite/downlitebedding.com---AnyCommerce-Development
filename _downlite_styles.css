@@ -356,13 +356,24 @@ div.cartItemImgCont{
     border-right: 10px solid #FFFFFF;
     display: table-cell;
     float: left;
-    height: auto;
+    height: 550px;
     padding: 15px 15px 0 25px;
     width: 270px;
 	margin-top: 5px;
  }
- 
- .blog2, .blog3 {
+ .blog1Cont, .blog2Cont, .blog3Cont{
+	width: 330px;
+	float:left;
+	position: relative;
+}
+.blog1Link, .blog2Link, .blog3Link{
+	bottom: 0;
+    font-size: 15px;
+    font-style: italic;
+    position: absolute;
+    right: 37px;
+}
+ .blog2Link, .blog3Link {
  	margin-left: 15px;
  }
  
@@ -409,15 +420,19 @@ div.cartItemImgCont{
 	/*HEADER*/
 	.header_ads{
 		float: left;
-		height: 50px;
+		height: 64px;
 		margin: 21px 0 0 5px;
 		width: 180px;
 	}
 	.header_contact{
-		margin: 6px 0 0 5px;
+		margin: -5px 0 0 5px;
 	}
 	.header_cart_menu{
 		margin-right: 5px;
+		width: 230px;
+	}
+	.header_cart_menu ul.cart{
+		margin: 7px 0 0 35px;
 	}
 	#brandCategories li{
 		margin: 0;
@@ -533,7 +548,12 @@ div.cartItemImgCont{
 		margin: -25px 0 0 240px;
 	}
 	.header_cart_menu{
+		margin-right: 0;
 		margin-top: -75px;
+		width: 152px;
+	}
+	.header_cart_menu ul.cart {
+		margin: 7px 0 0 27px;
 	}
 	.vertical_slider{
 		margin-top: -40px;
@@ -702,7 +722,8 @@ div.cartItemImgCont{
 		margin: 5px 0 0 35px;
 	}
 	.header_contact{
-		margin: 10px 0 0 35px;
+		height: 53px;
+		margin: 12px 0 0 35px;
 	}
 	.header_ads{
 		margin: 1px 0 0 22px;
@@ -711,13 +732,18 @@ div.cartItemImgCont{
 		display:none;
 	}
 	.header_cart_menu{
-		margin-right: 60px;
+		margin-right: 0;
 		margin-top: -20px;
+		width: 215px;
 	}
 	.vertical_slider{
-		margin-top: -25px;
-		width: 90px;
 		height: 20px;
+		margin-right: 204px;
+		margin-top: -39px;
+		width: 90px;
+	}
+	.header_cart_menu ul.cart {
+		margin: 3px 0 0 25px;
 	}
 	.showHideBrandsMobile{
 	}
@@ -896,7 +922,7 @@ div.cartItemImgCont{
 		float: left;
 	}
 	.savings{
-		lear: left;
+		clear: left;
 		float: left;
 		margin-left: 0;
 	}
@@ -998,11 +1024,12 @@ div.cartItemImgCont{
 	}
 	
 	.header_cart_menu{
-		margin-right: 0;
+		margin-left: 68px;
 		margin-top: -33px;
-		width: 115px;
+		width: 125px;
 	}
 	.header_cart_menu ul.cart{
+		margin: 3px 0 0 10px;
 		width: 110px;
 	}
 	.header_cart_menu ul.account{
@@ -1021,7 +1048,7 @@ div.cartItemImgCont{
 		width: 200px;
 	}
 	.vertical_slider{
-		bottom: 129px;
+		bottom: 138px;
 		height: 20px;
 		left: 138px;
 		margin-top: 0;
@@ -1031,6 +1058,7 @@ div.cartItemImgCont{
 	
 	.nav_menu{
 		position:relative;
+		margin-top: -10px;
 	}
 	.nav_menu ul{
 		margin: 14px 0 10px;

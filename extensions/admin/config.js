@@ -112,7 +112,7 @@ var admin_config = function(_app) {
 				},
 
 
-			//shows the lists of all blast messages and the means to edit each one individually.
+			//shows the lists of all notifications and the means to edit each one individually.
 			showNotifications : function($target,params)	{
 				$target.showLoading({"message":"Fetching notifications"});
 				$target.tlc({'templateid':'notificationPageTemplate','verb':'template'});
@@ -278,13 +278,14 @@ var admin_config = function(_app) {
 				$target.showLoading({'message':'Fetching your payment method settings'});
 				_app.model.destroy('adminConfigDetail|payment|'+_app.vars.partition);
 				_app.u.addEventDelegation($target);
-				$target.anyform({'trackEdits':true});
 				_app.ext.admin.calls.adminConfigDetail.init({'payment':true},{
 					'callback' : 'anycontent',
 					'datapointer' : 'adminConfigDetail|payment|'+_app.vars.partition,
 					'templateID' : 'paymentManagerPageTemplate',
 					'onComplete' : function(){
 						$("li[data-tender='CC']",$target).trigger('click');
+						_app.u.handleCommonPlugins($target);
+						$target.anyform({'trackEdits':true});
 						},
 					jqObj : $target
 					},'mutable');
@@ -898,7 +899,7 @@ when an event type is changed, all the event types are dropped, then re-added.
 								var $updateTR = $(this);
 								if($updateTR.hasClass('rowTaggedForRemove'))	{} //ignore this row, it's being deleted.
 								else	{
-									newSfo['@updates'].push("NOTIFICATION/DATATABLE-INSERT?"+$.param(_app.u.getWhitelistedObject($updateTR.data(),['event','verb','url','email'])));
+									newSfo['@updates'].push("NOTIFICATION/DATATABLE-INSERT?"+$.param(_app.u.getWhitelistedObject($updateTR.data(),['event','verb','url','email','assignto'])));
 									}
 								});
 							
@@ -912,6 +913,11 @@ when an event type is changed, all the event types are dropped, then re-added.
 						}
 					});
 
+				newSfo['_tag'].onComplete = function(){
+					// refresh the data
+					navigateTo('#!ext/admin_config/showNotifications');
+					};
+					
 				return newSfo;
 				},
 			
@@ -1673,7 +1679,7 @@ when an event type is changed, all the event types are dropped, then re-added.
 				if(_app.u.validateForm($form))	{
 					$form.showLoading({'message':'Saving Changes'});
 					var sfo = $form.serializeJSON({'cb':true}), updates = new Array();
-					if($form.data('scope') == 'HOST')	{
+					if(sfo.scope == 'HOST')	{
 						$("[data-app-role='pluginHostsList']",$form).find('tr').each(function(){
 							var $tr = $(this);
 							if($tr.hasClass('rowTaggedForRemove'))	{
@@ -1687,7 +1693,7 @@ when an event type is changed, all the event types are dropped, then re-added.
 							});
 						}
 					else	{
-						updates.push("PLUGIN/SET-"+($form.data('scope') || 'PRT')+"?"+_app.u.hash2kvp(sfo));
+						updates.push("PLUGIN/SET-"+(sfo.scope || 'PRT')+"?"+_app.u.hash2kvp(sfo));
 						}
 
 					_app.model.addDispatchToQ({
@@ -1880,13 +1886,13 @@ when an event type is changed, all the event types are dropped, then re-added.
 			notificationUpdateShow : function($ele,p)	{
 				p.preventDefault();
 				var $target = $ele.closest("[data-app-role='notificationsContainer']").find("[data-app-role='slimLeftContentContainer']");
-				
+												
 				if($ele.data('event') && _app.u.thisNestedExists("data.adminConfigDetail|"+_app.vars.partition+"|notifications.@NOTIFICATIONS",_app))	{
 					var dataset = _app.ext.admin.u.getValueByKeyFromArray(_app.data['adminConfigDetail|'+_app.vars.partition+'|notifications']['@NOTIFICATIONS'],'event',$ele.data('event'));
 					$target.empty().anycontent({"templateID":"notificationUpdateTemplate","data":dataset});
+					$target.find("[data-app-role='addNotificationContainer']").empty().anycontent({"templateID":"appendNotificationFieldset","data":{}});
 					_app.u.handleButtons($target);
 					$('form',$target).anyform();
-					$("[data-app-role='verb_"+($ele.data('event').split('.')[0])+"']",$target).show();
 					}
 				else if(!$ele.data('event'))	{
 					$target.anymessage({"message":"In admin_config.e.notificationsUpdateShow, data-event not set on trigger element.","gMessage":true});
@@ -1894,10 +1900,26 @@ when an event type is changed, all the event types are dropped, then re-added.
 				else	{
 					$target.anymessage({"message":"In admin_config.e.notificationsUpdateShow, adminConfigDetail|"+_app.vars.partition+"|notifications is not in memory.","gMessage":true});
 					}
+
+			
+				$('form',$target).find("input[name='event']").val($ele.data('event'));				
+				return false;
+				},
+
+			notificationAddNew : function($ele,p)	{
+				// the Add new Notification container
+				p.preventDefault();
+				var $target = $ele.closest("[data-app-role='notificationsContainer']").find("[data-app-role='slimLeftContentContainer']");
+				$target.empty().anycontent({"templateID":"notificationAddNewTemplate","data":{}});
+				$target.find("[data-app-role='addNotificationContainer']").empty().anycontent({"templateID":"appendNotificationFieldset","data":{}});
+				
+				_app.u.handleButtons($target);
+				_app.u.addEventDelegation($target);
+				$('form',$target).anyform();
+				//$("[data-app-role='verb_"+($ele.data('event').split('.')[0])+"']",$target).show();
 				
 				return false;
 				}
-
 
 			} //e [app Events]
 		} //r object.
