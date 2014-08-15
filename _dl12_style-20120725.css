@@ -1605,15 +1605,12 @@ h1	{color:#665d51; font-size:18px; font-weight:bold; margin:0 0 12px 0; padding:
 	/*z-index:10001;*/
 	background-image: url("images/need_help_bg.png");
     background-repeat: repeat-x;
-    border: 1px solid #B2B2B2;
-    border-radius: 6px 6px 6px 6px;
-    /*height: 124px;*/
-    /*position: fixed;
-    top: 286px;
-	left:12px;*/
-    width: 125px;
-	float:left;
-	}
+    border: 1px solid #b2b2b2;
+    border-radius: 6px;
+    float: left;
+    padding: 5px;
+	margin-left: 2px;
+}
 
 .need_help p{
 	color: #615A54;
