@@ -253,6 +253,11 @@ td.tabbedProductContentTD div.prodTabs ul.tabs li.ui-tabs-active{
 }
 #contactContent{
 }
+
+.faqQuestion{
+	font-weight:bold;
+}
+
 .sideline a{
 	padding: 5px 0;
 }
